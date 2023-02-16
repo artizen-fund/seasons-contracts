@@ -1,4 +1,4 @@
-# ArtifactRegistry
+# ERC1155Upgradeable
 
 
 
@@ -6,53 +6,9 @@
 
 
 
-
+*Implementation of the basic standard multi-token. See https://eips.ethereum.org/EIPS/eip-1155 Originally based on code by Enjin: https://github.com/enjin/erc-1155 _Available since v3.1._*
 
 ## Methods
-
-### amontOfTokenSold
-
-```solidity
-function amontOfTokenSold(uint256) external view returns (uint256)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined
-
-### artifactTopBuyer
-
-```solidity
-function artifactTopBuyer(uint256) external view returns (address)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined
 
 ### balanceOf
 
@@ -100,17 +56,6 @@ function balanceOfBatch(address[] accounts, uint256[] ids) external view returns
 |---|---|---|
 | _0 | uint256[] | undefined
 
-### initialize
-
-```solidity
-function initialize() external nonpayable
-```
-
-
-
-
-
-
 ### isApprovedForAll
 
 ```solidity
@@ -133,51 +78,6 @@ function isApprovedForAll(address account, address operator) external view retur
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | undefined
-
-### owner
-
-```solidity
-function owner() external view returns (address)
-```
-
-
-
-*Returns the address of the current owner.*
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined
-
-### projectCount
-
-```solidity
-function projectCount() external view returns (uint256)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined
-
-### renounceOwnership
-
-```solidity
-function renounceOwnership() external nonpayable
-```
-
-
-
-*Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.*
-
 
 ### safeBatchTransferFrom
 
@@ -219,28 +119,6 @@ function safeTransferFrom(address from, address to, uint256 id, uint256 amount, 
 | amount | uint256 | undefined
 | data | bytes | undefined
 
-### seasonTopBuyer
-
-```solidity
-function seasonTopBuyer(uint256) external view returns (address)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined
-
 ### setApprovalForAll
 
 ```solidity
@@ -257,44 +135,6 @@ function setApprovalForAll(address operator, bool approved) external nonpayable
 |---|---|---|
 | operator | address | undefined
 | approved | bool | undefined
-
-### setDAOWalletAddress
-
-```solidity
-function setDAOWalletAddress(address payable _artizenWallet) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _artizenWallet | address payable | undefined
-
-### setTokenPrice
-
-```solidity
-function setTokenPrice(uint256 price) external nonpayable returns (uint256)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| price | uint256 | undefined
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined
 
 ### supportsInterface
 
@@ -317,22 +157,6 @@ function supportsInterface(bytes4 interfaceId) external view returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | undefined
-
-### transferOwnership
-
-```solidity
-function transferOwnership(address newOwner) external nonpayable
-```
-
-
-
-*Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newOwner | address | undefined
 
 ### uri
 
@@ -378,22 +202,6 @@ event ApprovalForAll(address indexed account, address indexed operator, bool app
 | operator `indexed` | address | undefined |
 | approved  | bool | undefined |
 
-### ArtizenWalletAddressSet
-
-```solidity
-event ArtizenWalletAddressSet(address artizenWallet)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| artizenWallet  | address | undefined |
-
 ### Initialized
 
 ```solidity
@@ -409,40 +217,6 @@ event Initialized(uint8 version)
 | Name | Type | Description |
 |---|---|---|
 | version  | uint8 | undefined |
-
-### OwnershipTransferred
-
-```solidity
-event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| previousOwner `indexed` | address | undefined |
-| newOwner `indexed` | address | undefined |
-
-### ProjectCreated
-
-```solidity
-event ProjectCreated(uint256 tokenID, address projectOwner)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| tokenID  | uint256 | undefined |
-| projectOwner  | address | undefined |
 
 ### TransferBatch
 
@@ -501,24 +275,5 @@ event URI(string value, uint256 indexed id)
 | value  | string | undefined |
 | id `indexed` | uint256 | undefined |
 
-
-
-## Errors
-
-### ZeroAddressNotAllowed
-
-```solidity
-error ZeroAddressNotAllowed(string message)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| message | string | undefined |
 
 
