@@ -18,7 +18,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     // STORAGE
     // --------------------------------------------------------------
 
-    uint256 tokenID = 123;
+    uint256 starttokenID = 123;
     uint256 public projectCount; // not sure if we need this
     address payable artizenWallet;
     uint256 tokenPrice;
@@ -26,9 +26,13 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     struct Project {
         uint256[] tokenIDs;
-        uint256[] tokebURIs;
-        address projectOwner;
+        uint256[] seasons;
+        string[] tokenURIs;
+        address[] projectOwners;
     }
+
+    // projectID => struct
+    mapping(uint256 => Project) projects;
     //tokenID => top buyer address
     mapping(uint256 => address) public artifactTopBuyer;
     // season => season topBuyer
@@ -36,17 +40,23 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     // tokenID => amount
     mapping(uint256 => uint256) public amontOfTokenSold;
+
+    // season => bool
+    mapping(uint256 => bool) public seasonClosed;
     // --------------------------------------------------------------
     // EVENTS
     // --------------------------------------------------------------
 
-    event ProjectCreated(uint256 tokenID, address projectOwner);
+    event ProjectCreated(uint256 projectID, address projectOwner);
+    event ProjectUpdated(uint256 projectID);
     event ArtizenWalletAddressSet(address artizenWallet);
+    event Shutdown(bool _isShutdown);
 
     // --------------------------------------------------------------
     // CUSTOM ERRORS
     // --------------------------------------------------------------
     error ZeroAddressNotAllowed(string message);
+    error SeasonClosed(uint256 season);
 
     // --------------------------------------------------------------
     // CONSTRUCTOR
@@ -70,5 +80,64 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     function setTokenPrice(uint256 price) public onlyOwner returns (uint256) {
         // TODO
+    }
+
+    function setURI(string memory newuri, uint256 tokenID) public onlyOwner {
+        //TODO
+        _setURI(newuri);
+    }
+
+    function shutdown(bool _isShutdown) external {
+        isShutdown = _isShutdown;
+        emit Shutdown(_isShutdown);
+    }
+
+    function createProject(
+        uint256 _season,
+        string memory _tokenURI,
+        address _projectOwner
+    ) public onlyOwner returns (uint256) {
+        if (_projectOwner == address(0)) revert ZeroAddressNotAllowed("");
+        if (seasonClosed[_season]) revert SeasonClosed(1);
+
+        unchecked {
+            projectCount++;
+        }
+        uint256 latestTokenID = getLatestTokenID();
+        uint256 tokenToMint = latestTokenID + 1;
+        projects[projectCount].tokenIDs.push(tokenToMint);
+        projects[projectCount].seasons.push(_season);
+        projects[projectCount].tokenURIs.push(_tokenURI);
+        projects[projectCount].projectOwners.push(_projectOwner);
+
+        emit ProjectCreated(tokenToMint, _projectOwner);
+
+        return projectCount;
+    }
+
+    function renewProject() public onlyOwner {
+        //TODO
+    }
+
+    function closeSeason() public onlyOwner {
+        //TODO
+    }
+
+    function mintArtifact() public payable {
+        // TODO
+    }
+
+    // --------------------------------------------------------------
+    // VIEW FUNCTIONS
+    // --------------------------------------------------------------
+
+    function getArtizenWalletAddress() public view returns (address wallet) {
+        assembly {
+            wallet := sload(artizenWallet.slot)
+        }
+    }
+
+    function getLatestTokenID() public view returns (uint256) {
+        //TODO
     }
 }

@@ -100,6 +100,75 @@ function balanceOfBatch(address[] accounts, uint256[] ids) external view returns
 |---|---|---|
 | _0 | uint256[] | undefined
 
+### closeSeason
+
+```solidity
+function closeSeason() external nonpayable
+```
+
+
+
+
+
+
+### createProject
+
+```solidity
+function createProject(uint256 _season, string _tokenURI, address _projectOwner) external nonpayable returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _season | uint256 | undefined
+| _tokenURI | string | undefined
+| _projectOwner | address | undefined
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+### getArtizenWalletAddress
+
+```solidity
+function getArtizenWalletAddress() external view returns (address wallet)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| wallet | address | undefined
+
+### getLatestTokenID
+
+```solidity
+function getLatestTokenID() external view returns (uint256)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
 ### initialize
 
 ```solidity
@@ -134,6 +203,17 @@ function isApprovedForAll(address account, address operator) external view retur
 |---|---|---|
 | _0 | bool | undefined
 
+### mintArtifact
+
+```solidity
+function mintArtifact() external payable
+```
+
+
+
+
+
+
 ### owner
 
 ```solidity
@@ -167,6 +247,17 @@ function projectCount() external view returns (uint256)
 | Name | Type | Description |
 |---|---|---|
 | _0 | uint256 | undefined
+
+### renewProject
+
+```solidity
+function renewProject() external nonpayable
+```
+
+
+
+
+
 
 ### renounceOwnership
 
@@ -218,6 +309,28 @@ function safeTransferFrom(address from, address to, uint256 id, uint256 amount, 
 | id | uint256 | undefined
 | amount | uint256 | undefined
 | data | bytes | undefined
+
+### seasonClosed
+
+```solidity
+function seasonClosed(uint256) external view returns (bool)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined
 
 ### seasonTopBuyer
 
@@ -295,6 +408,39 @@ function setTokenPrice(uint256 price) external nonpayable returns (uint256)
 | Name | Type | Description |
 |---|---|---|
 | _0 | uint256 | undefined
+
+### setURI
+
+```solidity
+function setURI(string newuri, uint256 tokenID) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newuri | string | undefined
+| tokenID | uint256 | undefined
+
+### shutdown
+
+```solidity
+function shutdown(bool _isShutdown) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _isShutdown | bool | undefined
 
 ### supportsInterface
 
@@ -430,7 +576,7 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 ### ProjectCreated
 
 ```solidity
-event ProjectCreated(uint256 tokenID, address projectOwner)
+event ProjectCreated(uint256 projectID, address projectOwner)
 ```
 
 
@@ -441,8 +587,40 @@ event ProjectCreated(uint256 tokenID, address projectOwner)
 
 | Name | Type | Description |
 |---|---|---|
-| tokenID  | uint256 | undefined |
+| projectID  | uint256 | undefined |
 | projectOwner  | address | undefined |
+
+### ProjectUpdated
+
+```solidity
+event ProjectUpdated(uint256 projectID)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| projectID  | uint256 | undefined |
+
+### Shutdown
+
+```solidity
+event Shutdown(bool _isShutdown)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _isShutdown  | bool | undefined |
 
 ### TransferBatch
 
@@ -504,6 +682,22 @@ event URI(string value, uint256 indexed id)
 
 
 ## Errors
+
+### SeasonClosed
+
+```solidity
+error SeasonClosed(uint256 season)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| season | uint256 | undefined |
 
 ### ZeroAddressNotAllowed
 
