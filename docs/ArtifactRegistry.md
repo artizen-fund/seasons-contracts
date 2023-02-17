@@ -231,16 +231,39 @@ function lastTokenIDOfSeason(uint256) external view returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined
 
-### mintArtifact
+### latestTokenID
 
 ```solidity
-function mintArtifact() external payable
+function latestTokenID() external view returns (uint256)
 ```
 
 
 
 
 
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+### mintArtifact
+
+```solidity
+function mintArtifact(uint256 projectID, uint256 amount) external payable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| projectID | uint256 | undefined
+| amount | uint256 | undefined
 
 ### owner
 
@@ -275,25 +298,6 @@ function projectCount() external view returns (uint256)
 | Name | Type | Description |
 |---|---|---|
 | _0 | uint256 | undefined
-
-### renewProject
-
-```solidity
-function renewProject(uint256 projectID, uint256 _season, string _tokenURI, address _projectOwner) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| projectID | uint256 | undefined
-| _season | uint256 | undefined
-| _tokenURI | string | undefined
-| _projectOwner | address | undefined
 
 ### renounceOwnership
 
@@ -445,23 +449,6 @@ function setTokenPrice(uint256 price) external nonpayable returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined
 
-### setURI
-
-```solidity
-function setURI(string newuri, uint256 tokenID) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newuri | string | undefined
-| tokenID | uint256 | undefined
-
 ### shutdown
 
 ```solidity
@@ -499,6 +486,23 @@ function supportsInterface(bytes4 interfaceId) external view returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | undefined
+
+### tokenPrice
+
+```solidity
+function tokenPrice() external view returns (uint256)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
 
 ### transferOwnership
 
@@ -766,6 +770,22 @@ event URI(string value, uint256 indexed id)
 
 
 ## Errors
+
+### IncorrectAmount
+
+```solidity
+error IncorrectAmount(string message)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| message | string | undefined |
 
 ### SeasonAlreadyClosed
 
