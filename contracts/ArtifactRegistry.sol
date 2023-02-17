@@ -168,31 +168,33 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         uint seasonOfProject = projects[projectID].season;
         if (seasonClosed[seasonOfProject])
             revert SeasonAlreadyClosed(seasonOfProject);
-        uint[] calldata tokenIDToMint = projects[projectID].tokenID;
+        uint[] storage tokenIDsToMint = projects[projectID].tokenID;
+        uint tokenIDToMint = tokenIDsToMint[0];
         uint latestTokenIDOfSeason = lastTokenIDOfSeason[seasonOfProject];
         if (tokenIDToMint <= latestTokenIDOfSeason)
             revert SeasonAlreadyClosed(seasonOfProject);
 
         _setURI(projects[projectID].tokenURI);
 
-        splitPrice(projectID, amount);
+        uint amountToMint = amount[0];
+        splitPrice(projectID, amountToMint);
 
-        if (amount == 1) {
+        if (amountToMint == 1) {
             _mint(msg.sender, tokenIDToMint, 1, "");
             _mint(artizenWallet, tokenIDToMint, 1, "");
             _mint(projects[projectID].projectOwner, tokenIDToMint, 1, "");
         } else {
-            _mintBatch(msg.sender, tokenIDToMint, amount, "");
-            _mintBatch(artizenWallet, tokenIDToMint, amount, "");
+            _mintBatch(msg.sender, tokenIDsToMint, amount, "");
+            _mintBatch(artizenWallet, tokenIDsToMint, amount, "");
             _mintBatch(
                 projects[projectID].projectOwner,
-                tokenIDToMint,
+                tokenIDsToMint,
                 amount,
                 ""
             );
         }
 
-        emit ArtifactMinted(msg.sender, tokenIDToMint, amount);
+        emit ArtifactMinted(msg.sender, tokenIDToMint, amountToMint);
     }
 
     // --------------------------------------------------------------

@@ -137,7 +137,7 @@ function closeSeason(uint256 _season, uint256 _lastTokenIDOfSeason) external non
 ### createProject
 
 ```solidity
-function createProject(uint256 _season, string _tokenURI, address _projectOwner) external nonpayable returns (uint256)
+function createProject(uint256 _season, string _tokenURI, address payable _projectOwner) external nonpayable returns (uint256)
 ```
 
 
@@ -150,7 +150,7 @@ function createProject(uint256 _season, string _tokenURI, address _projectOwner)
 |---|---|---|
 | _season | uint256 | undefined
 | _tokenURI | string | undefined
-| _projectOwner | address | undefined
+| _projectOwner | address payable | undefined
 
 #### Returns
 
@@ -268,7 +268,7 @@ function latestTokenID() external view returns (uint256)
 ### mintArtifact
 
 ```solidity
-function mintArtifact(uint256 projectID, uint256 amount) external payable
+function mintArtifact(uint256 projectID, uint256[] amount) external payable
 ```
 
 
@@ -280,7 +280,7 @@ function mintArtifact(uint256 projectID, uint256 amount) external payable
 | Name | Type | Description |
 |---|---|---|
 | projectID | uint256 | undefined
-| amount | uint256 | undefined
+| amount | uint256[] | undefined
 
 ### owner
 
@@ -596,6 +596,24 @@ event ApprovalForAll(address indexed account, address indexed operator, bool app
 | account `indexed` | address | undefined |
 | operator `indexed` | address | undefined |
 | approved  | bool | undefined |
+
+### ArtifactMinted
+
+```solidity
+event ArtifactMinted(address to, uint256 tokenID, uint256 amount)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| to  | address | undefined |
+| tokenID  | uint256 | undefined |
+| amount  | uint256 | undefined |
 
 ### ArtizenFeeSplitPercentageSet
 
