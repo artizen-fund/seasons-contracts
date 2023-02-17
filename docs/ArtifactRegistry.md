@@ -103,13 +103,19 @@ function balanceOfBatch(address[] accounts, uint256[] ids) external view returns
 ### closeSeason
 
 ```solidity
-function closeSeason() external nonpayable
+function closeSeason(uint256 _season, uint256 _lastTokenIDOfSeason) external nonpayable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _season | uint256 | undefined
+| _lastTokenIDOfSeason | uint256 | undefined
 
 ### createProject
 
@@ -203,6 +209,28 @@ function isApprovedForAll(address account, address operator) external view retur
 |---|---|---|
 | _0 | bool | undefined
 
+### lastTokenIDOfSeason
+
+```solidity
+function lastTokenIDOfSeason(uint256) external view returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
 ### mintArtifact
 
 ```solidity
@@ -251,13 +279,21 @@ function projectCount() external view returns (uint256)
 ### renewProject
 
 ```solidity
-function renewProject() external nonpayable
+function renewProject(uint256 projectID, uint256 _season, string _tokenURI, address _projectOwner) external nonpayable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| projectID | uint256 | undefined
+| _season | uint256 | undefined
+| _tokenURI | string | undefined
+| _projectOwner | address | undefined
 
 ### renounceOwnership
 
@@ -590,6 +626,22 @@ event ProjectCreated(uint256 projectID, address projectOwner)
 | projectID  | uint256 | undefined |
 | projectOwner  | address | undefined |
 
+### ProjectRenewed
+
+```solidity
+event ProjectRenewed(uint256 projectID)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| projectID  | uint256 | undefined |
+
 ### ProjectUpdated
 
 ```solidity
@@ -606,6 +658,22 @@ event ProjectUpdated(uint256 projectID)
 |---|---|---|
 | projectID  | uint256 | undefined |
 
+### SeasonClosed
+
+```solidity
+event SeasonClosed(uint256 _season)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _season  | uint256 | undefined |
+
 ### Shutdown
 
 ```solidity
@@ -621,6 +689,22 @@ event Shutdown(bool _isShutdown)
 | Name | Type | Description |
 |---|---|---|
 | _isShutdown  | bool | undefined |
+
+### TokenPriceSet
+
+```solidity
+event TokenPriceSet(uint256 price)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| price  | uint256 | undefined |
 
 ### TransferBatch
 
@@ -683,10 +767,10 @@ event URI(string value, uint256 indexed id)
 
 ## Errors
 
-### SeasonClosed
+### SeasonAlreadyClosed
 
 ```solidity
-error SeasonClosed(uint256 season)
+error SeasonAlreadyClosed(uint256 season)
 ```
 
 
