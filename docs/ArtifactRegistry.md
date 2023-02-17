@@ -54,6 +54,23 @@ function artifactTopBuyer(uint256) external view returns (address)
 |---|---|---|
 | _0 | address | undefined
 
+### artizenSplitPercentage
+
+```solidity
+function artizenSplitPercentage() external view returns (uint256)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
 ### balanceOf
 
 ```solidity
@@ -411,6 +428,22 @@ function setApprovalForAll(address operator, bool approved) external nonpayable
 | operator | address | undefined
 | approved | bool | undefined
 
+### setArtizenFeeSplitPercentage
+
+```solidity
+function setArtizenFeeSplitPercentage(uint256 percentage) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| percentage | uint256 | undefined
+
 ### setDAOWalletAddress
 
 ```solidity
@@ -563,6 +596,22 @@ event ApprovalForAll(address indexed account, address indexed operator, bool app
 | account `indexed` | address | undefined |
 | operator `indexed` | address | undefined |
 | approved  | bool | undefined |
+
+### ArtizenFeeSplitPercentageSet
+
+```solidity
+event ArtizenFeeSplitPercentageSet(uint256 percentage)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| percentage  | uint256 | undefined |
 
 ### ArtizenWalletAddressSet
 
