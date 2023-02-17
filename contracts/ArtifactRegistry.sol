@@ -27,10 +27,10 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     uint public latestTokenID;
 
     struct Project {
-        uint256 tokenID;
+        uint256[] tokenID;
         uint256 season;
         string tokenURI;
-        address projectOwner;
+        address payable projectOwner;
     }
 
     // projectID => struct
@@ -59,6 +59,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     event TokenPriceSet(uint price);
     event Shutdown(bool _isShutdown);
     event ArtizenFeeSplitPercentageSet(uint percentage);
+    event ArtifactMinted(address to, uint tokenID, uint amount);
 
     // --------------------------------------------------------------
     // CUSTOM ERRORS
@@ -109,7 +110,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     function createProject(
         uint256 _season,
         string memory _tokenURI,
-        address _projectOwner
+        address payable _projectOwner
     ) public onlyOwner returns (uint256) {
         if (_projectOwner == address(0)) revert ZeroAddressNotAllowed("");
         if (seasonClosed[_season]) revert SeasonAlreadyClosed(_season);
@@ -119,7 +120,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         }
         uint256 latestTokenID = getLatestTokenID();
         uint256 tokenToMint = latestTokenID++;
-        projects[projectCount].tokenID = tokenToMint;
+        projects[projectCount].tokenID.push(tokenToMint);
         projects[projectCount].season = _season;
         projects[projectCount].tokenURI = _tokenURI;
         projects[projectCount].projectOwner = _projectOwner;
@@ -159,17 +160,39 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         emit SeasonClosed(_season);
     }
 
-    function mintArtifact(uint projectID, uint amount) public payable {
+    function mintArtifact(
+        uint projectID,
+        uint[] calldata amount
+    ) public payable {
         if (msg.value != tokenPrice) revert IncorrectAmount("");
         uint seasonOfProject = projects[projectID].season;
         if (seasonClosed[seasonOfProject])
             revert SeasonAlreadyClosed(seasonOfProject);
-        uint tokenIDToMint = projects[projectID].tokenID;
+        uint[] calldata tokenIDToMint = projects[projectID].tokenID;
         uint latestTokenIDOfSeason = lastTokenIDOfSeason[seasonOfProject];
         if (tokenIDToMint <= latestTokenIDOfSeason)
             revert SeasonAlreadyClosed(seasonOfProject);
 
         _setURI(projects[projectID].tokenURI);
+
+        splitPrice(projectID, amount);
+
+        if (amount == 1) {
+            _mint(msg.sender, tokenIDToMint, 1, "");
+            _mint(artizenWallet, tokenIDToMint, 1, "");
+            _mint(projects[projectID].projectOwner, tokenIDToMint, 1, "");
+        } else {
+            _mintBatch(msg.sender, tokenIDToMint, amount, "");
+            _mintBatch(artizenWallet, tokenIDToMint, amount, "");
+            _mintBatch(
+                projects[projectID].projectOwner,
+                tokenIDToMint,
+                amount,
+                ""
+            );
+        }
+
+        emit ArtifactMinted(msg.sender, tokenIDToMint, amount);
     }
 
     // --------------------------------------------------------------
@@ -180,14 +203,13 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         uint amountOfTokensMinted = amountOfTokensBought * 3;
         uint fullPrice = tokenPrice * amountOfTokensMinted;
 
-        uint splitPercentage = artizenSplitPercentage;
-    }
+        uint splitArtizen = (fullPrice / 100) * artizenSplitPercentage;
+        uint splitArtist = fullPrice - splitArtizen;
 
-    function splitArtifacts(
-        uint projectID,
-        uint amountOfTokensBought
-    ) internal {
-        uint amountOfTokensMinted = amountOfTokensBought * 3;
+        artizenWallet.transfer(splitArtizen);
+
+        address payable artistAddress = projects[projectID].projectOwner;
+        artistAddress.transfer(splitArtist);
     }
 
     // --------------------------------------------------------------
