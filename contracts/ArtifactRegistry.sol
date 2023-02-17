@@ -14,217 +14,217 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 */
 
 contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
-    // -------------------------------------------------------------
-    // STORAGE
-    // --------------------------------------------------------------
+  // -------------------------------------------------------------
+  // STORAGE
+  // --------------------------------------------------------------
 
-    uint256 startTokenID = 123;
-    uint256 public projectCount; // not sure if we need this
-    address payable artizenWallet;
-    uint public artizenSplitPercentage;
-    uint256 public tokenPrice;
-    bool private isShutdown;
-    uint public latestTokenID;
+  uint256 startTokenID = 123;
+  uint256 public projectCount; // not sure if we need this
+  address payable artizenWallet;
+  uint public artizenSplitPercentage;
+  uint256 public tokenPrice;
+  bool private isShutdown;
+  uint public latestTokenID;
 
-    struct Project {
-        uint256[] tokenID;
-        uint256 season;
-        string tokenURI;
-        address payable projectOwner;
+  struct Project {
+    uint256[] tokenID;
+    uint256 season;
+    string tokenURI;
+    address payable projectOwner;
+  }
+
+  // projectID => struct
+  mapping(uint256 => Project) projects;
+  //tokenID => top buyer address
+  mapping(uint256 => address) public artifactTopBuyer;
+  // season => season topBuyer
+  mapping(uint256 => address) public seasonTopBuyer; // need to figure operation out for this one, probably needs a separate funtion to run once at the end of the season
+
+  // tokenID => amount
+  mapping(uint256 => uint256) public amontOfTokenSold;
+
+  // season => bool
+  mapping(uint256 => bool) public seasonClosed;
+  //season => last tokenID
+  mapping(uint256 => uint256) public lastTokenIDOfSeason;
+  // --------------------------------------------------------------
+  // EVENTS
+  // --------------------------------------------------------------
+
+  event ProjectCreated(uint256 projectID, address projectOwner);
+  event ProjectUpdated(uint256 projectID);
+  event ProjectRenewed(uint256 projectID);
+  event ArtizenWalletAddressSet(address artizenWallet);
+  event SeasonClosed(uint256 _season);
+  event TokenPriceSet(uint price);
+  event Shutdown(bool _isShutdown);
+  event ArtizenFeeSplitPercentageSet(uint percentage);
+  event ArtifactMinted(address to, uint tokenID, uint amount);
+
+  // --------------------------------------------------------------
+  // CUSTOM ERRORS
+  // --------------------------------------------------------------
+  error ZeroAddressNotAllowed(string message);
+  error SeasonAlreadyClosed(uint256 season);
+  error IncorrectAmount(string message);
+
+  // --------------------------------------------------------------
+  // CONSTRUCTOR
+  // --------------------------------------------------------------
+
+  function initialize() public initializer {}
+
+  // --------------------------------------------------------------
+  // STATE-MODIFYING FUNCTIONS
+  // --------------------------------------------------------------
+  function setDAOWalletAddress(
+    address payable _artizenWallet
+  ) public onlyOwner {
+    if (_artizenWallet == address(0))
+      revert ZeroAddressNotAllowed("Cannot set zero address");
+    assembly {
+      sstore(artizenWallet.slot, _artizenWallet)
+    }
+    emit ArtizenWalletAddressSet(_artizenWallet);
+  }
+
+  function setTokenPrice(uint256 price) public onlyOwner returns (uint256) {
+    assembly {
+      sstore(tokenPrice.slot, price)
+    }
+    emit TokenPriceSet(price);
+  }
+
+  function setArtizenFeeSplitPercentage(uint percentage) public onlyOwner {
+    assembly {
+      sstore(artizenSplitPercentage.slot, percentage)
+    }
+    emit ArtizenFeeSplitPercentageSet(percentage);
+  }
+
+  function shutdown(bool _isShutdown) external {
+    isShutdown = _isShutdown;
+    emit Shutdown(_isShutdown);
+  }
+
+  function createProject(
+    uint256 _season,
+    string memory _tokenURI,
+    address payable _projectOwner
+  ) public onlyOwner returns (uint256) {
+    if (_projectOwner == address(0)) revert ZeroAddressNotAllowed("");
+    if (seasonClosed[_season]) revert SeasonAlreadyClosed(_season);
+
+    unchecked {
+      projectCount++;
+    }
+    uint256 latestTokenID = getLatestTokenID();
+    uint256 tokenToMint = latestTokenID++;
+    projects[projectCount].tokenID.push(tokenToMint);
+    projects[projectCount].season = _season;
+    projects[projectCount].tokenURI = _tokenURI;
+    projects[projectCount].projectOwner = _projectOwner;
+    emit ProjectCreated(tokenToMint, _projectOwner);
+
+    return projectCount;
+  }
+
+  // function renewProject(
+  //   uint256 projectID,
+  //   uint256 _season,
+  //   string memory _tokenURI,
+  //   address _projectOwner
+  // ) public onlyOwner {
+  //   if (_projectOwner == address(0)) revert ZeroAddressNotAllowed("");
+  //   if (seasonClosed[_season]) revert SeasonAlreadyClosed(_season);
+
+  //   uint256 latestTokenID = getLatestTokenID();
+  //   uint256 tokenToMint = latestTokenID++;
+  //   projects[projectID].tokenIDs.push(tokenToMint);
+  //   projects[projectID].seasons.push(_season);
+  //   projects[projectID].tokenURIs.push(_tokenURI);
+  //   projects[projectID].projectOwners.push(_projectOwner);
+
+  //   emit ProjectRenewed(projectID);
+  // }
+
+  function closeSeason(
+    uint256 _season,
+    uint256 _lastTokenIDOfSeason
+  ) public onlyOwner {
+    if (seasonClosed[_season]) revert SeasonAlreadyClosed(_season);
+
+    lastTokenIDOfSeason[_season] = _lastTokenIDOfSeason;
+    seasonClosed[_season];
+
+    emit SeasonClosed(_season);
+  }
+
+  function mintArtifact(uint projectID, uint[] calldata amount) public payable {
+    uint amountToMint = amount[0];
+    uint[] storage tokenIDsToMint = projects[projectID].tokenID;
+    uint tokenIDToMint = tokenIDsToMint[0];
+    if (msg.value != tokenPrice) revert IncorrectAmount("");
+    uint seasonOfProject = projects[projectID].season;
+    if (seasonClosed[seasonOfProject])
+      revert SeasonAlreadyClosed(seasonOfProject);
+
+    uint latestTokenIDOfSeason = lastTokenIDOfSeason[seasonOfProject];
+    if (tokenIDToMint <= latestTokenIDOfSeason)
+      revert SeasonAlreadyClosed(seasonOfProject);
+    amontOfTokenSold[tokenIDToMint] += amountToMint;
+
+    //TODO topBuyer
+
+    _setURI(projects[projectID].tokenURI);
+
+    splitPrice(projectID, amountToMint);
+
+    if (amountToMint == 1) {
+      _mint(msg.sender, tokenIDToMint, 1, "");
+      _mint(artizenWallet, tokenIDToMint, 1, "");
+      _mint(projects[projectID].projectOwner, tokenIDToMint, 1, "");
+    } else {
+      _mintBatch(msg.sender, tokenIDsToMint, amount, "");
+      _mintBatch(artizenWallet, tokenIDsToMint, amount, "");
+      _mintBatch(projects[projectID].projectOwner, tokenIDsToMint, amount, "");
     }
 
-    // projectID => struct
-    mapping(uint256 => Project) projects;
-    //tokenID => top buyer address
-    mapping(uint256 => address) public artifactTopBuyer;
-    // season => season topBuyer
-    mapping(uint256 => address) public seasonTopBuyer; // need to figure operation out for this one, probably needs a separate funtion to run once at the end of the season
+    emit ArtifactMinted(msg.sender, tokenIDToMint, amountToMint);
+  }
 
-    // tokenID => amount
-    mapping(uint256 => uint256) public amontOfTokenSold;
+  // --------------------------------------------------------------
+  // INTERNAL FUNCTIONS
+  // --------------------------------------------------------------
 
-    // season => bool
-    mapping(uint256 => bool) public seasonClosed;
-    //season => last tokenID
-    mapping(uint256 => uint256) public lastTokenIDOfSeason;
-    // --------------------------------------------------------------
-    // EVENTS
-    // --------------------------------------------------------------
+  function splitPrice(uint projectID, uint amountOfTokensBought) internal {
+    uint amountOfTokensMinted = amountOfTokensBought * 3;
+    uint fullPrice = tokenPrice * amountOfTokensMinted;
 
-    event ProjectCreated(uint256 projectID, address projectOwner);
-    event ProjectUpdated(uint256 projectID);
-    event ProjectRenewed(uint256 projectID);
-    event ArtizenWalletAddressSet(address artizenWallet);
-    event SeasonClosed(uint256 _season);
-    event TokenPriceSet(uint price);
-    event Shutdown(bool _isShutdown);
-    event ArtizenFeeSplitPercentageSet(uint percentage);
-    event ArtifactMinted(address to, uint tokenID, uint amount);
+    uint splitArtizen = (fullPrice / 100) * artizenSplitPercentage;
+    uint splitArtist = fullPrice - splitArtizen;
 
-    // --------------------------------------------------------------
-    // CUSTOM ERRORS
-    // --------------------------------------------------------------
-    error ZeroAddressNotAllowed(string message);
-    error SeasonAlreadyClosed(uint256 season);
-    error IncorrectAmount(string message);
+    artizenWallet.transfer(splitArtizen);
 
-    // --------------------------------------------------------------
-    // CONSTRUCTOR
-    // --------------------------------------------------------------
+    address payable artistAddress = projects[projectID].projectOwner;
+    artistAddress.transfer(splitArtist);
+  }
 
-    function initialize() public initializer {}
+  // --------------------------------------------------------------
+  // VIEW FUNCTIONS
+  // --------------------------------------------------------------
 
-    // --------------------------------------------------------------
-    // STATE-MODIFYING FUNCTIONS
-    // --------------------------------------------------------------
-    function setDAOWalletAddress(
-        address payable _artizenWallet
-    ) public onlyOwner {
-        if (_artizenWallet == address(0))
-            revert ZeroAddressNotAllowed("Cannot set zero address");
-        assembly {
-            sstore(artizenWallet.slot, _artizenWallet)
-        }
-        emit ArtizenWalletAddressSet(_artizenWallet);
+  function getArtizenWalletAddress() public view returns (address wallet) {
+    assembly {
+      wallet := sload(artizenWallet.slot)
     }
+  }
 
-    function setTokenPrice(uint256 price) public onlyOwner returns (uint256) {
-        assembly {
-            sstore(tokenPrice.slot, price)
-        }
-        emit TokenPriceSet(price);
-    }
+  function getLatestTokenID() public view returns (uint256) {
+    return startTokenID + projectCount;
+  }
 
-    function setArtizenFeeSplitPercentage(uint percentage) public onlyOwner {
-        assembly {
-            sstore(artizenSplitPercentage.slot, percentage)
-        }
-        emit ArtizenFeeSplitPercentageSet(percentage);
-    }
-
-    function shutdown(bool _isShutdown) external {
-        isShutdown = _isShutdown;
-        emit Shutdown(_isShutdown);
-    }
-
-    function createProject(
-        uint256 _season,
-        string memory _tokenURI,
-        address payable _projectOwner
-    ) public onlyOwner returns (uint256) {
-        if (_projectOwner == address(0)) revert ZeroAddressNotAllowed("");
-        if (seasonClosed[_season]) revert SeasonAlreadyClosed(_season);
-
-        unchecked {
-            projectCount++;
-        }
-        uint256 latestTokenID = getLatestTokenID();
-        uint256 tokenToMint = latestTokenID++;
-        projects[projectCount].tokenID.push(tokenToMint);
-        projects[projectCount].season = _season;
-        projects[projectCount].tokenURI = _tokenURI;
-        projects[projectCount].projectOwner = _projectOwner;
-        emit ProjectCreated(tokenToMint, _projectOwner);
-
-        return projectCount;
-    }
-
-    // function renewProject(
-    //   uint256 projectID,
-    //   uint256 _season,
-    //   string memory _tokenURI,
-    //   address _projectOwner
-    // ) public onlyOwner {
-    //   if (_projectOwner == address(0)) revert ZeroAddressNotAllowed("");
-    //   if (seasonClosed[_season]) revert SeasonAlreadyClosed(_season);
-
-    //   uint256 latestTokenID = getLatestTokenID();
-    //   uint256 tokenToMint = latestTokenID++;
-    //   projects[projectID].tokenIDs.push(tokenToMint);
-    //   projects[projectID].seasons.push(_season);
-    //   projects[projectID].tokenURIs.push(_tokenURI);
-    //   projects[projectID].projectOwners.push(_projectOwner);
-
-    //   emit ProjectRenewed(projectID);
-    // }
-
-    function closeSeason(
-        uint256 _season,
-        uint256 _lastTokenIDOfSeason
-    ) public onlyOwner {
-        if (seasonClosed[_season]) revert SeasonAlreadyClosed(_season);
-
-        lastTokenIDOfSeason[_season] = _lastTokenIDOfSeason;
-        seasonClosed[_season];
-
-        emit SeasonClosed(_season);
-    }
-
-    function mintArtifact(
-        uint projectID,
-        uint[] calldata amount
-    ) public payable {
-        if (msg.value != tokenPrice) revert IncorrectAmount("");
-        uint seasonOfProject = projects[projectID].season;
-        if (seasonClosed[seasonOfProject])
-            revert SeasonAlreadyClosed(seasonOfProject);
-        uint[] storage tokenIDsToMint = projects[projectID].tokenID;
-        uint tokenIDToMint = tokenIDsToMint[0];
-        uint latestTokenIDOfSeason = lastTokenIDOfSeason[seasonOfProject];
-        if (tokenIDToMint <= latestTokenIDOfSeason)
-            revert SeasonAlreadyClosed(seasonOfProject);
-
-        _setURI(projects[projectID].tokenURI);
-
-        uint amountToMint = amount[0];
-        splitPrice(projectID, amountToMint);
-
-        if (amountToMint == 1) {
-            _mint(msg.sender, tokenIDToMint, 1, "");
-            _mint(artizenWallet, tokenIDToMint, 1, "");
-            _mint(projects[projectID].projectOwner, tokenIDToMint, 1, "");
-        } else {
-            _mintBatch(msg.sender, tokenIDsToMint, amount, "");
-            _mintBatch(artizenWallet, tokenIDsToMint, amount, "");
-            _mintBatch(
-                projects[projectID].projectOwner,
-                tokenIDsToMint,
-                amount,
-                ""
-            );
-        }
-
-        emit ArtifactMinted(msg.sender, tokenIDToMint, amountToMint);
-    }
-
-    // --------------------------------------------------------------
-    // INTERNAL FUNCTIONS
-    // --------------------------------------------------------------
-
-    function splitPrice(uint projectID, uint amountOfTokensBought) internal {
-        uint amountOfTokensMinted = amountOfTokensBought * 3;
-        uint fullPrice = tokenPrice * amountOfTokensMinted;
-
-        uint splitArtizen = (fullPrice / 100) * artizenSplitPercentage;
-        uint splitArtist = fullPrice - splitArtizen;
-
-        artizenWallet.transfer(splitArtizen);
-
-        address payable artistAddress = projects[projectID].projectOwner;
-        artistAddress.transfer(splitArtist);
-    }
-
-    // --------------------------------------------------------------
-    // VIEW FUNCTIONS
-    // --------------------------------------------------------------
-
-    function getArtizenWalletAddress() public view returns (address wallet) {
-        assembly {
-            wallet := sload(artizenWallet.slot)
-        }
-    }
-
-    function getLatestTokenID() public view returns (uint256) {
-        return startTokenID + projectCount;
-    }
+  function getTopBuyerOfSeason(uint season) public view returns (address) {
+    //TODO
+  }
 }
