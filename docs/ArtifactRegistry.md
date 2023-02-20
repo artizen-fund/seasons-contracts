@@ -10,10 +10,10 @@
 
 ## Methods
 
-### amontOfTokenSold
+### amountPurchasedPerTokenPerAddress
 
 ```solidity
-function amontOfTokenSold(uint256) external view returns (uint256)
+function amountPurchasedPerTokenPerAddress(address, uint256) external view returns (uint256)
 ```
 
 
@@ -24,7 +24,8 @@ function amontOfTokenSold(uint256) external view returns (uint256)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | undefined
+| _0 | address | undefined
+| _1 | uint256 | undefined
 
 #### Returns
 
@@ -192,6 +193,28 @@ function getLatestTokenID() external view returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined
 
+### getTopBuyerOfSeason
+
+```solidity
+function getTopBuyerOfSeason(uint256 season) external view returns (address)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| season | uint256 | undefined
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined
+
 ### initialize
 
 ```solidity
@@ -268,7 +291,7 @@ function latestTokenID() external view returns (uint256)
 ### mintArtifact
 
 ```solidity
-function mintArtifact(uint256 projectID, uint256[] amount) external payable
+function mintArtifact(uint256 submissionID, uint256[] amount) external payable
 ```
 
 
@@ -279,7 +302,7 @@ function mintArtifact(uint256 projectID, uint256[] amount) external payable
 
 | Name | Type | Description |
 |---|---|---|
-| projectID | uint256 | undefined
+| submissionID | uint256 | undefined
 | amount | uint256[] | undefined
 
 ### owner
@@ -537,6 +560,51 @@ function tokenPrice() external view returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined
 
+### topAmontOfTokenSold
+
+```solidity
+function topAmontOfTokenSold(uint256) external view returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+### totalPurchasedPerAddressPerSeason
+
+```solidity
+function totalPurchasedPerAddressPerSeason(address, uint256) external view returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined
+| _1 | uint256 | undefined
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
 ### transferOwnership
 
 ```solidity
@@ -683,7 +751,7 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 ### ProjectCreated
 
 ```solidity
-event ProjectCreated(uint256 projectID, address projectOwner)
+event ProjectCreated(uint256 submissionID, address projectOwner)
 ```
 
 
@@ -694,13 +762,13 @@ event ProjectCreated(uint256 projectID, address projectOwner)
 
 | Name | Type | Description |
 |---|---|---|
-| projectID  | uint256 | undefined |
+| submissionID  | uint256 | undefined |
 | projectOwner  | address | undefined |
 
 ### ProjectRenewed
 
 ```solidity
-event ProjectRenewed(uint256 projectID)
+event ProjectRenewed(uint256 submissionID)
 ```
 
 
@@ -711,12 +779,12 @@ event ProjectRenewed(uint256 projectID)
 
 | Name | Type | Description |
 |---|---|---|
-| projectID  | uint256 | undefined |
+| submissionID  | uint256 | undefined |
 
 ### ProjectUpdated
 
 ```solidity
-event ProjectUpdated(uint256 projectID)
+event ProjectUpdated(uint256 submissionID)
 ```
 
 
@@ -727,7 +795,7 @@ event ProjectUpdated(uint256 projectID)
 
 | Name | Type | Description |
 |---|---|---|
-| projectID  | uint256 | undefined |
+| submissionID  | uint256 | undefined |
 
 ### SeasonClosed
 
