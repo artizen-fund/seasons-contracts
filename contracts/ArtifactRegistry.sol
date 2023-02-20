@@ -26,6 +26,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
   bool private isShutdown;
   uint public latestTokenID;
 
+  // TODO rename it to Submission
   struct Project {
     uint256[] tokenID;
     uint256 season;
@@ -42,6 +43,11 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
   // tokenID => amount
   mapping(uint256 => uint256) public amontOfTokenSold;
+  // address => amount
+  mapping(address => uint) public amountPurchasedPerAddress;
+  // address => season => amount
+  mapping(address => mapping(uint => uint))
+    public totalPurchasedPerAddressPerSeason;
 
   // season => bool
   mapping(uint256 => bool) public seasonClosed;
@@ -175,6 +181,17 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     amontOfTokenSold[tokenIDToMint] += amountToMint;
 
     //TODO topBuyer
+
+    if (
+      // amounts purchased per address
+      grants[_grantID].topAmountSold <
+      totalDonationPerAddressPerCycle[_grantID][msg.sender]
+    ) {
+      grants[_grantID].topDonor = msg.sender;
+      grants[_grantID].topDonatedAmount = totalDonationPerAddressPerCycle[
+        _grantID
+      ][msg.sender];
+    }
 
     _setURI(projects[projectID].tokenURI);
 
