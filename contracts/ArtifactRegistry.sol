@@ -48,7 +48,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         public amountPurchasedPerTokenPerAddress;
     // address => season => amount
     mapping(address => mapping(uint => uint))
-        public totalPurchasedPerAddressPerSeason;
+        public totalTokensPurchasedPerAddressPerSeason;
 
     // season => bool
     mapping(uint256 => bool) public seasonClosed;
@@ -183,12 +183,14 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         if (tokenIDToMint <= latestTokenIDOfSeason)
             revert SeasonAlreadyClosed(seasonOfProject);
 
+        totalTokensPurchasedPerAddressPerSeason[msg.sender][
+            submissions[submissionID].season
+        ] += amountToMint;
         // register top buyer
 
         if (
             // amounts purchased per address
-            topAmontOfTokenSold[tokenIDToMint] <
-            amountPurchasedPerTokenPerAddress[msg.sender][tokenIDToMint]
+            topAmontOfTokenSold[tokenIDToMint] < amountToMint * 3
         ) {
             artifactTopBuyer[tokenIDToMint] = msg.sender;
             topAmontOfTokenSold[tokenIDToMint] = amountToMint * 3;
@@ -249,5 +251,12 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     function getTopBuyerOfSeason(uint season) public view returns (address) {
         //TODO
+    }
+
+    function getTotalSalesPerSubmission(
+        uint submissionID
+    ) public view returns (uint) {
+        uint[] memory tokenID = submissions[submissionID].tokenID;
+        uint tokenIDToCheck = tokenID[0];
     }
 }
