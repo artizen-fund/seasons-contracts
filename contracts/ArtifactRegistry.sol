@@ -115,7 +115,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         emit Shutdown(_isShutdown);
     }
 
-    function createProject(
+    function createSubmisson(
         uint256 _season,
         string memory _tokenURI,
         address payable _projectOwner
@@ -174,7 +174,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         // register top buyer
         if (
             // amounts purchased per address
-            topAmontOfTokenSold[tokenIDToMint] < amountToMint;
+            topAmontOfTokenSold[tokenIDToMint] < amountToMint
         ) {
             artifactTopBuyer[tokenIDToMint] = msg.sender;
             topAmontOfTokenSold[tokenIDToMint] = amountToMint;
