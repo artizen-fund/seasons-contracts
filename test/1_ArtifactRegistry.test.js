@@ -14,7 +14,7 @@ describe("Artifact Registry Tests", function () {
   describe("Setter functions", function () {
     it("sets up dao wallet address properly", async () => {});
     it("sets token price properly", async () => {});
-    it("sets  sets fee split percentage properly", async () => {});
+    it("sets sets fee split percentage properly", async () => {});
     it("shutdown works properly", async () => {});
     it("contract shuts down if shutdown is turned on", async () => {});
   });

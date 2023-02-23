@@ -260,4 +260,10 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
       wallet := sload(artizenWallet.slot)
     }
   }
+
+  function getSplitPercentage() public view returns (uint percentage) {
+    assembly {
+      percentage := sload(artizenSplitPercentage.slot)
+    }
+  }
 }
