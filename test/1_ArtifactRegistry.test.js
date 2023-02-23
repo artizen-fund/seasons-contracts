@@ -33,14 +33,22 @@ describe("Artifact Registry Tests", function () {
         ownerAddress
       );
     });
-    it.only("sets token price properly", async () => {
+    it("sets token price properly", async () => {
       await RegistryInstance.connect(owner).setTokenPrice(BigNumber.from("1"));
 
       expect(await RegistryInstance.getTokenPrice()).to.equal(
         BigNumber.from("1")
       );
     });
-    it("sets sets fee split percentage properly", async () => {});
+    it.only("sets sets fee split percentage properly", async () => {
+      await RegistryInstance.connect(owner).setArtizenFeeSplitPercentage(
+        BigNumber.from("10")
+      );
+
+      expect(await RegistryInstance.getSplitPercentage()).to.equal(
+        BigNumber.from("10")
+      );
+    });
     it("shutdown works properly", async () => {});
     it("contract shuts down if shutdown is turned on", async () => {});
   });
