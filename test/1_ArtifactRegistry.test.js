@@ -40,7 +40,7 @@ describe("Artifact Registry Tests", function () {
         BigNumber.from("1")
       );
     });
-    it.only("sets sets fee split percentage properly", async () => {
+    it("sets sets fee split percentage properly", async () => {
       await RegistryInstance.connect(owner).setArtizenFeeSplitPercentage(
         BigNumber.from("10")
       );
@@ -49,7 +49,6 @@ describe("Artifact Registry Tests", function () {
         BigNumber.from("10")
       );
     });
-    it("shutdown works properly", async () => {});
     it("contract shuts down if shutdown is turned on", async () => {});
   });
   describe("createSubmission function", function () {
