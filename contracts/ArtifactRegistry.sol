@@ -174,10 +174,10 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         // register top buyer
         if (
             // amounts purchased per address
-            topAmontOfTokenSold[tokenIDToMint] < amountToMint * 3
+            topAmontOfTokenSold[tokenIDToMint] < amountToMint;
         ) {
             artifactTopBuyer[tokenIDToMint] = msg.sender;
-            topAmontOfTokenSold[tokenIDToMint] = amountToMint * 3;
+            topAmontOfTokenSold[tokenIDToMint] = amountToMint;
         }
 
         _setURI(submissions[submissionID].tokenURI);
