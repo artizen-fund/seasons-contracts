@@ -26,14 +26,20 @@ describe("Artifact Registry Tests", function () {
     RegistryInstance = await upgrades.deployProxy(RegistryContract, []);
   });
   describe("Setter functions", function () {
-    it.only("sets up dao wallet address properly", async () => {
+    it("sets up dao wallet address properly", async () => {
       await RegistryInstance.connect(owner).setDAOWalletAddress(ownerAddress);
 
       expect(await RegistryInstance.getDAOWalletAddress()).to.equal(
         ownerAddress
       );
     });
-    it("sets token price properly", async () => {});
+    it.only("sets token price properly", async () => {
+      await RegistryInstance.connect(owner).setTokenPrice(BigNumber.from("1"));
+
+      expect(await RegistryInstance.getTokenPrice()).to.equal(
+        BigNumber.from("1")
+      );
+    });
     it("sets sets fee split percentage properly", async () => {});
     it("shutdown works properly", async () => {});
     it("contract shuts down if shutdown is turned on", async () => {});
