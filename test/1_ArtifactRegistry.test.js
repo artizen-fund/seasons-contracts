@@ -61,20 +61,25 @@ describe("Artifact Registry Tests", function () {
     it("only owner can create submission", async () => {});
   });
   describe("closeSeason function", function () {
-    it.only("cannot close a season that's already been closed", async () => {
+    it("cannot close a season that's already been closed", async () => {
       await RegistryInstance.connect(owner).closeSeason(1, 150);
       await expect(
         RegistryInstance.connect(owner).closeSeason(1, 150)
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
     });
-    it("users cant mint if a season is closed", async () => {});
-    it("only owner can close season submission", async () => {});
+
+    it.only("only owner can close season submission", async () => {
+      await expect(
+        RegistryInstance.connect(buyer1).closeSeason(1, 150)
+      ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
   });
   describe("mintArtifact function", function () {
     it("msg.value has to be equal to token price", async () => {});
     it("mints correct tokenID for submission", async () => {});
     it("mints 3 times the amount given", async () => {});
     it("mints the same amounts to 3 different addresses", async () => {});
+    it("users cant mint if a season is closed", async () => {});
     it("sets correct tokenURI for each token", async () => {});
     it("splits token price correctly", async () => {});
     it("sets correct tokenURI for each token", async () => {});
