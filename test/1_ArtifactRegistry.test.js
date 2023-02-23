@@ -49,15 +49,26 @@ describe("Artifact Registry Tests", function () {
         BigNumber.from("10")
       );
     });
-    it("contract shuts down if shutdown is turned on", async () => {});
+    it("contract shuts down if shutdown is turned on", async () => {
+      await RegistryInstance.connect(owner).shutdown(true);
+
+      //TODO
+      // await expect(RegistryInstance.connect(owner).createSubmission());
+    });
   });
   describe("createSubmission function", function () {
     it("registers submission details properly ", async () => {});
+    it("only owner can create submission", async () => {});
   });
   describe("closeSeason function", function () {
-    it("cannot close a season that's already been closed", async () => {});
+    it.only("cannot close a season that's already been closed", async () => {
+      await RegistryInstance.connect(owner).closeSeason(1, 150);
+      await expect(
+        RegistryInstance.connect(owner).closeSeason(1, 150)
+      ).to.be.revertedWith("SeasonAlreadyClosed(1)");
+    });
     it("users cant mint if a season is closed", async () => {});
-    it("emits seasonClosed event properly", async () => {});
+    it("only owner can close season submission", async () => {});
   });
   describe("mintArtifact function", function () {
     it("msg.value has to be equal to token price", async () => {});
