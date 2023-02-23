@@ -9,8 +9,22 @@ const { BigNumber } = require("ethers");
 //   currentTime,
 // } = require("./utils/TestUtils");
 
+let RegistryContract;
+let RegistryInstance;
+let owner, buyer1, buyer2, buyer3;
+let ownerAddress, buyer1Address, buyer2Address, buyer3Address;
+
 describe("Artifact Registry Tests", function () {
-  beforeEach(async () => {});
+  beforeEach(async () => {
+    [owner, buyer1, buyer2, buyer3] = await ethers.getSigners();
+    ownerAddress = await owner.getAddress();
+    buyer1Address = await buyer1.getAddress();
+    buyer2Address = await buyer2.getAddress();
+    buyer3Address = await buyer3.getAddress();
+
+    RegistryContract = await ethers.getContractFactory("ArtifactRegistry");
+    RegistryInstance = await upgrades.deployProxy(RegistryContract, []);
+  });
   describe("Setter functions", function () {
     it("sets up dao wallet address properly", async () => {});
     it("sets token price properly", async () => {});
