@@ -151,6 +151,12 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         submissions[SubmissionCount].season = _season;
         submissions[SubmissionCount].tokenURI = _tokenURI;
         submissions[SubmissionCount].SubmissionOwner = _SubmissionOwner;
+
+        // persist information to season struct
+
+        uint[] storage tokenIDsOfSeason = seasons[_season].tokenIDs;
+        tokenIDsOfSeason.push(tokenToMint);
+
         emit SubmissionCreated(tokenToMint, _SubmissionOwner);
 
         return SubmissionCount;
@@ -175,13 +181,17 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         return seasonCount;
     }
 
-    function closeSeason(
-        uint256 _season,
-        uint256 _lastTokenIDOfSeason
-    ) public onlyOwner {
+    function closeSeason(uint256 _season) public onlyOwner {
         if (seasons[_season].isClosed) revert SeasonAlreadyClosed(_season);
 
-        lastTokenIDOfSeason[_season] = _lastTokenIDOfSeason;
+        // return last tokenIDOfSeason
+
+        uint[] memory tokenIDsofSeason = seasons[_season].tokenIDs;
+        uint _lastTokenIDofSeason = seasons[_season].tokenIDs[
+            tokenIDsofSeason.length
+        ];
+
+        seasons[_season].lastTokenIDOfSeason = _lastTokenIDofSeason;
         seasons[_season].isClosed = true;
 
         emit SeasonClosed(_season);
