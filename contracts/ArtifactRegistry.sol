@@ -29,6 +29,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     bool private isShutdown;
     uint public latestTokenID;
 
+    uint[] amountsBoughtPerAddress;
+
     // TODO rename it to Submission
     struct Submission {
         uint256[] tokenID;
@@ -280,6 +282,35 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         artistAddress.transfer(splitArtist);
     }
 
+    function getTopBuyerOfSeason(
+        uint _season
+    ) public onlyOwner returns (address) {
+        // TODO
+        uint[] memory tokenIDs = seasons[_season].tokenIDs;
+        uint fistTokenID = tokenIDs[0];
+        uint lastTokenID = tokenIDs[tokenIDs.length - 1];
+
+        for (uint i = fistTokenID; i < lastTokenID; i++) {
+            // get top buyer per artifact
+            address topBuyers = getTopBuyerPerArtifact(tokenIDs[i]);
+            // get full amount of tokens bought during the season
+            uint amoutBought = getTotalTokensPurchasedPerAddressInSeason(
+                topBuyers,
+                _season
+            );
+
+            amountsBoughtPerAddress.push(amoutBought);
+
+            uint256 largest = 0;
+            for (i = 0; i < amountsBoughtPerAddress.length; i++) {
+                if (amountsBoughtPerAddress[i] > largest) {
+                    largest = amountsBoughtPerAddress[i];
+                }
+            }
+            //TODO - need to return an address somehow
+        }
+    }
+
     // --------------------------------------------------------------
     // VIEW FUNCTIONS
     // --------------------------------------------------------------
@@ -292,19 +323,6 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     function getLatestTokenID() public view returns (uint256) {
         return startTokenID + submissionCount;
-    }
-
-    function getTopBuyerOfSeason(uint _season) public view returns (address) {
-        // TODO
-        uint[] memory tokenIDs = seasons[_season].tokenIDs;
-        uint fistTokenID = tokenIDs[0];
-        uint lastTokenID = tokenIDs[tokenIDs.length - 1];
-
-        for (uint i = fistTokenID; i < lastTokenID; i++) {
-            // get top buyer per artifact
-            address topBuyers = getTopBuyerPerArtifact(tokenIDs[i]);
-            // get full amount of tokens bought during the season
-        }
     }
 
     function getTotalTokenSales(uint submissionID) public view returns (uint) {
