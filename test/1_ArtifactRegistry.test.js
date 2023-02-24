@@ -85,11 +85,16 @@ describe("Artifact Registry Tests", function () {
     it("sets correct tokenURI for each token", async () => {});
   });
 
-  describe("View functions", function () {
-    it("getArtizenWalletAddress returns correct wallet address", async () => {});
-    it("getLatestTokenID returns correct tokenIDs", async () => {});
-    it("getTopBuyerOfSeason returns top buyer of season correctly", async () => {});
-    it("getTotalTokenSales returns correct amount of tokens sold", async () => {});
-    it("getTopBuyer returns top buyer per submission correctly", async () => {});
+  describe("createSeason function", function () {
+    it("creates season with correct details", async () => {});
+    it("only owner can create season", async () => {});
   });
+});
+
+describe("View functions", function () {
+  it("getArtizenWalletAddress returns correct wallet address", async () => {});
+  it("getLatestTokenID returns correct tokenIDs", async () => {});
+  it("getTopBuyerOfSeason returns top buyer of season correctly", async () => {});
+  it("getTotalTokenSales returns correct amount of tokens sold", async () => {});
+  it("getTopBuyer returns top buyer per submission correctly", async () => {});
 });

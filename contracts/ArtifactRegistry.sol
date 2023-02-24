@@ -21,7 +21,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     // --------------------------------------------------------------
 
     uint256 startTokenID;
-    uint256 public SubmissionCount;
+    uint256 public submissionCount;
     uint public seasonCount;
     address payable artizenWallet;
     uint public artizenSplitPercentage;
@@ -38,6 +38,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     }
 
     struct Season {
+        uint[] submissionIDs;
         uint[] tokenIDs;
         address topBuyer;
         address topSubmission;
@@ -52,11 +53,10 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     mapping(uint256 => Submission) submissions;
     //tokenID => top buyer address
     mapping(uint256 => address) public artifactTopBuyer;
-    // season => season topBuyer
-    mapping(uint256 => address) public seasonTopBuyer; // need to figure operation out for this one, probably needs a separate funtion to run once at the end of the season
 
     // tokenID => amount
     mapping(uint256 => uint256) public topAmontOfTokenSold;
+    // tokenID => amout
     mapping(uint => uint) public totalAmountOfTokensSold;
     // address => tokenID => amount
     mapping(address => mapping(uint => uint))
@@ -86,6 +86,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     // --------------------------------------------------------------
     error ZeroAddressNotAllowed(string message);
     error SeasonAlreadyClosed(uint256 season);
+    error NoMoreSubmissionsToThisSeason(uint256 season);
     error IncorrectAmount(string message);
     error ContractShutdown(string message);
     error IncorrectTimesGiven(string message);
@@ -141,31 +142,37 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         if (isShutdown) revert ContractShutdown("Contract has been shut down");
         if (_SubmissionOwner == address(0)) revert ZeroAddressNotAllowed("");
         if (seasons[_season].isClosed) revert SeasonAlreadyClosed(_season);
+        if (seasons[_season].endTime < block.timestamp)
+            revert NoMoreSubmissionsToThisSeason(_season);
 
         unchecked {
-            SubmissionCount++;
+            submissionCount++;
         }
         uint256 latestTokenID = getLatestTokenID();
         uint256 tokenToMint = latestTokenID++;
-        submissions[SubmissionCount].tokenID.push(tokenToMint);
-        submissions[SubmissionCount].season = _season;
-        submissions[SubmissionCount].tokenURI = _tokenURI;
-        submissions[SubmissionCount].SubmissionOwner = _SubmissionOwner;
+        submissions[submissionCount].tokenID.push(tokenToMint);
+        submissions[submissionCount].season = _season;
+        submissions[submissionCount].tokenURI = _tokenURI;
+        submissions[submissionCount].SubmissionOwner = _SubmissionOwner;
 
         // persist information to season struct
 
         uint[] storage tokenIDsOfSeason = seasons[_season].tokenIDs;
         tokenIDsOfSeason.push(tokenToMint);
 
+        uint[] storage submissionIDsOfSeason = seasons[_season].submissionIDs;
+        submissionIDsOfSeason.push(submissionCount);
+
         emit SubmissionCreated(tokenToMint, _SubmissionOwner);
 
-        return SubmissionCount;
+        return submissionCount;
     }
 
     function createSeason(
         uint startTime,
         uint endTime
     ) public onlyOwner returns (uint) {
+        if (isShutdown) revert ContractShutdown("Contract has been shut down");
         if (startTime > endTime)
             revert IncorrectTimesGiven("Incorrect times given");
 
@@ -285,7 +292,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     }
 
     function getLatestTokenID() public view returns (uint256) {
-        return startTokenID + SubmissionCount;
+        return startTokenID + submissionCount;
     }
 
     function getTopBuyerOfSeason(uint _season) public view returns (address) {
@@ -312,7 +319,16 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     function getTopSubmissionOfSeason(
         uint seasonID
-    ) public view returns (address) {}
+    ) public view returns (address) {
+        //TODO
+        // getTotalAmountOfTokenSold for each token in season, return the highest one then save it into season struct
+
+        uint[] memory submissionIDsOfSeason = seasons[seasonID].submissionIDs;
+
+        for (uint i = 0; i < submissionIDsOfSeason.length; i++) {
+            getTotalTokenSales(submissionIDsOfSeason[i]);
+        }
+    }
 
     function getDAOWalletAddress() public view returns (address wallet) {
         assembly {
