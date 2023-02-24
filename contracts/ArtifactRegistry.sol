@@ -7,11 +7,11 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 /* * Contract requirements *
 - Minting 3 times of the amount of NFTs 
 - Fee split on buy
-- TokenID is associated with a project
+- TokenID is associated with a Submission
 - Start minting from tokenID 123
 - Specify mint price
 - Minting opened/closed from tokenID to tokenID => closeSeason
-- Top project of the season calculation
+- Top Submission of the season calculation
 - Add season struct record timestamps, try to close season by timestamp
 */
 
@@ -21,7 +21,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     // --------------------------------------------------------------
 
     uint256 startTokenID;
-    uint256 public projectCount; // not sure if we need this
+    uint256 public SubmissionCount;
+    uint public seasonCount;
     address payable artizenWallet;
     uint public artizenSplitPercentage;
     uint256 public tokenPrice;
@@ -33,7 +34,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         uint256[] tokenID;
         uint256 season;
         string tokenURI;
-        address payable projectOwner;
+        address payable SubmissionOwner;
     }
 
     struct Season {
@@ -70,9 +71,9 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     // EVENTS
     // --------------------------------------------------------------
 
-    event ProjectCreated(uint256 submissionID, address projectOwner);
-    event ProjectUpdated(uint256 submissionID);
-    event ProjectRenewed(uint256 submissionID);
+    event SubmissionCreated(uint256 submissionID, address SubmissionOwner);
+    event SubmissionUpdated(uint256 submissionID);
+    event SeasonCreated(uint seasonID);
     event ArtizenWalletAddressSet(address artizenWallet);
     event SeasonClosed(uint256 _season);
     event TokenPriceSet(uint price);
@@ -87,6 +88,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     error SeasonAlreadyClosed(uint256 season);
     error IncorrectAmount(string message);
     error ContractShutdown(string message);
+    error IncorrectTimesGiven(string message);
 
     // --------------------------------------------------------------
     // CONSTRUCTOR
@@ -134,24 +136,43 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     function createSubmisson(
         uint256 _season,
         string memory _tokenURI,
-        address payable _projectOwner
+        address payable _SubmissionOwner
     ) public onlyOwner returns (uint256) {
         if (isShutdown) revert ContractShutdown("Contract has been shut down");
-        if (_projectOwner == address(0)) revert ZeroAddressNotAllowed("");
+        if (_SubmissionOwner == address(0)) revert ZeroAddressNotAllowed("");
         if (seasons[_season].isClosed) revert SeasonAlreadyClosed(_season);
 
         unchecked {
-            projectCount++;
+            SubmissionCount++;
         }
         uint256 latestTokenID = getLatestTokenID();
         uint256 tokenToMint = latestTokenID++;
-        submissions[projectCount].tokenID.push(tokenToMint);
-        submissions[projectCount].season = _season;
-        submissions[projectCount].tokenURI = _tokenURI;
-        submissions[projectCount].projectOwner = _projectOwner;
-        emit ProjectCreated(tokenToMint, _projectOwner);
+        submissions[SubmissionCount].tokenID.push(tokenToMint);
+        submissions[SubmissionCount].season = _season;
+        submissions[SubmissionCount].tokenURI = _tokenURI;
+        submissions[SubmissionCount].SubmissionOwner = _SubmissionOwner;
+        emit SubmissionCreated(tokenToMint, _SubmissionOwner);
 
-        return projectCount;
+        return SubmissionCount;
+    }
+
+    function createSeason(
+        uint startTime,
+        uint endTime
+    ) public onlyOwner returns (uint) {
+        if (startTime > endTime)
+            revert IncorrectTimesGiven("Incorrect times given");
+
+        unchecked {
+            seasonCount++;
+        }
+
+        seasons[seasonCount].startTime;
+        seasons[seasonCount].endTime;
+
+        emit SeasonCreated(seasonCount);
+
+        return seasonCount;
     }
 
     function closeSeason(
@@ -175,13 +196,13 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         uint[] storage tokenIDsToMint = submissions[submissionID].tokenID;
         uint tokenIDToMint = tokenIDsToMint[0];
         if (msg.value != tokenPrice) revert IncorrectAmount("");
-        uint seasonOfProject = submissions[submissionID].season;
-        if (seasons[seasonOfProject].isClosed)
-            revert SeasonAlreadyClosed(seasonOfProject);
+        uint seasonOfSubmission = submissions[submissionID].season;
+        if (seasons[seasonOfSubmission].isClosed)
+            revert SeasonAlreadyClosed(seasonOfSubmission);
 
-        uint latestTokenIDOfSeason = lastTokenIDOfSeason[seasonOfProject];
+        uint latestTokenIDOfSeason = lastTokenIDOfSeason[seasonOfSubmission];
         if (tokenIDToMint <= latestTokenIDOfSeason)
-            revert SeasonAlreadyClosed(seasonOfProject);
+            revert SeasonAlreadyClosed(seasonOfSubmission);
 
         totalTokensPurchasedPerAddressPerSeason[msg.sender][
             submissions[submissionID].season
@@ -205,12 +226,17 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         if (amountToMint == 1) {
             _mint(msg.sender, tokenIDToMint, 1, "");
             _mint(artizenWallet, tokenIDToMint, 1, "");
-            _mint(submissions[submissionID].projectOwner, tokenIDToMint, 1, "");
+            _mint(
+                submissions[submissionID].SubmissionOwner,
+                tokenIDToMint,
+                1,
+                ""
+            );
         } else {
             _mintBatch(msg.sender, tokenIDsToMint, amount, "");
             _mintBatch(artizenWallet, tokenIDsToMint, amount, "");
             _mintBatch(
-                submissions[submissionID].projectOwner,
+                submissions[submissionID].SubmissionOwner,
                 tokenIDsToMint,
                 amount,
                 ""
@@ -233,7 +259,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
         artizenWallet.transfer(splitArtizen);
 
-        address payable artistAddress = submissions[submissionID].projectOwner;
+        address payable artistAddress = submissions[submissionID]
+            .SubmissionOwner;
         artistAddress.transfer(splitArtist);
     }
 
@@ -248,7 +275,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     }
 
     function getLatestTokenID() public view returns (uint256) {
-        return startTokenID + projectCount;
+        return startTokenID + SubmissionCount;
     }
 
     function getTopBuyerOfSeason(uint _season) public view returns (address) {
