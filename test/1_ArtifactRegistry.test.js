@@ -97,4 +97,5 @@ describe("View functions", function () {
   it("getTopBuyerOfSeason returns top buyer of season correctly", async () => {});
   it("getTotalTokenSales returns correct amount of tokens sold", async () => {});
   it("getTopBuyer returns top buyer per submission correctly", async () => {});
+  it("getTopSubmissionOfSeason returns top submission for season correctly", async () => {});
 });
