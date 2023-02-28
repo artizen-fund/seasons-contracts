@@ -134,10 +134,19 @@ describe("Artifact Registry Tests", function () {
     it("splits token price correctly", async () => {});
     it("sets correct tokenURI for each token", async () => {});
   });
+  it.only("getLatestTokenID returns correct tokenIDs", async () => {
+    await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+    await RegistryInstance.connect(owner).createSubmission(
+      1,
+      "",
+      buyer1Address
+    );
+    expect(await RegistryInstance.getLatestTokenID(1)).to.equal(124);
+  });
 });
 
 describe("View functions", function () {
-  it("getprotocolWalletAddress returns correct wallet address", async () => {
+  it.only("getprotocolWalletAddress returns correct wallet address", async () => {
     await RegistryInstance.connect(owner).setProtocolWalletAddress(
       ownerAddress
     );
@@ -145,11 +154,7 @@ describe("View functions", function () {
       ownerAddress
     );
   });
-  it("getLatestTokenID returns correct tokenIDs", async () => {
-    // await RegistryInstance.connect(buyer1).createSeason(startTime, endTime);
-    // await RegistryInstance.createSubmission(1, "", buyer1Address);
-    // expect(await RegistryInstance.getLatestTokenID(1)).to.equal(124);
-  });
+
   it("getTopBuyerOfSeason returns top buyer of season correctly", async () => {});
   it("getTotalTokenSales returns correct amount of tokens sold", async () => {});
   it("getTopBuyer returns top buyer per submission correctly", async () => {});
