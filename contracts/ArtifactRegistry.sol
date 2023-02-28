@@ -23,7 +23,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     uint256 startTokenID;
     uint256 public submissionCount;
     uint public seasonCount;
-    address payable artizenWallet;
+    address payable protocolWallet;
     uint artizenSplitPercentage;
     uint protocolFeePercentage;
     uint256 public tokenPrice;
@@ -79,7 +79,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     event SubmissionCreated(uint256 submissionID, address SubmissionOwner);
     event SubmissionUpdated(uint256 submissionID);
     event SeasonCreated(uint seasonID);
-    event ArtizenWalletAddressSet(address artizenWallet);
+    event protocolWalletAddressSet(address protocolWallet);
     event SeasonClosed(uint256 _season);
     event TokenPriceSet(uint price);
     event Shutdown(bool _isShutdown);
@@ -103,6 +103,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     function initialize() public initializer {
         startTokenID = 123;
+        submissionCount = 123;
         __ERC1155_init("");
         __Ownable_init();
     }
@@ -110,15 +111,15 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     // --------------------------------------------------------------
     // STATE-MODIFYING FUNCTIONS
     // --------------------------------------------------------------
-    function setDAOWalletAddress(
-        address payable _artizenWallet
+    function setProtocolWalletAddress(
+        address payable _protocolWallet
     ) public onlyOwner {
-        if (_artizenWallet == address(0))
+        if (_protocolWallet == address(0))
             revert ZeroAddressNotAllowed("Cannot set zero address");
         assembly {
-            sstore(artizenWallet.slot, _artizenWallet)
+            sstore(protocolWallet.slot, _protocolWallet)
         }
-        emit ArtizenWalletAddressSet(_artizenWallet);
+        emit protocolWalletAddressSet(_protocolWallet);
     }
 
     function setTokenPrice(uint256 price) public onlyOwner returns (uint256) {
@@ -262,7 +263,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
         if (amountToMint == 1) {
             _mint(msg.sender, tokenIDToMint, 1, "");
-            _mint(artizenWallet, tokenIDToMint, 1, "");
+            _mint(protocolWallet, tokenIDToMint, 1, "");
             _mint(
                 submissions[submissionID].SubmissionOwner,
                 tokenIDToMint,
@@ -271,7 +272,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
             );
         } else {
             _mintBatch(msg.sender, tokenIDsToMint, amount, "");
-            _mintBatch(artizenWallet, tokenIDsToMint, amount, "");
+            _mintBatch(protocolWallet, tokenIDsToMint, amount, "");
             _mintBatch(
                 submissions[submissionID].SubmissionOwner,
                 tokenIDsToMint,
@@ -324,7 +325,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         uint protocolFee = (fullPrice / 100) * protocolFeePercentage;
         uint splitArtist = fullPrice - (splitArtizen + protocolFeePercentage);
 
-        artizenWallet.transfer(splitArtizen);
+        protocolWallet.transfer(splitArtizen);
 
         address payable artistAddress = submissions[submissionID]
             .SubmissionOwner;
@@ -385,9 +386,9 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     // VIEW FUNCTIONS
     // --------------------------------------------------------------
 
-    function getArtizenWalletAddress() public view returns (address wallet) {
+    function getprotocolWalletAddress() public view returns (address wallet) {
         assembly {
-            wallet := sload(artizenWallet.slot)
+            wallet := sload(protocolWallet.slot)
         }
     }
 
@@ -425,9 +426,9 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         return amountOfTokenBoughtPerAddress[tokenID][amount];
     }
 
-    function getDAOWalletAddress() public view returns (address wallet) {
+    function getProtocolWalletAddress() public view returns (address wallet) {
         assembly {
-            wallet := sload(artizenWallet.slot)
+            wallet := sload(protocolWallet.slot)
         }
     }
 

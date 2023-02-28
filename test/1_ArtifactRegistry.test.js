@@ -1,13 +1,12 @@
 const { expect } = require("chai");
 const { ethers, upgrades } = require("hardhat");
 const { BigNumber } = require("ethers");
-// const { constants } = require("./utils/TestConstants");
 // const {
 //   createGrantObject,
 //   createDonationObject,
 //   fastForward,
 //   currentTime,
-// } = require("./utils/TestUtils");
+// } = require("./utils");
 
 let RegistryContract;
 let RegistryInstance;
@@ -73,6 +72,7 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.connect(buyer1).closeSeason(1, 150)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
+    it("submissonID and tokenID should be the same", async () => {});
   });
   describe("mintArtifact function", function () {
     it("msg.value has to be equal to token price", async () => {});
