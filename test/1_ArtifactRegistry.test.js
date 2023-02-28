@@ -86,13 +86,16 @@ describe("Artifact Registry Tests", function () {
       expect(await season[6]).to.equal(0);
       expect(await season[7]).to.equal(false);
     });
-    it.only("reverts if incorrect times given", async () => {
+    it("reverts if incorrect times given", async () => {
       await expect(
         RegistryInstance.connect(owner).createSeason(endTime, startTime)
       ).to.be.revertedWith('IncorrectTimesGiven("Incorrect times given")');
     });
-    // it("registers submission details properly", async () => {});
-    // it("registers submission details properly", async () => {});
+    it("only owner can create season", async () => {
+      await expect(
+        RegistryInstance.connect(buyer1).createSeason(startTime, endTime)
+      ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
   });
   describe("closeSeason function", function () {
     it("cannot close a season that's already been closed", async () => {
@@ -130,11 +133,6 @@ describe("Artifact Registry Tests", function () {
     it("sets correct tokenURI for each token", async () => {});
     it("splits token price correctly", async () => {});
     it("sets correct tokenURI for each token", async () => {});
-  });
-
-  describe("createSeason function", function () {
-    it("creates season with correct details", async () => {});
-    it("only owner can create season", async () => {});
   });
 });
 
