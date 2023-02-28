@@ -244,6 +244,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         // TODO double check this
         amountOfTokenBoughtPerAddress[tokenIDToMint][amountToMint] = msg.sender;
 
+        amountToTokenIDs[amountToMint].push(tokenIDToMint);
+
         // register top buyer
         if (
             // amounts purchased per address
