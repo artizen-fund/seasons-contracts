@@ -173,6 +173,10 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     unchecked {
       submissionCount++;
     }
+
+    uint[] storage submissionIDsOfSeason = seasons[_season].submissionIDs;
+    submissionIDsOfSeason.push(submissionCount);
+
     uint256 latestTokenID = getLatestTokenID(_season);
     uint256 tokenToMint = latestTokenID++;
     submissions[submissionCount].tokenID.push(tokenToMint);
@@ -184,9 +188,6 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     uint[] storage tokenIDsOfSeason = seasons[_season].tokenIDs;
     tokenIDsOfSeason.push(tokenToMint);
-
-    uint[] storage submissionIDsOfSeason = seasons[_season].submissionIDs;
-    submissionIDsOfSeason.push(submissionCount);
 
     emit SubmissionCreated(tokenToMint, _SubmissionOwner);
 
@@ -402,11 +403,12 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     }
   }
 
-  function getLatestTokenID(uint seasonID) public view returns (uint256) {
+  function getLatestTokenID(
+    uint seasonID
+  ) public view returns (uint256 lastTokenID) {
     // TODO
-    // uint[] memory allTokenIDs = seasons[seasonID].tokenIDs;
-    // uint lastTokenID = allTokenIDs[allTokenIDs.length];
-    return 2;
+    uint[] memory allTokenIDs = seasons[seasonID].submissionIDs;
+    lastTokenID = allTokenIDs[allTokenIDs.length - 1];
   }
 
   function getTotalTokenSales(uint submissionID) public view returns (uint) {

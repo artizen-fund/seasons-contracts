@@ -74,15 +74,24 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
 
-      const submission = await RegistryInstance.getSeason(1);
-      console.log(submission[1].toString());
+      const season = await RegistryInstance.getSeason(1);
+      console.log(season.toString());
+      console.log(season[5].toString());
+      expect(await season[0].toString()).to.equal("124,125");
+      expect(await season[1].toString()).to.equal("124,125");
+      expect(await season[2].toString()).to.equal("");
+      expect(await season[3].toString()).to.equal("");
+      expect(await season[4]).to.equal(startTime);
+      expect(await season[5]).to.equal(endTime);
+      expect(await season[6]).to.equal(0);
+      expect(await season[7]).to.equal(false);
     });
-    it("registers submission details properly", async () => {});
-    it("registers submission details properly", async () => {});
-    it("registers submission details properly", async () => {});
+    // it("registers submission details properly", async () => {});
+    // it("registers submission details properly", async () => {});
+    // it("registers submission details properly", async () => {});
   });
   describe("closeSeason function", function () {
-    it.only("cannot close a season that's already been closed", async () => {
+    it("cannot close a season that's already been closed", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(
         1,
