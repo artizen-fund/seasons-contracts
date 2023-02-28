@@ -61,7 +61,7 @@ describe("Artifact Registry Tests", function () {
     it("submissonID and tokenID should be the same", async () => {});
   });
   describe("createSeason function", function () {
-    it.only("registers submission details properly", async () => {
+    it("registers submission details properly", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(
         1,
@@ -86,7 +86,11 @@ describe("Artifact Registry Tests", function () {
       expect(await season[6]).to.equal(0);
       expect(await season[7]).to.equal(false);
     });
-    // it("registers submission details properly", async () => {});
+    it.only("reverts if incorrect times given", async () => {
+      await expect(
+        RegistryInstance.connect(owner).createSeason(endTime, startTime)
+      ).to.be.revertedWith('IncorrectTimesGiven("Incorrect times given")');
+    });
     // it("registers submission details properly", async () => {});
     // it("registers submission details properly", async () => {});
   });
