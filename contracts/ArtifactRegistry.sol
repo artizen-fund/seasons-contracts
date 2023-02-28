@@ -64,8 +64,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     mapping(uint256 => uint256) public topAmontOfTokenSold;
     // tokenID => amout
     mapping(uint => uint) public totalAmountOfTokensSold;
-    // address => tokenID => amount
-    mapping(address => mapping(uint => uint)) amountPurchasedPerTokenPerAddress;
+
     // address => season => amount
     mapping(address => mapping(uint => uint)) totalTokensPurchasedPerAddressPerSeason;
     // tokenID => amount => user
