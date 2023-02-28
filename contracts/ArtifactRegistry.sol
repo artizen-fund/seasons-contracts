@@ -337,7 +337,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         uint protocolFee = (fullPrice / 100) * protocolFeePercentage;
         uint splitArtist = fullPrice - (splitArtizen + protocolFeePercentage);
 
-        protocolWallet.transfer(splitArtizen);
+        treasuryWallet.transfer(splitArtizen);
+        protocolWallet.transfer(protocolFee);
 
         address payable artistAddress = submissions[submissionID]
             .SubmissionOwner;
