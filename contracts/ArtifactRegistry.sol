@@ -46,7 +46,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         uint[] submissionIDs;
         uint[] tokenIDs;
         address[] topBuyers;
-        address[] topSubmissions;
+        uint[] topSubmissions;
         uint startTime;
         uint endTime;
         uint lastTokenIDOfSeason;
@@ -303,13 +303,13 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     function getTopSubmissionsOfSeason(
         uint _seasonID
-    ) public returns (uint[] memory) {
+    ) public returns (uint[] memory topSubmissions) {
         uint largestAmount = getLargestAmountOfTokensSoldInSeason(_seasonID);
         uint[] memory topTokenIDs = amountToTokenIDsOfSeason[_seasonID][
             largestAmount
         ];
 
-        // return submissionIDs with largest amounts sold
+        return topSubmissions = seasons[_seasonID].topSubmissions = topTokenIDs;
     }
 
     // --------------------------------------------------------------
