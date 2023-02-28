@@ -58,6 +58,13 @@ describe("Artifact Registry Tests", function () {
   describe("createSubmission function", function () {
     it("registers submission details properly ", async () => {});
     it("only owner can create submission", async () => {});
+    it("submissonID and tokenID should be the same", async () => {});
+  });
+  describe("createSeason function", function () {
+    it("registers submission details properly", async () => {});
+    it("registers submission details properly", async () => {});
+    it("registers submission details properly", async () => {});
+    it("registers submission details properly", async () => {});
   });
   describe("closeSeason function", function () {
     it("cannot close a season that's already been closed", async () => {
@@ -69,10 +76,9 @@ describe("Artifact Registry Tests", function () {
 
     it.only("only owner can close season submission", async () => {
       await expect(
-        RegistryInstance.connect(buyer1).closeSeason(1, 150)
+        RegistryInstance.connect(buyer1).closeSeason(1)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
-    it("submissonID and tokenID should be the same", async () => {});
   });
   describe("mintArtifact function", function () {
     it("msg.value has to be equal to token price", async () => {});
@@ -92,7 +98,14 @@ describe("Artifact Registry Tests", function () {
 });
 
 describe("View functions", function () {
-  it("getArtizenWalletAddress returns correct wallet address", async () => {});
+  it.only("getArtizenWalletAddress returns correct wallet address", async () => {
+    await RegistryInstance.connect(owner).setProtocolWalletAddress(
+      ownerAddress
+    );
+    expect(await RegistryInstance.getprotocolWalletAddress()).to.equal(
+      ownerAddress
+    );
+  });
   it("getLatestTokenID returns correct tokenIDs", async () => {});
   it("getTopBuyerOfSeason returns top buyer of season correctly", async () => {});
   it("getTotalTokenSales returns correct amount of tokens sold", async () => {});
