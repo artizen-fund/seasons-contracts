@@ -69,8 +69,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     mapping(address => mapping(uint => uint)) totalTokensPurchasedPerAddressPerSeason;
     // tokenID => amount => user
     mapping(uint => mapping(uint => address)) amountOfTokenBoughtPerAddress;
-    // amount => tokenIDs
-    mapping(uint => uint[]) amountToTokenIDs;
+    // amount => season => tokenIDs
+    mapping(uint => mapping(uint => uint[])) amountToTokenIDsOfSeason;
 
     // --------------------------------------------------------------
     // EVENTS
@@ -244,7 +244,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         // TODO double check this
         amountOfTokenBoughtPerAddress[tokenIDToMint][amountToMint] = msg.sender;
 
-        amountToTokenIDs[amountToMint].push(tokenIDToMint);
+        amountToTokenIDsOfSeason[submissions[submissionID].season][amountToMint]
+            .push(tokenIDToMint);
 
         // register top buyer
         if (
@@ -286,7 +287,9 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         uint _seasonID
     ) public returns (address[] memory) {
         uint largestAmount = getLargestAmountOfTokensBoughtInSeason(_seasonID);
-        uint[] memory topTokenIDs = amountToTokenIDs[largestAmount];
+        uint[] memory topTokenIDs = amountToTokenIDsOfSeason[_seasonID][
+            largestAmount
+        ];
 
         for (uint i = 0; i < topTokenIDs.length; i++) {
             address buyers = amountOfTokenBoughtPerAddress[largestAmount][
@@ -299,8 +302,13 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     }
 
     function getTopSubmissionsOfSeason(
-        uint _season
+        uint _seasonID
     ) public returns (uint[] memory) {
+        uint largestAmount = getLargestAmountOfTokensSoldInSeason(_seasonID);
+        uint[] memory topTokenIDs = amountToTokenIDsOfSeason[_seasonID][
+            largestAmount
+        ];
+
         // return submissionIDs with largest amounts sold
     }
 
