@@ -31,6 +31,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     uint public latestTokenID;
 
     uint[] amountsBoughtPerAddress;
+    uint[] toptokenIDs;
+    address[] topBuyers;
 
     // TODO rename it to Submission
     struct Submission {
@@ -67,6 +69,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     mapping(address => mapping(uint => uint)) totalTokensPurchasedPerAddressPerSeason;
     // tokenID => amount => user
     mapping(uint => mapping(uint => address)) amountOfTokenBoughtPerAddress;
+    // amount => tokenIDs
+    mapping(uint => uint[]) amountToTokenIDs;
 
     // --------------------------------------------------------------
     // EVENTS
@@ -276,6 +280,22 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         emit ArtifactMinted(msg.sender, tokenIDToMint, amountToMint);
     }
 
+    function getTopBuyersOfSeason(
+        uint _season
+    ) public returns (address[] memory) {
+        uint largestAmount = getLargestAmountOfTokensBoughtInSeason(_season);
+        uint[] memory topTokenIDs = amountToTokenIDs[largestAmount];
+
+        for (uint i = 0; i < topTokenIDs.length; i++) {
+            address buyers = amountOfTokenBoughtPerAddress[largestAmount][
+                topTokenIDs[i]
+            ];
+
+            topBuyers.push(buyers);
+        }
+        return topBuyers;
+    }
+
     // --------------------------------------------------------------
     // INTERNAL FUNCTIONS
     // --------------------------------------------------------------
@@ -297,8 +317,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     function getLargestAmountOfTokensBoughtInSeason(
         uint _season
-    ) public onlyOwner returns (uint) {
-        // TODO
+    ) internal returns (uint) {
+        uint256 largest = 0;
         uint[] memory tokenIDs = seasons[_season].tokenIDs;
         uint fistTokenID = tokenIDs[0];
         uint lastTokenID = tokenIDs[tokenIDs.length - 1];
@@ -314,18 +334,13 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
             amountsBoughtPerAddress.push(amoutBought);
 
-            uint256 largest = 0;
             for (i = 0; i < amountsBoughtPerAddress.length; i++) {
                 if (amountsBoughtPerAddress[i] > largest) {
                     largest = amountsBoughtPerAddress[i];
                 }
             }
-
-            return largest;
         }
-
-        // map amount => tokenID
-        // tokenID => amount to address
+        return largest;
     }
 
     // --------------------------------------------------------------
