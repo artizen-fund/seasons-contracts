@@ -24,6 +24,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     uint256 public submissionCount;
     uint public seasonCount;
     address payable protocolWallet;
+    address payable treasuryWallet;
     uint artizenSplitPercentage;
     uint protocolFeePercentage;
     uint256 public tokenPrice;
@@ -111,6 +112,17 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     // --------------------------------------------------------------
     // STATE-MODIFYING FUNCTIONS
     // --------------------------------------------------------------
+    function setTreasuryAddress(
+        address payable _treasuryWallet
+    ) public onlyOwner {
+        if (_treasuryWallet == address(0))
+            revert ZeroAddressNotAllowed("Cannot set zero address");
+        assembly {
+            sstore(treasuryWallet.slot, _treasuryWallet)
+        }
+        emit protocolWalletAddressSet(_treasuryWallet);
+    }
+
     function setProtocolWalletAddress(
         address payable _protocolWallet
     ) public onlyOwner {
