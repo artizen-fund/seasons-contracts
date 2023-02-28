@@ -1,12 +1,7 @@
 const { expect } = require("chai");
 const { ethers, upgrades } = require("hardhat");
 const { BigNumber } = require("ethers");
-// const {
-//   createGrantObject,
-//   createDonationObject,
-//   fastForward,
-//   currentTime,
-// } = require("./utils");
+const { fastForward, currentTime } = require("./utils");
 
 let RegistryContract;
 let RegistryInstance;
@@ -23,12 +18,17 @@ describe("Artifact Registry Tests", function () {
 
     RegistryContract = await ethers.getContractFactory("ArtifactRegistry");
     RegistryInstance = await upgrades.deployProxy(RegistryContract, []);
+
+    startTime = await currentTime();
+    endTime = startTime + 2629800;
   });
   describe("Setter functions", function () {
-    it("sets up dao wallet address properly", async () => {
-      await RegistryInstance.connect(owner).setDAOWalletAddress(ownerAddress);
+    it("sets up protocol wallet address properly", async () => {
+      await RegistryInstance.connect(owner).setProtocolWalletAddress(
+        ownerAddress
+      );
 
-      expect(await RegistryInstance.getDAOWalletAddress()).to.equal(
+      expect(await RegistryInstance.getprotocolWalletAddress()).to.equal(
         ownerAddress
       );
     });
@@ -61,20 +61,48 @@ describe("Artifact Registry Tests", function () {
     it("submissonID and tokenID should be the same", async () => {});
   });
   describe("createSeason function", function () {
-    it("registers submission details properly", async () => {});
+    it.only("registers submission details properly", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+
+      const submission = await RegistryInstance.getSeason(1);
+      console.log(submission[1].toString());
+    });
     it("registers submission details properly", async () => {});
     it("registers submission details properly", async () => {});
     it("registers submission details properly", async () => {});
   });
   describe("closeSeason function", function () {
-    it("cannot close a season that's already been closed", async () => {
-      await RegistryInstance.connect(owner).closeSeason(1, 150);
+    it.only("cannot close a season that's already been closed", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+
+      await RegistryInstance.connect(owner).closeSeason(1);
       await expect(
-        RegistryInstance.connect(owner).closeSeason(1, 150)
+        RegistryInstance.connect(owner).closeSeason(1)
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
     });
 
-    it.only("only owner can close season submission", async () => {
+    it("only owner can close season submission", async () => {
       await expect(
         RegistryInstance.connect(buyer1).closeSeason(1)
       ).to.be.revertedWith("Ownable: caller is not the owner");
@@ -98,7 +126,7 @@ describe("Artifact Registry Tests", function () {
 });
 
 describe("View functions", function () {
-  it.only("getArtizenWalletAddress returns correct wallet address", async () => {
+  it("getprotocolWalletAddress returns correct wallet address", async () => {
     await RegistryInstance.connect(owner).setProtocolWalletAddress(
       ownerAddress
     );
@@ -106,7 +134,11 @@ describe("View functions", function () {
       ownerAddress
     );
   });
-  it("getLatestTokenID returns correct tokenIDs", async () => {});
+  it("getLatestTokenID returns correct tokenIDs", async () => {
+    // await RegistryInstance.connect(buyer1).createSeason(startTime, endTime);
+    // await RegistryInstance.createSubmission(1, "", buyer1Address);
+    // expect(await RegistryInstance.getLatestTokenID(1)).to.equal(124);
+  });
   it("getTopBuyerOfSeason returns top buyer of season correctly", async () => {});
   it("getTotalTokenSales returns correct amount of tokens sold", async () => {});
   it("getTopBuyer returns top buyer per submission correctly", async () => {});
