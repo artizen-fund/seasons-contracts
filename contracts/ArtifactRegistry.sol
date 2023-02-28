@@ -295,9 +295,9 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         artistAddress.transfer(splitArtist);
     }
 
-    function getTopBuyerOfSeason(
+    function getLargestAmountOfTokensBoughtInSeason(
         uint _season
-    ) public onlyOwner returns (address) {
+    ) public onlyOwner returns (uint) {
         // TODO
         uint[] memory tokenIDs = seasons[_season].tokenIDs;
         uint fistTokenID = tokenIDs[0];
@@ -314,14 +314,14 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
             amountsBoughtPerAddress.push(amoutBought);
 
-            //     uint256 largest = 0;
-            //     for (i = 0; i < amountsBoughtPerAddress.length; i++) {
-            //         if (amountsBoughtPerAddress[i] > largest) {
-            //             largest = amountsBoughtPerAddress[i];
-            //         }
-            //     }
+            uint256 largest = 0;
+            for (i = 0; i < amountsBoughtPerAddress.length; i++) {
+                if (amountsBoughtPerAddress[i] > largest) {
+                    largest = amountsBoughtPerAddress[i];
+                }
+            }
 
-            //     return largest;
+            return largest;
         }
 
         // map amount => tokenID
