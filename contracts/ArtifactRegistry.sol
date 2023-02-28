@@ -285,7 +285,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         uint fullPrice = tokenPrice * amountOfTokensMinted;
 
         uint splitArtizen = (fullPrice / 100) * artizenSplitPercentage;
-        uint splitArtist = fullPrice - splitArtizen;
+        uint protocolFee = (fullPrice / 100) * protocolFeePercentage;
+        uint splitArtist = fullPrice - (splitArtizen + protocolFeePercentage);
 
         artizenWallet.transfer(splitArtizen);
 
