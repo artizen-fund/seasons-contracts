@@ -32,7 +32,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     uint[] amountsBoughtPerAddress;
     uint[] toptokenIDs;
-    address[] topBuyers;
+    uint[] totalSalesOfTokenIDs;
 
     // TODO rename it to Submission
     struct Submission {
@@ -45,8 +45,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     struct Season {
         uint[] submissionIDs;
         uint[] tokenIDs;
-        address topBuyer;
-        address topSubmission;
+        address[] topBuyers;
+        address[] topSubmissions;
         uint startTime;
         uint endTime;
         uint lastTokenIDOfSeason;
@@ -283,9 +283,9 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     }
 
     function getTopBuyersOfSeason(
-        uint _season
+        uint _seasonID
     ) public returns (address[] memory) {
-        uint largestAmount = getLargestAmountOfTokensBoughtInSeason(_season);
+        uint largestAmount = getLargestAmountOfTokensBoughtInSeason(_seasonID);
         uint[] memory topTokenIDs = amountToTokenIDs[largestAmount];
 
         for (uint i = 0; i < topTokenIDs.length; i++) {
@@ -293,9 +293,15 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
                 topTokenIDs[i]
             ];
 
-            topBuyers.push(buyers);
+            seasons[_seasonID].topBuyers.push(buyers);
         }
-        return topBuyers;
+        return seasons[_seasonID].topBuyers;
+    }
+
+    function getTopSubmissionsOfSeason(
+        uint _season
+    ) public returns (uint[] memory) {
+        // return submissionIDs with largest amounts sold
     }
 
     // --------------------------------------------------------------
@@ -345,6 +351,28 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         return largest;
     }
 
+    function getLargestAmountOfTokensSoldInSeason(
+        uint _season
+    ) internal returns (uint) {
+        // need each tokenID in season
+        // total amout of tokens sold
+        // largest amount
+        uint256 largest = 0;
+        uint[] memory submissionIDs = seasons[_season].submissionIDs;
+
+        for (uint i = 0; i < submissionIDs.length; i++) {
+            uint totalTokenSales = getTotalTokenSales(submissionIDs[i]);
+
+            totalSalesOfTokenIDs.push(totalTokenSales);
+            for (i = 0; i < totalSalesOfTokenIDs.length; i++) {
+                if (totalSalesOfTokenIDs[i] > largest) {
+                    largest = totalSalesOfTokenIDs[i];
+                }
+            }
+        }
+        return largest;
+    }
+
     // --------------------------------------------------------------
     // VIEW FUNCTIONS
     // --------------------------------------------------------------
@@ -387,25 +415,6 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         uint amount
     ) public view returns (address) {
         return amountOfTokenBoughtPerAddress[tokenID][amount];
-    }
-
-    function getTopSubmissionOfSeason(
-        uint seasonID
-    ) public view returns (uint) {
-        //TODO
-        // getTotalAmountOfTokenSold for each token in season, return the highest one then save it into season struct
-
-        uint[] memory submissionIDsOfSeason = seasons[seasonID].submissionIDs;
-
-        for (uint i = 0; i < submissionIDsOfSeason.length; i++) {
-            uint totalTokenSales = getTotalTokenSales(submissionIDsOfSeason[i]);
-            uint256 largest = 0;
-            // for (i = 0; i < amountsBoughtPerAddress.length; i++) {
-            //   if (amountsBoughtPerAddress[i] > largest) {
-            //     largest = amountsBoughtPerAddress[i];
-            //   }
-            // }
-        }
     }
 
     function getDAOWalletAddress() public view returns (address wallet) {
