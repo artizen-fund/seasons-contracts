@@ -54,7 +54,7 @@ describe("Artifact Registry Tests", function () {
         BigNumber.from("5")
       );
     });
-    it.only("contract shuts down if shutdown is turned on", async () => {
+    it("contract shuts down if shutdown is turned on", async () => {
       await RegistryInstance.connect(owner).shutdown(true);
 
       await expect(
@@ -166,7 +166,19 @@ describe("Artifact Registry Tests", function () {
     it("mints correct tokenID for submission", async () => {});
     it("mints 3 times the amount given", async () => {});
     it("mints the same amounts to 3 different addresses", async () => {});
-    it("users cant mint if a season is closed", async () => {});
+    it.only("users cant mint if a season is closed", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+
+      await RegistryInstance.connect(owner).closeSeason(1);
+      await expect(
+        RegistryInstance.connect(buyer1).mintArtifact(124, [2])
+      ).to.be.revertedWith("SeasonAlreadyClosed(1)");
+    });
     it("sets correct tokenURI for each token", async () => {});
     it("splits token price correctly", async () => {});
     it("sets correct tokenURI for each token", async () => {});
