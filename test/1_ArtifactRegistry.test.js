@@ -182,7 +182,7 @@ describe("Artifact Registry Tests", function () {
   describe("mintArtifact function", function () {
     it("msg.value has to be equal to token price", async () => {});
     it("mints correct tokenID for submission", async () => {});
-    it.only("mints the same amounts to 3 different addresses", async () => {
+    it("mints the same amounts to 3 different addresses", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(
         1,
@@ -208,7 +208,9 @@ describe("Artifact Registry Tests", function () {
 
       await RegistryInstance.connect(owner).closeSeason(1);
       await expect(
-        RegistryInstance.connect(buyer1).mintArtifact(124, [2])
+        RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+          value: 100,
+        })
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
     });
     it("sets correct tokenURI for each token", async () => {});
