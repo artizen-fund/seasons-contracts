@@ -19,6 +19,24 @@ describe("Artifact Registry Tests", function () {
     RegistryContract = await ethers.getContractFactory("ArtifactRegistry");
     RegistryInstance = await upgrades.deployProxy(RegistryContract, []);
 
+    // set token price split percentages
+    await RegistryInstance.connect(owner).setTreasurySplitPercentage(
+      BigNumber.from("5")
+    );
+    await RegistryInstance.connect(owner).setProtocolFeePercentage(
+      BigNumber.from("10")
+    );
+
+    // set protocol and treasury wallet address
+    await RegistryInstance.connect(owner).setProtocolWalletAddress(
+      ownerAddress
+    );
+
+    await RegistryInstance.connect(owner).setTreasuryAddress(ownerAddress);
+
+    // set token price
+
+    await RegistryInstance.connect(owner).setTokenPrice(100);
     startTime = await currentTime();
     endTime = startTime + 2629800;
   });
@@ -88,7 +106,7 @@ describe("Artifact Registry Tests", function () {
       expect(await submission[2]).to.equal("");
       expect(await submission[3]).to.equal(buyer1Address);
     });
-    it.only("only owner can create submission", async () => {
+    it("only owner can create submission", async () => {
       await expect(
         RegistryInstance.connect(buyer1).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("Ownable: caller is not the owner");
@@ -164,9 +182,23 @@ describe("Artifact Registry Tests", function () {
   describe("mintArtifact function", function () {
     it("msg.value has to be equal to token price", async () => {});
     it("mints correct tokenID for submission", async () => {});
-    it("mints 3 times the amount given", async () => {});
-    it("mints the same amounts to 3 different addresses", async () => {});
-    it.only("users cant mint if a season is closed", async () => {
+    it.only("mints the same amounts to 3 different addresses", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+      await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+        value: 100,
+      });
+
+      expect(await RegistryInstance.balanceOf(buyer1Address, 124)).to.equal(2);
+      expect(await RegistryInstance.balanceOf(buyer2Address, 124)).to.equal(2);
+      expect(await RegistryInstance.balanceOf(ownerAddress, 124)).to.equal(2);
+    });
+
+    it("users cant mint if a season is closed", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(
         1,
