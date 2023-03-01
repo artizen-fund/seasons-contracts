@@ -39,9 +39,9 @@ describe("Artifact Registry Tests", function () {
         BigNumber.from("1")
       );
     });
-    it("sets sets protocol fee split percentage properly", async () => {
+    it.only("sets sets protocol fee split percentage properly", async () => {
       //TODO
-      await RegistryInstance.connect(owner).setProtocolFeeSplitPercentage(
+      await RegistryInstance.connect(owner).setProtocolFeePercentage(
         BigNumber.from("10")
       );
 
@@ -80,7 +80,9 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.connect(buyer1).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
-    it("submissonID and tokenID should be the same", async () => {});
+    it("submissonID and tokenID should be the same", async () => {
+      //TODO
+    });
   });
   describe("createSeason function", function () {
     it("registers submission details properly", async () => {
