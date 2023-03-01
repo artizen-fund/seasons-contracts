@@ -39,7 +39,7 @@ describe("Artifact Registry Tests", function () {
         BigNumber.from("1")
       );
     });
-    it.only("sets sets protocol fee split percentage properly", async () => {
+    it("sets sets protocol fee  and treasury fee split percentage properly", async () => {
       await RegistryInstance.connect(owner).setTreasurySplitPercentage(
         BigNumber.from("5")
       );
@@ -54,11 +54,19 @@ describe("Artifact Registry Tests", function () {
         BigNumber.from("5")
       );
     });
-    it("contract shuts down if shutdown is turned on", async () => {
+    it.only("contract shuts down if shutdown is turned on", async () => {
       await RegistryInstance.connect(owner).shutdown(true);
 
-      //TODO
-      // await expect(RegistryInstance.connect(owner).createSubmission());
+      await expect(
+        RegistryInstance.connect(owner).createSeason(startTime, endTime)
+      ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
+      await expect(
+        RegistryInstance.connect(owner).createSubmission(1, "", buyer1Address)
+      ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
+
+      await expect(
+        RegistryInstance.connect(owner).mintArtifact(124, [5])
+      ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
     });
   });
   describe("createSubmission function", function () {
