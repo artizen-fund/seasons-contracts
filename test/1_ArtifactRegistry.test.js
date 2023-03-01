@@ -56,7 +56,24 @@ describe("Artifact Registry Tests", function () {
     });
   });
   describe("createSubmission function", function () {
-    it("registers submission details properly ", async () => {});
+    it.only("registers submission details properly ", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+
+      const submission = await RegistryInstance.getSubmission(
+        BigNumber.from(124)
+      );
+      console.log(submission.toString());
+
+      expect(await submission[0].toString()).to.equal("124");
+      expect(await submission[1]).to.equal(1);
+      expect(await submission[2]).to.equal("");
+      expect(await submission[3]).to.equal(buyer1Address);
+    });
     it("only owner can create submission", async () => {});
     it("submissonID and tokenID should be the same", async () => {});
   });
@@ -134,7 +151,7 @@ describe("Artifact Registry Tests", function () {
     it("splits token price correctly", async () => {});
     it("sets correct tokenURI for each token", async () => {});
   });
-  it.only("getLatestTokenID returns correct tokenIDs", async () => {
+  it("getLatestTokenID returns correct tokenIDs", async () => {
     await RegistryInstance.connect(owner).createSeason(startTime, endTime);
     await RegistryInstance.connect(owner).createSubmission(
       1,
@@ -146,7 +163,7 @@ describe("Artifact Registry Tests", function () {
 });
 
 describe("View functions", function () {
-  it.only("getprotocolWalletAddress returns correct wallet address", async () => {
+  it("getprotocolWalletAddress returns correct wallet address", async () => {
     await RegistryInstance.connect(owner).setProtocolWalletAddress(
       ownerAddress
     );
