@@ -397,6 +397,12 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     return seasons[seasonID];
   }
 
+  function getSubmission(
+    uint submissionID
+  ) public view returns (Submisson memory) {
+    return submissions[tokenID];
+  }
+
   function getprotocolWalletAddress() public view returns (address wallet) {
     assembly {
       wallet := sload(protocolWallet.slot)
