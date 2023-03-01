@@ -216,6 +216,22 @@ describe("Artifact Registry Tests", function () {
     it("sets correct tokenURI for each token", async () => {});
     it("splits token price correctly", async () => {});
     it("sets correct tokenURI for each token", async () => {});
+    it.only("saves top artifact buyer to the submission struct correctly", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+
+      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+        value: 100,
+      });
+
+      expect(await RegistryInstance.getTopBuyerPerArtifact(124)).to.equal(
+        buyer2Address
+      );
+    });
   });
   it("getLatestTokenID returns correct tokenIDs", async () => {
     await RegistryInstance.connect(owner).createSeason(startTime, endTime);
