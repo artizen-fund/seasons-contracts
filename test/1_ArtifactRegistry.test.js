@@ -40,13 +40,18 @@ describe("Artifact Registry Tests", function () {
       );
     });
     it.only("sets sets protocol fee split percentage properly", async () => {
-      //TODO
+      await RegistryInstance.connect(owner).setTreasurySplitPercentage(
+        BigNumber.from("5")
+      );
       await RegistryInstance.connect(owner).setProtocolFeePercentage(
         BigNumber.from("10")
       );
 
-      expect(await RegistryInstance.getSplitPercentage()).to.equal(
+      expect(await RegistryInstance.getProtocolFeeSplitPercentage()).to.equal(
         BigNumber.from("10")
+      );
+      expect(await RegistryInstance.getTreasurySplitPercentage()).to.equal(
+        BigNumber.from("5")
       );
     });
     it("contract shuts down if shutdown is turned on", async () => {
