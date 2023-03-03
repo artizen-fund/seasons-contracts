@@ -290,16 +290,15 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
                 ""
             );
         }
-        // uint splitArtizen = (msg.value / 100) * treasurySplitPercentage;
-        // uint protocolFee = (msg.value / 100) * artistFeePercentage;
-        // uint splitArtist = msg.value - (splitArtizen + artistFeePercentage);
 
-        uint splitArtist = (msg.value / 100) * 80;
-        uint splitArtizen = (msg.value / 100) * 10;
-        address payable artistAddress = submissions[submissionID]
-            .SubmissionOwner;
-        artistAddress.transfer(splitArtist);
-        treasuryWallet.transfer(splitArtizen);
+        // uint splitArtist = (msg.value / 100) * 80;
+        // uint splitArtizen = (msg.value / 100) * 10;
+        // address payable artistAddress = submissions[submissionID]
+        //     .SubmissionOwner;
+        // artistAddress.transfer(splitArtist);
+        // treasuryWallet.transfer(splitArtizen);
+
+        splitPrice(submissionID, msg.value);
 
         emit ArtifactMinted(msg.sender, tokenIDToMint, amountToMint);
     }

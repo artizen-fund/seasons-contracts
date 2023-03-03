@@ -21,7 +21,7 @@ describe("Artifact Registry Tests", function () {
 
     // set token price split percentages
     await RegistryInstance.connect(owner).setTreasurySplitPercentage(10);
-    await RegistryInstance.connect(owner).setProtocolFeePercentage(10);
+    await RegistryInstance.connect(owner).setArtistFeePercentage(50);
 
     // set protocol and treasury wallet address
     await RegistryInstance.connect(owner).setProtocolWalletAddress(
