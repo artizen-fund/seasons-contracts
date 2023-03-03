@@ -330,7 +330,30 @@ describe("View functions", function () {
 
   it("getTopBuyerOfSeason returns top buyer of season correctly", async () => {});
   it("getTotalTokenSales returns correct amount of tokens sold", async () => {});
-  it("getTopBuyer returns top buyer per submission correctly", async () => {});
+  it.only("getTopBuyer returns top buyer per artifact correctly", async () => {
+    await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+    await RegistryInstance.connect(owner).createSubmission(
+      1,
+      "",
+      buyer1Address
+    );
+
+    await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+      value: ethers.utils.parseEther("600"),
+    });
+
+    await RegistryInstance.connect(buyer3).mintArtifact(124, [3], {
+      value: ethers.utils.parseEther("900"),
+    });
+
+    await RegistryInstance.connect(buyer1).mintArtifact(124, [5], {
+      value: ethers.utils.parseEther("1500"),
+    });
+
+    expect(await RegistryInstance.getTopBuyerPerArtifact(124)).to.equal(
+      buyer1Address
+    );
+  });
   it("getTopSubmissionOfSeason returns top submission for season correctly", async () => {});
   it("withdrawing protocol fees works properly", async () => {});
 });
