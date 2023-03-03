@@ -191,7 +191,7 @@ describe("Artifact Registry Tests", function () {
         })
       ).to.be.revertedWith('IncorrectAmount("")');
     });
-    it.only("mints correct tokenID for submission", async () => {
+    it("mints correct tokenID for submission", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(
         1,
@@ -260,7 +260,7 @@ describe("Artifact Registry Tests", function () {
     // expect(await RegistryInstance.uri(124)).to.be.equal("");
     // expect(await RegistryInstance.uri(125)).to.be.equal("blabla");
   });
-  it.only("splits token price correctly", async () => {
+  it("splits token price correctly", async () => {
     await RegistryInstance.connect(owner).createSeason(startTime, endTime);
     await RegistryInstance.connect(owner).createSubmission(
       1,
@@ -289,8 +289,39 @@ describe("Artifact Registry Tests", function () {
     //   ethers.utils.parseEther("1000300")
     // );
   });
-  it("sets correct tokenURI for each token", async () => {});
-  it("buyer receives correct amount and tokenIDs of NFTs after purchase", async () => {});
+  it.only("buyer receives correct amount and tokenIDs of NFTs after purchase", async () => {
+    await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+    await RegistryInstance.connect(owner).createSubmission(
+      1,
+      "",
+      buyer2Address
+    );
+    await RegistryInstance.connect(owner).createSubmission(
+      1,
+      "",
+      buyer2Address
+    );
+    await RegistryInstance.connect(owner).createSubmission(
+      1,
+      "",
+      buyer2Address
+    );
+    await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+      value: ethers.utils.parseEther("600"),
+    });
+
+    await RegistryInstance.connect(buyer1).mintArtifact(125, [3], {
+      value: ethers.utils.parseEther("900"),
+    });
+
+    await RegistryInstance.connect(buyer3).mintArtifact(126, [1], {
+      value: ethers.utils.parseEther("300"),
+    });
+
+    expect(await RegistryInstance.balanceOf(buyer1Address, 124)).to.equal(2);
+    expect(await RegistryInstance.balanceOf(buyer3Address, 126)).to.equal(1);
+    expect(await RegistryInstance.balanceOf(buyer1Address, 125)).to.equal(3);
+  });
   it("saves top artifact buyer correctly", async () => {
     await RegistryInstance.connect(owner).createSeason(startTime, endTime);
     await RegistryInstance.connect(owner).createSubmission(
