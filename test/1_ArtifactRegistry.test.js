@@ -289,7 +289,7 @@ describe("Artifact Registry Tests", function () {
     //   ethers.utils.parseEther("1000300")
     // );
   });
-  it.only("buyer receives correct amount and tokenIDs of NFTs after purchase", async () => {
+  it("buyer receives correct amount and tokenIDs of NFTs after purchase", async () => {
     await RegistryInstance.connect(owner).createSeason(startTime, endTime);
     await RegistryInstance.connect(owner).createSubmission(
       1,
@@ -347,6 +347,41 @@ describe("Artifact Registry Tests", function () {
     );
     expect(await RegistryInstance.getLatestTokenID(1)).to.equal(124);
   });
+
+  it.only("getTopBuyerOfSeason returns top buyer of season correctly", async () => {
+    // TODO
+    await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+    await RegistryInstance.connect(owner).createSubmission(
+      1,
+      "",
+      buyer2Address
+    );
+    await RegistryInstance.connect(owner).createSubmission(
+      1,
+      "",
+      buyer2Address
+    );
+    await RegistryInstance.connect(owner).createSubmission(
+      1,
+      "",
+      buyer2Address
+    );
+    await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+      value: ethers.utils.parseEther("600"),
+    });
+
+    await RegistryInstance.connect(buyer1).mintArtifact(125, [3], {
+      value: ethers.utils.parseEther("900"),
+    });
+
+    await RegistryInstance.connect(buyer3).mintArtifact(126, [1], {
+      value: ethers.utils.parseEther("300"),
+    });
+
+    expect(await RegistryInstance.getTopBuyersOfSeason(1)).to.equal(
+      buyer1Address
+    );
+  });
 });
 
 describe("View functions", function () {
@@ -358,10 +393,8 @@ describe("View functions", function () {
       ownerAddress
     );
   });
-
-  it("getTopBuyerOfSeason returns top buyer of season correctly", async () => {});
   it("getTotalTokenSales returns correct amount of tokens sold", async () => {});
-  it.only("getTopBuyer returns top buyer per artifact correctly", async () => {
+  it("getTopBuyer returns top buyer per artifact correctly", async () => {
     await RegistryInstance.connect(owner).createSeason(startTime, endTime);
     await RegistryInstance.connect(owner).createSubmission(
       1,
