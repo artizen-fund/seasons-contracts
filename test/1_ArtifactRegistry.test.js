@@ -407,39 +407,42 @@ describe("Artifact Registry Tests", function () {
     });
   });
   describe("Events", function () {
-
-        it("emits seasonCreated event correctly", async () => {
-      //TODO
-        });
+    it.only("emits seasonCreated event correctly", async () => {
+      expect(
+        await RegistryInstance.connect(owner).createSeason(startTime, endTime)
+      )
+        .to.emit(RegistryInstance, "seasonCreated")
+        .withArgs(1);
+    });
     it("emits submissionCreated event correctly", async () => {
       //TODO
     });
-        it("emits protocolWalletAddressSet event correctly", async () => {
+    it("emits protocolWalletAddressSet event correctly", async () => {
       //TODO
-        });
-    
-            it("emits SeasonClosed event correctly", async () => {
+    });
+
+    it("emits SeasonClosed event correctly", async () => {
       //TODO
-            });
-    
-            it("emits TokenPriceSet event correctly", async () => {
+    });
+
+    it("emits TokenPriceSet event correctly", async () => {
       //TODO
-            });
-             it("emits Shutdown event correctly", async () => {
+    });
+    it("emits Shutdown event correctly", async () => {
       //TODO
-             });
-                 it("emits ArtizenFeeSplitPercentageSet event correctly", async () => {
+    });
+    it("emits ArtizenFeeSplitPercentageSet event correctly", async () => {
       //TODO
-                 });
-                 it("emits ArtistFeePercentageSet event correctly", async () => {
+    });
+    it("emits ArtistFeePercentageSet event correctly", async () => {
       //TODO
-                 });
-                 it("emits ArtifactMinted  event correctly", async () => {
+    });
+    it("emits ArtifactMinted  event correctly", async () => {
       //TODO
-                 });
+    });
 
     it.only("emits FeesWithdrawn event correctly", async () => {
-      await RegistryInstance.connect(owner).–setProtocolWalletAddress(
+      await RegistryInstance.connect(owner).setProtocolWalletAddress(
         buyer3Address
       );
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
