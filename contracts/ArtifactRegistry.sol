@@ -272,7 +272,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     _setURI(submissions[submissionID].tokenURI);
 
     // TODO
-    // splitPrice(submissionID, amountToMint);
+    splitPrice(submissionID, amountToMint);
 
     if (amountToMint == 1) {
       _mint(msg.sender, tokenIDToMint, 1, "");
@@ -324,7 +324,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
   // INTERNAL FUNCTIONS
   // --------------------------------------------------------------
 
-  function splitPrice(uint submissionID, uint amountOfTokensBought) internal {
+  function splitPrice(uint submissionID, uint amountOfTokensBought) public {
     uint amountOfTokensMinted = amountOfTokensBought * 3;
     uint fullPrice = tokenPrice * amountOfTokensMinted;
 
@@ -333,10 +333,10 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     uint splitArtist = fullPrice - (splitArtizen + protocolFeePercentage);
 
     treasuryWallet.transfer(splitArtizen);
-    protocolWallet.transfer(protocolFee);
+    // protocolWallet.transfer(protocolFee);
 
     address payable artistAddress = submissions[submissionID].SubmissionOwner;
-    artistAddress.transfer(splitArtist);
+    // artistAddress.transfer(splitArtist);
   }
 
   function getLargestAmountOfTokensBoughtInSeason(
