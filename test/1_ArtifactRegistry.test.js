@@ -407,9 +407,39 @@ describe("Artifact Registry Tests", function () {
     });
   });
   describe("Events", function () {
-    it("getprotocolWalletAddress returns correct wallet address", async () => {});
+
+        it("emits seasonCreated event correctly", async () => {
+      //TODO
+        });
+    it("emits submissionCreated event correctly", async () => {
+      //TODO
+    });
+        it("emits protocolWalletAddressSet event correctly", async () => {
+      //TODO
+        });
+    
+            it("emits SeasonClosed event correctly", async () => {
+      //TODO
+            });
+    
+            it("emits TokenPriceSet event correctly", async () => {
+      //TODO
+            });
+             it("emits Shutdown event correctly", async () => {
+      //TODO
+             });
+                 it("emits ArtizenFeeSplitPercentageSet event correctly", async () => {
+      //TODO
+                 });
+                 it("emits ArtistFeePercentageSet event correctly", async () => {
+      //TODO
+                 });
+                 it("emits ArtifactMinted  event correctly", async () => {
+      //TODO
+                 });
+
     it.only("emits FeesWithdrawn event correctly", async () => {
-      await RegistryInstance.connect(owner).setProtocolWalletAddress(
+      await RegistryInstance.connect(owner).–setProtocolWalletAddress(
         buyer3Address
       );
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
