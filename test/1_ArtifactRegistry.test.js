@@ -48,6 +48,7 @@ describe("Artifact Registry Tests", function () {
         ownerAddress
       );
     });
+    it("emits event correctly", async () => {});
     it("sets token price properly", async () => {
       await RegistryInstance.connect(owner).setTokenPrice(BigNumber.from("1"));
 
@@ -55,7 +56,8 @@ describe("Artifact Registry Tests", function () {
         BigNumber.from("1")
       );
     });
-    it("sets sets protocol fee  and treasury fee split percentage properly", async () => {
+    it("emits event correctly", async () => {});
+    it("sets sets artist fee  and treasury fee split percentage properly", async () => {
       await RegistryInstance.connect(owner).setTreasurySplitPercentage(
         BigNumber.from("5")
       );
@@ -70,6 +72,8 @@ describe("Artifact Registry Tests", function () {
         BigNumber.from("5")
       );
     });
+
+    it("emits event correctly", async () => {});
     it("contract shuts down if shutdown is turned on", async () => {
       await RegistryInstance.connect(owner).shutdown(true);
 
@@ -83,6 +87,9 @@ describe("Artifact Registry Tests", function () {
       await expect(
         RegistryInstance.connect(owner).mintArtifact(124, [5])
       ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
+    });
+    it("emits event correctly", async () => {
+      //TODO
     });
   });
   describe("createSubmission function", function () {
@@ -112,6 +119,10 @@ describe("Artifact Registry Tests", function () {
     it("submissonID and tokenID should be the same", async () => {
       //TODO
     });
+  });
+
+  it("emits event correctly", async () => {
+    //TODO
   });
   describe("createSeason function", function () {
     it("registers submission details properly", async () => {
@@ -149,6 +160,9 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.connect(buyer1).createSeason(startTime, endTime)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
+    it("emits event correctly", async () => {
+      //TODO
+    });
   });
   describe("closeSeason function", function () {
     it("cannot close a season that's already been closed", async () => {
@@ -175,6 +189,12 @@ describe("Artifact Registry Tests", function () {
       await expect(
         RegistryInstance.connect(buyer1).closeSeason(1)
       ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+    it("emits event correctly", async () => {
+      //TODO
+    });
+    it("transfers protocol fees to artizen wallet", async () => {
+      //TODO
     });
   });
   describe("mintArtifact function", function () {
@@ -338,7 +358,7 @@ describe("Artifact Registry Tests", function () {
       buyer2Address
     );
   });
-  it("getLatestTokenID returns correct tokenIDs", async () => {
+  it.only("getLatestTokenID returns correct tokenIDs", async () => {
     await RegistryInstance.connect(owner).createSeason(startTime, endTime);
     await RegistryInstance.connect(owner).createSubmission(
       1,
@@ -348,7 +368,7 @@ describe("Artifact Registry Tests", function () {
     expect(await RegistryInstance.getLatestTokenID(1)).to.equal(124);
   });
 
-  it.only("getTopBuyerOfSeason returns top buyer of season correctly", async () => {
+  it("getTopBuyerOfSeason returns top buyer of season correctly", async () => {
     // TODO
     await RegistryInstance.connect(owner).createSeason(startTime, endTime);
     await RegistryInstance.connect(owner).createSubmission(
@@ -381,6 +401,9 @@ describe("Artifact Registry Tests", function () {
     expect(await RegistryInstance.getTopBuyersOfSeason(1)).to.equal(
       buyer1Address
     );
+  });
+  it("emits event correctly", async () => {
+    //TODO
   });
 });
 
@@ -419,5 +442,28 @@ describe("View functions", function () {
     );
   });
   it("getTopSubmissionOfSeason returns top submission for season correctly", async () => {});
-  it("withdrawing protocol fees works properly", async () => {});
+  it.only("withdrawing protocol fees works properly", async () => {
+    await RegistryInstance.connect(owner).setProtocolWalletAddress(
+      buyer3Address
+    );
+    await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+    await RegistryInstance.connect(owner).createSubmission(
+      1,
+      "",
+      buyer1Address
+    );
+
+    await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+      value: ethers.utils.parseEther("600"),
+    });
+
+    const balanceBefore = await buyer3.getBalance();
+    console.log(balanceBefore.toString());
+    await RegistryInstance.connect(owner).withdrawProtocolFees();
+
+    const balanceAfter = await buyer3.getBalance();
+    console.log(balanceAfter.toString());
+
+    expect(await balanceAfter).to.equal(ethers.utils.parseEther("1000240"));
+  });
 });
