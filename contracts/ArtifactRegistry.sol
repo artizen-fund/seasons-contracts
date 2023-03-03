@@ -332,11 +332,15 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
         return topSubmissions = seasons[_seasonID].topSubmissions = topTokenIDs;
     }
 
+    function withdrawProtocolFees(address payable account) public onlyOwner {
+        account.transfer(address(this).balance);
+    }
+
     // --------------------------------------------------------------
     // INTERNAL FUNCTIONS
     // --------------------------------------------------------------
 
-    function splitPrice(uint submissionID, uint value) public {
+    function splitPrice(uint submissionID, uint value) internal {
         uint splitTreasury = (value / 100) * treasurySplitPercentage;
         uint splitArtist = (value / 100) * artistFeePercentage;
 
