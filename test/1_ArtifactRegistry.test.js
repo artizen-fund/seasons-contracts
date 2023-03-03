@@ -402,9 +402,6 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
     });
-    it("emits event correctly", async () => {
-      //TODO
-    });
   });
   describe("Events", function () {
     it.only("emits seasonCreated event correctly", async () => {
@@ -415,7 +412,16 @@ describe("Artifact Registry Tests", function () {
         .withArgs(1);
     });
     it("emits submissionCreated event correctly", async () => {
-      //TODO
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      expect(
+        await RegistryInstance.connect(owner).createSubmission(
+          1,
+          "",
+          buyer2Address
+        )
+      )
+        .to.emit(RegistryInstance, "submissionCreated")
+        .withArgs(124, buyer2Address);
     });
     it("emits protocolWalletAddressSet event correctly", async () => {
       //TODO
