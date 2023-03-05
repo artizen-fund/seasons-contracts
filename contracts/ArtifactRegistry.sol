@@ -318,15 +318,15 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     return seasons[_seasonID].topBuyers;
   }
 
-  function getTopSubmissionsOfSeason(
-    uint _seasonID
-  ) public returns (uint[] memory topSubmissions) {
+  function getTopSubmissionsOfSeason(uint _seasonID) public {
     uint largestAmount = getLargestAmountOfTokensSoldInSeason(_seasonID);
     uint[] memory topTokenIDs = amountToTokenIDsOfSeason[_seasonID][
       largestAmount
     ];
 
-    return topSubmissions = seasons[_seasonID].topSubmissions = topTokenIDs;
+    for (uint i = 0; i < topTokenIDs.length; i++) {
+      seasons[_seasonID].topSubmissions.push(topTokenIDs[i]);
+    }
   }
 
   function withdrawProtocolFees() public onlyOwner {
@@ -378,24 +378,28 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
   function getLargestAmountOfTokensSoldInSeason(
     uint _season
-  ) internal returns (uint) {
+  ) public view returns (uint) {
     // need each tokenID in season
     // total amout of tokens sold
     // largest amount
     uint256 largest = 0;
+
+    for (uint i = 0; i < totalSalesOfTokenIDs.length; i++) {
+      if (totalSalesOfTokenIDs[i] > largest) {
+        largest = totalSalesOfTokenIDs[i];
+      }
+    }
+    return largest;
+  }
+
+  function setTotalSalesOfTokenIDs(uint _season) public {
     uint[] memory submissionIDs = seasons[_season].submissionIDs;
 
     for (uint i = 0; i < submissionIDs.length; i++) {
       uint totalTokenSales = getTotalTokenSales(submissionIDs[i]);
 
       totalSalesOfTokenIDs.push(totalTokenSales);
-      for (i = 0; i < totalSalesOfTokenIDs.length; i++) {
-        if (totalSalesOfTokenIDs[i] > largest) {
-          largest = totalSalesOfTokenIDs[i];
-        }
-      }
     }
-    return largest;
   }
 
   // --------------------------------------------------------------
@@ -478,5 +482,9 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     assembly {
       price := sload(tokenPrice.slot)
     }
+  }
+
+  function returnTen() public view returns (uint) {
+    return 10;
   }
 }

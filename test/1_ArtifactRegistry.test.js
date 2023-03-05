@@ -519,7 +519,7 @@ describe("Artifact Registry Tests", function () {
         ownerAddress
       );
     });
-    it.only("getTotalTokenSales returns correct amount of tokens sold", async () => {
+    it("getTotalTokenSales returns correct amount of tokens sold", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
 
       await RegistryInstance.connect(owner).createSubmission(
@@ -562,7 +562,83 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
     });
-    it("getTopSubmissionOfSeason returns top submission for season correctly", async () => {});
+    it("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
+      // TODO
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(buyer2).mintArtifact(124, [4], {
+        value: ethers.utils.parseEther("1200"),
+      });
+
+      await RegistryInstance.connect(buyer2).mintArtifact(125, [2], {
+        value: ethers.utils.parseEther("600"),
+      });
+
+      await RegistryInstance.connect(buyer2).mintArtifact(126, [2], {
+        value: ethers.utils.parseEther("600"),
+      });
+
+      await RegistryInstance.getTopSubmissionsOfSeason(1);
+
+      const winners = await RegistryInstance.getSeason(1);
+      console.log(winners.toString());
+    });
+    it.only("getLargestAmountOfTokensSoldInSeason returns larges amount of tokens sold in season", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(buyer2).mintArtifact(124, [4], {
+        value: ethers.utils.parseEther("1200"),
+      });
+
+      await RegistryInstance.connect(buyer2).mintArtifact(125, [2], {
+        value: ethers.utils.parseEther("600"),
+      });
+
+      await RegistryInstance.connect(buyer2).mintArtifact(126, [2], {
+        value: ethers.utils.parseEther("600"),
+      });
+
+      await RegistryInstance.setTotalSalesOfTokenIDs(1);
+      expect(
+        await RegistryInstance.getLargestAmountOfTokensSoldInSeason(1)
+      ).to.equal(4);
+    });
     it("withdrawing protocol fees works properly", async () => {
       await RegistryInstance.connect(owner).setProtocolWalletAddress(
         buyer3Address
