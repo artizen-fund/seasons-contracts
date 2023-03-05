@@ -433,7 +433,7 @@ describe("Artifact Registry Tests", function () {
         .withArgs(ownerAddress);
     });
 
-    it.only("emits SeasonClosed event correctly", async () => {
+    it("emits SeasonClosed event correctly", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
 
       await RegistryInstance.connect(owner).createSubmission(
@@ -450,8 +450,10 @@ describe("Artifact Registry Tests", function () {
         .withArgs(1);
     });
 
-    it("emits TokenPriceSet event correctly", async () => {
-      //TODO
+    it.only("emits TokenPriceSet event correctly", async () => {
+      expect(await RegistryInstance.connect(owner).setTokenPrice(100))
+        .to.emit(RegistryInstance, "TokenPriceSet")
+        .to.emit(100);
     });
     it("emits Shutdown event correctly", async () => {
       //TODO
