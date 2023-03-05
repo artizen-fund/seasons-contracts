@@ -404,7 +404,7 @@ describe("Artifact Registry Tests", function () {
     });
   });
   describe("Events", function () {
-    it.only("emits seasonCreated event correctly", async () => {
+    it("emits seasonCreated event correctly", async () => {
       expect(
         await RegistryInstance.connect(owner).createSeason(startTime, endTime)
       )
@@ -423,7 +423,7 @@ describe("Artifact Registry Tests", function () {
         .to.emit(RegistryInstance, "submissionCreated")
         .withArgs(124, buyer2Address);
     });
-    it.only("emits protocolWalletAddressSet event correctly", async () => {
+    it("emits protocolWalletAddressSet event correctly", async () => {
       expect(
         await RegistryInstance.connect(owner).setProtocolWalletAddress(
           ownerAddress
@@ -433,8 +433,21 @@ describe("Artifact Registry Tests", function () {
         .withArgs(ownerAddress);
     });
 
-    it("emits SeasonClosed event correctly", async () => {
-      //TODO
+    it.only("emits SeasonClosed event correctly", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+      await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+        value: ethers.utils.parseEther("600"),
+      });
+
+      expect(await RegistryInstance.connect(owner).closeSeason(1))
+        .to.emit(RegistryInstance, "SeasonClosed")
+        .withArgs(1);
     });
 
     it("emits TokenPriceSet event correctly", async () => {
@@ -453,7 +466,7 @@ describe("Artifact Registry Tests", function () {
       //TODO
     });
 
-    it.only("emits FeesWithdrawn event correctly", async () => {
+    it("emits FeesWithdrawn event correctly", async () => {
       await RegistryInstance.connect(owner).setProtocolWalletAddress(
         buyer3Address
       );
