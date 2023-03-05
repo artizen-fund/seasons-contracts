@@ -450,13 +450,15 @@ describe("Artifact Registry Tests", function () {
         .withArgs(1);
     });
 
-    it.only("emits TokenPriceSet event correctly", async () => {
+    it("emits TokenPriceSet event correctly", async () => {
       expect(await RegistryInstance.connect(owner).setTokenPrice(100))
         .to.emit(RegistryInstance, "TokenPriceSet")
         .to.emit(100);
     });
-    it("emits Shutdown event correctly", async () => {
-      //TODO
+    it.only("emits Shutdown event correctly", async () => {
+      expect(await RegistryInstance.connect(owner).shutdown(true))
+        .to.emit(RegistryInstance, "Shutdown")
+        .withArgs(true);
     });
     it("emits ArtizenFeeSplitPercentageSet event correctly", async () => {
       //TODO
