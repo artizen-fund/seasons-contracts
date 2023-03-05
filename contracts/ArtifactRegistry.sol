@@ -78,7 +78,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
   event SubmissionCreated(uint256 submissionID, address SubmissionOwner);
   event SeasonCreated(uint seasonID);
-  event protocolWalletAddressSet(address protocolWallet);
+  event ProtocolWalletAddressSet(address protocolWallet);
   event SeasonClosed(uint256 _season);
   event TokenPriceSet(uint price);
   event Shutdown(bool _isShutdown);
@@ -119,7 +119,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     assembly {
       sstore(treasuryWallet.slot, _treasuryWallet)
     }
-    emit protocolWalletAddressSet(_treasuryWallet);
+    emit ProtocolWalletAddressSet(_treasuryWallet);
   }
 
   function setProtocolWalletAddress(
@@ -130,7 +130,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     assembly {
       sstore(protocolWallet.slot, _protocolWallet)
     }
-    emit protocolWalletAddressSet(_protocolWallet);
+    emit ProtocolWalletAddressSet(_protocolWallet);
   }
 
   function setTokenPrice(uint256 price) public onlyOwner returns (uint256) {

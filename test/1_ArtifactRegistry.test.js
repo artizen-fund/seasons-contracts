@@ -424,7 +424,11 @@ describe("Artifact Registry Tests", function () {
         .withArgs(124, buyer2Address);
     });
     it("emits protocolWalletAddressSet event correctly", async () => {
-      //TODO
+      expect(
+        await RegistryInstance.connect(owner).setProtocolWalletAddress(
+          ownerAddress
+        )
+      ).to.emit(RegistryInstance, "ProtocolWalletAddressSet");
     });
 
     it("emits SeasonClosed event correctly", async () => {
