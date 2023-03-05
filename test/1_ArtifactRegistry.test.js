@@ -472,7 +472,7 @@ describe("Artifact Registry Tests", function () {
         .to.emit(RegistryInstance, "ArtistFeePercentageSet")
         .withArgs(80);
     });
-    it.only("emits ArtifactMinted  event correctly", async () => {
+    it("emits ArtifactMinted  event correctly", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
 
       await RegistryInstance.connect(owner).createSubmission(
@@ -519,7 +519,25 @@ describe("Artifact Registry Tests", function () {
         ownerAddress
       );
     });
-    it("getTotalTokenSales returns correct amount of tokens sold", async () => {});
+    it.only("getTotalTokenSales returns correct amount of tokens sold", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+        value: ethers.utils.parseEther("600"),
+      });
+
+      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+        value: ethers.utils.parseEther("600"),
+      });
+
+      expect(await RegistryInstance.getTotalTokenSales(124)).to.equal(4);
+    });
     it("getTopBuyer returns top buyer per artifact correctly", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(

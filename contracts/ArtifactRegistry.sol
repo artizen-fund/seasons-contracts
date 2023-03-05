@@ -237,6 +237,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
   ) public payable {
     if (isShutdown) revert ContractShutdown("Contract has been shut down");
     uint amountToMint = amount[0] * 3;
+    uint amountSold = amount[0];
     uint[] storage tokenIDsToMint = submissions[submissionID].tokenID;
     uint tokenIDToMint = tokenIDsToMint[0];
     if (msg.value != tokenPrice * amountToMint) revert IncorrectAmount("");
@@ -253,7 +254,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
       submissions[submissionID].season
     ] += amountToMint;
 
-    totalAmountOfTokensSold[tokenIDToMint] += amountToMint;
+    totalAmountOfTokensSold[tokenIDToMint] += amountSold;
 
     // TODO double check this
     amountOfTokenBoughtPerAddress[tokenIDToMint][amountToMint] = msg.sender;
