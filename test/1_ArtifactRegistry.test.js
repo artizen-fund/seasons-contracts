@@ -602,38 +602,32 @@ describe("Artifact Registry Tests", function () {
       console.log(winners.toString());
     });
     it.only("getLargestAmountOfTokensSoldInSeason returns larges amount of tokens sold in season", async () => {
+      // TODO - made them internal!
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-
       await RegistryInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
-
       await RegistryInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
-
       await RegistryInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
-
       await RegistryInstance.connect(buyer2).mintArtifact(124, [4], {
         value: ethers.utils.parseEther("1200"),
       });
-
       await RegistryInstance.connect(buyer2).mintArtifact(125, [2], {
         value: ethers.utils.parseEther("600"),
       });
-
       await RegistryInstance.connect(buyer2).mintArtifact(126, [2], {
         value: ethers.utils.parseEther("600"),
       });
-
       await RegistryInstance.setTotalSalesOfTokenIDs(1);
       expect(
         await RegistryInstance.getLargestAmountOfTokensSoldInSeason(1)
