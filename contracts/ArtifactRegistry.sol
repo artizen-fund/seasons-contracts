@@ -82,7 +82,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
   event SeasonClosed(uint256 _season);
   event TokenPriceSet(uint price);
   event Shutdown(bool _isShutdown);
-  event ArtizenFeeSplitPercentageSet(uint percentage);
+  event TreasuryFeeSplitPercentageSet(uint percentage);
   event ArtistFeePercentageSet(uint percentage);
   event ArtifactMinted(address to, uint tokenID, uint amount);
   event FeesWithdrawn(uint balance);
@@ -144,7 +144,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     assembly {
       sstore(treasurySplitPercentage.slot, percentage)
     }
-    emit ArtizenFeeSplitPercentageSet(percentage);
+    emit TreasuryFeeSplitPercentageSet(percentage);
   }
 
   function setArtistFeePercentage(uint percentage) public onlyOwner {
