@@ -455,13 +455,15 @@ describe("Artifact Registry Tests", function () {
         .to.emit(RegistryInstance, "TokenPriceSet")
         .to.emit(100);
     });
-    it.only("emits Shutdown event correctly", async () => {
+    it("emits Shutdown event correctly", async () => {
       expect(await RegistryInstance.connect(owner).shutdown(true))
         .to.emit(RegistryInstance, "Shutdown")
         .withArgs(true);
     });
-    it("emits ArtizenFeeSplitPercentageSet event correctly", async () => {
-      //TODO
+    it.only("emits ArtizenFeeSplitPercentageSet event correctly", async () => {
+      expect(await RegistryInstance.connect(owner).setArtistFeePercentage(80))
+        .to.emit(RegistryInstance, "ArtizenFeeSplitPercentageSet")
+        .withArgs(80);
     });
     it("emits ArtistFeePercentageSet event correctly", async () => {
       //TODO
