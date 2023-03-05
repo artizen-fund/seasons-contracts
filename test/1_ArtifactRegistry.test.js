@@ -460,7 +460,7 @@ describe("Artifact Registry Tests", function () {
         .to.emit(RegistryInstance, "Shutdown")
         .withArgs(true);
     });
-    it.only("emits TreasuryFeeSplitPercentageSet event correctly", async () => {
+    it("emits TreasuryFeeSplitPercentageSet event correctly", async () => {
       expect(
         await RegistryInstance.connect(owner).setTreasurySplitPercentage(10)
       )
@@ -472,8 +472,22 @@ describe("Artifact Registry Tests", function () {
         .to.emit(RegistryInstance, "ArtistFeePercentageSet")
         .withArgs(80);
     });
-    it("emits ArtifactMinted  event correctly", async () => {
-      //TODO
+    it.only("emits ArtifactMinted  event correctly", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      expect(
+        await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+          value: ethers.utils.parseEther("600"),
+        })
+      )
+        .to.emit(RegistryInstance, "ArtifactMinted")
+        .withArgs(buyer2Address, 124, 2);
     });
 
     it("emits FeesWithdrawn event correctly", async () => {
