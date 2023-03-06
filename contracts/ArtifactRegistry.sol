@@ -96,6 +96,8 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
   error IncorrectAmount(string message);
   error ContractShutdown(string message);
   error IncorrectTimesGiven(string message);
+  error SeasonDoesntExist();
+  error SubmissionDoesntExist();
 
   // --------------------------------------------------------------
   // CONSTRUCTOR
@@ -320,12 +322,25 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
   //   return seasons[_seasonID].topBuyers;
   // }
 
-  function getTopSubmissionsOfSeason(uint _seasonID) public onlyOwner {
+  function calculateTopSubmissionsOfSeason(
+    uint _seasonID
+  ) public onlyOwner returns (uint[] memory) {
+    //TODO
+    if (_seasonID > seasonCount) revert SeasonDoesntExist();
+    setTotalSalesOfTokenIDs(_seasonID);
+    setTopSubmissionsOfSeason(_seasonID);
+  }
+
+  function getTopSubmissionsOfSeason(
+    uint seasonID
+  ) public view returns (uint[] memory) {
+    return seasons[seasonID].topSubmissions;
+  }
+
+  function setTopSubmissionsOfSeason(uint _seasonID) public onlyOwner {
     // setTotalSalesOfTokenIDs(_seasonID);
     uint largestAmount = getLargestAmountOfTokensSoldInSeason(_seasonID);
 
-    // !! this is where the bug is !!
-    // create a view function to a uint, then nested loop, push uints into topTokenIDs
     uint[] memory IDs = getAmountToTokenIDsOfSeason(1, largestAmount);
     for (uint i = 0; i < IDs.length; i++) {
       seasons[_seasonID].topSubmissions.push(IDs[i]);

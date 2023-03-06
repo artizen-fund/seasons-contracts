@@ -596,8 +596,11 @@ describe("Artifact Registry Tests", function () {
         value: ethers.utils.parseEther("600"),
       });
 
-      await RegistryInstance.connect(owner).setTotalSalesOfTokenIDs(1);
-      await RegistryInstance.connect(owner).getTopSubmissionsOfSeason(1);
+      // await RegistryInstance.connect(owner).setTotalSalesOfTokenIDs(1);
+      await RegistryInstance.connect(owner).calculateTopSubmissionsOfSeason(1);
+      expect(
+        await RegistryInstance.connect(owner).getTopSubmissionsOfSeason(1)
+      ).to.equal([BigNumber.from("124")]);
 
       const winners = await RegistryInstance.getSeason(1);
       console.log(winners.toString());
