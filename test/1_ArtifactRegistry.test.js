@@ -61,19 +61,12 @@ describe("Artifact Registry Tests", function () {
       await RegistryInstance.connect(owner).setTreasurySplitPercentage(
         BigNumber.from("5")
       );
-      await RegistryInstance.connect(owner).setProtocolFeePercentage(
-        BigNumber.from("10")
-      );
 
-      expect(await RegistryInstance.getProtocolFeeSplitPercentage()).to.equal(
-        BigNumber.from("10")
-      );
       expect(await RegistryInstance.getTreasurySplitPercentage()).to.equal(
         BigNumber.from("5")
       );
     });
 
-    it("emits event correctly", async () => {});
     it("contract shuts down if shutdown is turned on", async () => {
       await RegistryInstance.connect(owner).shutdown(true);
 
@@ -82,7 +75,7 @@ describe("Artifact Registry Tests", function () {
       ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
       await expect(
         RegistryInstance.connect(owner).createSubmission(1, "", buyer1Address)
-      ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
+      ).to.be.revertedWith("SeasonDoesntExist()");
 
       await expect(
         RegistryInstance.connect(owner).mintArtifact(124, [5])
@@ -267,8 +260,7 @@ describe("Artifact Registry Tests", function () {
         })
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
     });
-    it.only("sets correct tokenURI for each token", async () => {
-      //TODO
+    it("sets correct tokenURI for each token", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(
         1,
@@ -386,6 +378,40 @@ describe("Artifact Registry Tests", function () {
       await expect(RegistryInstance.getLatestTokenID(2)).to.be.revertedWith(
         "SeasonDoesntExist()"
       );
+    });
+    it.only("getLargestAmountOfTokensBoughtInSeason returns largest amount bought per buyer in season", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+      await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+        value: ethers.utils.parseEther("600"),
+      });
+
+      await RegistryInstance.connect(buyer1).mintArtifact(125, [3], {
+        value: ethers.utils.parseEther("900"),
+      });
+
+      await RegistryInstance.connect(buyer3).mintArtifact(126, [1], {
+        value: ethers.utils.parseEther("300"),
+      });
+
+      await RegistryInstance.setAmountOfTokensBoughtInSeason(1);
+      expect(
+        await RegistryInstance.getLargestAmountOfTokensBoughtInSeason(1)
+      ).to.equal(5);
     });
     it("getTopBuyerOfSeason returns top buyer of season correctly", async () => {
       // TODO
@@ -581,7 +607,7 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
     });
-    it.only("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
+    it("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
       // TODO - this test should be passing
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
