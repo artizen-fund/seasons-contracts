@@ -116,8 +116,17 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.connect(buyer1).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
-    it("submissonID and tokenID should be the same", async () => {
-      //TODO
+    it.only("reverts if submission doesn't exist", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+
+      await expect(RegistryInstance.getSubmission(125)).to.be.revertedWith(
+        "SubmissionDoesntExist()"
+      );
     });
   });
 
