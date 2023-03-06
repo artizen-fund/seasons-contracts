@@ -326,13 +326,10 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
 
     // !! this is where the bug is !!
     // create a view function to a uint, then nested loop, push uints into topTokenIDs
-    // uint[] storage topTokenIDs = amountToTokenIDsOfSeason[_seasonID][
-    //   largestAmount
-    // ];
-    // for (uint i = 0; i < topTokenIDs.length; i++) {
-    //   uint[] storage topSubs = seasons[_seasonID].topSubmissions;
-    //   topSubs.push(topTokenIDs[i]);
-    // }
+    uint[] memory IDs = getAmountToTokenIDsOfSeason(1, largestAmount);
+    for (uint i = 0; i < IDs.length; i++) {
+      seasons[_seasonID].topSubmissions.push(IDs[i]);
+    }
   }
 
   function withdrawProtocolFees() public onlyOwner {

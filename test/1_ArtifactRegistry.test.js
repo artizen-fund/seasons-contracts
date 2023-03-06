@@ -562,7 +562,7 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
     });
-    it("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
+    it.only("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
       // TODO
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
 
@@ -596,12 +596,13 @@ describe("Artifact Registry Tests", function () {
         value: ethers.utils.parseEther("600"),
       });
 
-      await RegistryInstance.getTopSubmissionsOfSeason(1);
+      await RegistryInstance.connect(owner).setTotalSalesOfTokenIDs(1);
+      await RegistryInstance.connect(owner).getTopSubmissionsOfSeason(1);
 
       const winners = await RegistryInstance.getSeason(1);
       console.log(winners.toString());
     });
-    it.only("getAmountToTokenIDsOfSeason returns an array of tokenIDs", async () => {
+    it("getAmountToTokenIDsOfSeason returns an array of tokenIDs", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
 
       await RegistryInstance.connect(owner).createSubmission(
@@ -619,10 +620,11 @@ describe("Artifact Registry Tests", function () {
       await RegistryInstance.connect(buyer2).mintArtifact(124, [4], {
         value: ethers.utils.parseEther("1200"),
       });
-      await RegistryInstance.connect(buyer2).mintArtifact(125, [2], {
-        value: ethers.utils.parseEther("600"),
+      await RegistryInstance.connect(buyer2).mintArtifact(125, [4], {
+        value: ethers.utils.parseEther("1200"),
       });
 
+      await RegistryInstance.setTotalSalesOfTokenIDs(1);
       const hm = await RegistryInstance.getAmountToTokenIDsOfSeason(1, 4);
 
       console.log(hm);
