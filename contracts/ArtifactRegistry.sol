@@ -329,7 +329,7 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     // setTotalSalesOfTokenIDs(_seasonID);
     uint largestAmount = getLargestAmountOfTokensSoldInSeason(_seasonID);
 
-    uint[] memory IDs = getAmountToTokenIDsOfSeason(1, largestAmount);
+    uint[] memory IDs = getAmountToTokenIDsOfSeason(_seasonID, largestAmount);
     for (uint i = 0; i < IDs.length; i++) {
       seasons[_seasonID].topSubmissions.push(IDs[i]);
     }
