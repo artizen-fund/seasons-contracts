@@ -410,6 +410,14 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     return largest;
   }
 
+  function getAmountToTokenIDsOfSeason(
+    uint seasonID,
+    uint amount
+  ) internal view returns (uint[] memory) {
+    if (seasonID > seasonCount) revert SeasonDoesntExist();
+    return amountToTokenIDsOfSeason[seasonID][amount];
+  }
+
   // --------------------------------------------------------------
   // VIEW FUNCTIONS
   // --------------------------------------------------------------
@@ -494,14 +502,6 @@ contract ArtifactRegistry is ERC1155Upgradeable, OwnableUpgradeable {
     assembly {
       price := sload(tokenPrice.slot)
     }
-  }
-
-  function getAmountToTokenIDsOfSeason(
-    uint seasonID,
-    uint amount
-  ) public view returns (uint[] memory) {
-    if (seasonID > seasonCount) revert SeasonDoesntExist();
-    return amountToTokenIDsOfSeason[seasonID][amount];
   }
 
   function getTopSubmissionsOfSeason(
