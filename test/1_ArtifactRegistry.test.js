@@ -267,27 +267,27 @@ describe("Artifact Registry Tests", function () {
         })
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
     });
-    it("sets correct tokenURI for each token", async () => {
+    it.only("sets correct tokenURI for each token", async () => {
       //TODO
-      // await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      // await RegistryInstance.connect(owner).createSubmission(
-      //   1,
-      //   "",
-      //   buyer1Address
-      // );
-      // await RegistryInstance.connect(owner).createSubmission(
-      //   1,
-      //   "blabla",
-      //   buyer1Address
-      // );
-      // await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
-      //   value: ethers.utils.parseEther("100"),
-      // });
-      // await RegistryInstance.connect(buyer2).mintArtifact(125, [2], {
-      //   value: ethers.utils.parseEther("100"),
-      // });
-      // expect(await RegistryInstance.uri(124)).to.be.equal("");
-      // expect(await RegistryInstance.uri(125)).to.be.equal("blabla");
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "blabla",
+        buyer1Address
+      );
+      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+        value: ethers.utils.parseEther("600"),
+      });
+      await RegistryInstance.connect(buyer2).mintArtifact(125, [2], {
+        value: ethers.utils.parseEther("600"),
+      });
+      expect(await RegistryInstance.uri(124)).to.be.equal("");
+      expect(await RegistryInstance.uri(125)).to.be.equal("blabla");
     });
     it("splits token price correctly", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
@@ -582,7 +582,7 @@ describe("Artifact Registry Tests", function () {
       );
     });
     it.only("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
-      // TODO
+      // TODO - this test should be passing
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
 
