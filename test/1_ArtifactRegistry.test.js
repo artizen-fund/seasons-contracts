@@ -116,7 +116,7 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.connect(buyer1).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
-    it.only("reverts if submission doesn't exist", async () => {
+    it("getSubmission reverts if submission doesn't exist", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(
         1,
@@ -130,9 +130,6 @@ describe("Artifact Registry Tests", function () {
     });
   });
 
-  it("emits event correctly", async () => {
-    //TODO
-  });
   describe("createSeason function", function () {
     it("registers submission details properly", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
@@ -169,8 +166,11 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.connect(buyer1).createSeason(startTime, endTime)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
-    it("emits event correctly", async () => {
-      //TODO
+    it.only("getSeason reverts if season doesn't exist", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await expect(RegistryInstance.getSeason(2)).to.be.revertedWith(
+        "SeasonDoesntExist()"
+      );
     });
   });
   describe("closeSeason function", function () {
