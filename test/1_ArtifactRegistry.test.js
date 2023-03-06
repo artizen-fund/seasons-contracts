@@ -614,6 +614,13 @@ describe("Artifact Registry Tests", function () {
       const winners = await RegistryInstance.getSeason(1);
       console.log(winners.toString());
     });
+    it.only("getTopSubmissionsOfSeason reverts if season doesn't exist", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+
+      await expect(
+        RegistryInstance.getTopSubmissionsOfSeason(2)
+      ).to.be.revertedWith("SeasonDoesntExist()");
+    });
     it("getAmountToTokenIDsOfSeason returns an array of tokenIDs", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
 
