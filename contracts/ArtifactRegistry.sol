@@ -252,7 +252,7 @@ contract ArtifactRegistry is
     uint amountSold = amount[0];
     uint[] storage tokenIDsToMint = submissions[submissionID].tokenID;
     uint tokenIDToMint = tokenIDsToMint[0];
-    if (msg.value != tokenPrice * amountToMint) revert IncorrectAmount("");
+    if (msg.value != tokenPrice * amountSold) revert IncorrectAmount("");
     uint seasonOfSubmission = submissions[submissionID].season;
     if (seasons[seasonOfSubmission].isClosed)
       revert SeasonAlreadyClosed(seasonOfSubmission);

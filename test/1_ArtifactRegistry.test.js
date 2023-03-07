@@ -396,18 +396,23 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer2Address
       );
+
       await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
-        value: ethers.utils.parseEther("600"),
+        value: ethers.utils.parseEther("200"),
       });
+      console.log("?");
 
       await RegistryInstance.connect(buyer1).mintArtifact(125, [3], {
-        value: ethers.utils.parseEther("900"),
-      });
-
-      await RegistryInstance.connect(buyer3).mintArtifact(126, [1], {
         value: ethers.utils.parseEther("300"),
       });
 
+      console.log("?");
+
+      await RegistryInstance.connect(buyer3).mintArtifact(126, [1], {
+        value: ethers.utils.parseEther("100"),
+      });
+
+      console.log("?");
       await RegistryInstance.setAmountOfTokensBoughtInSeason(1);
       expect(
         await RegistryInstance.getLargestAmountOfTokensBoughtInSeason(1)
