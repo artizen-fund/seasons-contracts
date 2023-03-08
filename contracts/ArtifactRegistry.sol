@@ -37,7 +37,6 @@ contract ArtifactRegistry is
   uint public latestTokenID;
 
   uint[] amountsBoughtPerAddress;
-  uint[] toptokenIDs;
   uint[] totalSalesOfTokenIDs;
 
   // TODO rename it to Submission
@@ -269,7 +268,7 @@ contract ArtifactRegistry is
     totalAmountOfTokensSold[tokenIDToMint] += amountSold;
 
     // TODO double check this
-    amountOfTokenBoughtPerAddress[tokenIDToMint][amountToMint] = msg.sender;
+    amountOfTokenBoughtPerAddress[tokenIDToMint][amountSold] = msg.sender;
 
     amountToTokenIDsOfSeason[submissions[submissionID].season][amountSold].push(
       tokenIDToMint
@@ -278,13 +277,12 @@ contract ArtifactRegistry is
     // register top buyer
     if (
       // amounts purchased per address
-      topAmontOfTokenSold[tokenIDToMint] < amountToMint
+      topAmontOfTokenSold[tokenIDToMint] < amountSold
     ) {
       artifactTopBuyer[tokenIDToMint] = msg.sender;
-      topAmontOfTokenSold[tokenIDToMint] = amountToMint;
+      topAmontOfTokenSold[tokenIDToMint] = amountSold;
     }
 
-    // TODO this need to be overriden into tokenID per uri like in 721
     _setURI(tokenIDToMint, submissions[submissionID].tokenURI);
 
     if (amountToMint == 1) {
@@ -307,24 +305,27 @@ contract ArtifactRegistry is
     emit ArtifactMinted(msg.sender, tokenIDToMint, amountToMint);
   }
 
-  // function getTopBuyersOfSeason(
-  //   uint _seasonID
-  // ) public returns (address[] memory) {
-  //   uint largestAmount = getLargestAmountOfTokensBoughtInSeason(_seasonID);
+  function calculateTopBuyerOfSeason(uint seasonID) public onlyOwner {
+    setAmountOfTokensBoughtInSeason(seasonID);
+    settopBuyersOfSeason(seasonID);
+  }
 
-  //   uint[] memory topTokenIDs = amountToTokenIDsOfSeason[_seasonID][
-  //     largestAmount
-  //   ];
+  address[] topBuyerArray;
 
-  //   for (uint i = 0; i < topTokenIDs.length; i++) {
-  //     address buyers = amountOfTokenBoughtPerAddress[largestAmount][
-  //       topTokenIDs[i]
-  //     ];
+  // step 3. - top buyer ( includes step 2)
+  function settopBuyersOfSeason(uint _seasonID) public onlyOwner {
+    uint largestAmount = getLargestAmountOfTokensBoughtInSeason(_seasonID);
 
-  //     seasons[_seasonID].topBuyers.push(buyers);
-  //   }
-  //   return seasons[_seasonID].topBuyers;
-  // }
+    uint[] memory IDs = getAmountToTokenIDsOfSeason(_seasonID, largestAmount);
+
+    for (uint i = 0; i < IDs.length; i++) {
+      address buyer = getAddressOfAmountBoughtPerToken(IDs[i], largestAmount);
+      topBuyerArray.push(buyer);
+      // for (uint i = 0; i < topBuyerArray.length; i++) {
+      //   seasons[_seasonID].topBuyers.push(topBuyerArray[i]);
+      // }
+    }
+  }
 
   function calculateTopSubmissionsOfSeason(uint _seasonID) public onlyOwner {
     if (_seasonID > seasonCount) revert SeasonDoesntExist();
@@ -333,7 +334,6 @@ contract ArtifactRegistry is
   }
 
   function setTopSubmissionsOfSeason(uint _seasonID) public onlyOwner {
-    // setTotalSalesOfTokenIDs(_seasonID);
     uint largestAmount = getLargestAmountOfTokensSoldInSeason(_seasonID);
 
     uint[] memory IDs = getAmountToTokenIDsOfSeason(_seasonID, largestAmount);
@@ -361,6 +361,7 @@ contract ArtifactRegistry is
     artistAddress.transfer(splitArtist);
   }
 
+  // step 1.
   function setAmountOfTokensBoughtInSeason(uint _season) public returns (uint) {
     uint[] memory tokenIDs = seasons[_season].tokenIDs;
 
@@ -377,6 +378,7 @@ contract ArtifactRegistry is
     }
   }
 
+  // step 2.
   function getLargestAmountOfTokensBoughtInSeason(
     uint season
   ) public view returns (uint) {
@@ -516,6 +518,13 @@ contract ArtifactRegistry is
   ) public view returns (uint[] memory) {
     if (seasonID > seasonCount) revert SeasonDoesntExist();
     return seasons[seasonID].topSubmissions;
+  }
+
+  function getTopBuyersOfSeason(
+    uint seasonID
+  ) public view returns (address[] memory) {
+    if (seasonID > seasonCount) revert SeasonDoesntExist();
+    return seasons[seasonID].topBuyers;
   }
 
   function uri(
