@@ -121,15 +121,31 @@ describe("Artifact Registry Tests", function () {
         "SubmissionDoesntExist()"
       );
     });
-    it.only("revert's if season ended", async () => {
+    it("revert's if season ended", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
 
       await fastForward(endTime + 100000);
       await expect(
         RegistryInstance.connect(owner).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("NoMoreSubmissionsToThisSeason(1)");
     });
-    it("revert's if season is closed", async () => {});
+    it.only("revert's if season is closed", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+      await RegistryInstance.connect(owner).closeSeason(1);
+      await expect(
+        RegistryInstance.connect(owner).createSubmission(1, "", buyer1Address)
+      ).to.be.revertedWith("SeasonAlreadyClosed(1)");
+    });
   });
 
   describe("createSeason function", function () {
