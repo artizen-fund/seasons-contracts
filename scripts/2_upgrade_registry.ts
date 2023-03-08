@@ -42,12 +42,11 @@ async function main() {
   //   // set logic here
   // }
 
-  const ARTIZEN_ARTIFACTS_PROXY_ADDRESS =
-    "0x10d7A01618625C8eA1B11f50e55A2C25235E3c19";
+  const ARTIFACTS_REGISTRY_PROXY_ADDRESS = "";
 
   const nftContract = await upgrade(
-    "ArtizenArtifacts",
-    ARTIZEN_ARTIFACTS_PROXY_ADDRESS,
+    "ArtifactRegistry",
+    ARTIFACTS_REGISTRY_PROXY_ADDRESS,
     [],
     {
       timeout: 1800000, // ms = 1800 sec = 30 minutes
