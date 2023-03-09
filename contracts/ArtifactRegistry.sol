@@ -51,7 +51,6 @@ contract ArtifactRegistry is
     uint[] submissionIDs;
     uint[] tokenIDs;
     uint[] topSubmissions;
-    address topBuyers;
     uint startTime;
     uint endTime;
     uint lastTokenIDOfSeason;
