@@ -81,9 +81,6 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.connect(owner).mintArtifact(124, [5])
       ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
     });
-    it("emits event correctly", async () => {
-      //TODO
-    });
   });
   describe("createSubmission function", function () {
     it("registers submission details properly ", async () => {
@@ -216,11 +213,33 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.connect(buyer1).closeSeason(1)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
-    it("emits event correctly", async () => {
-      //TODO
-    });
-    it("transfers protocol fees to artizen wallet", async () => {
-      //TODO
+    it.only("transfers protocol fees to protocol wallet", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+
+      await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+        value: ethers.utils.parseEther("200"),
+      });
+
+      await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+        value: ethers.utils.parseEther("200"),
+      });
+      const ownerBalBefore = await owner.getBalance();
+      console.log(ownerBalBefore.toString());
+      await RegistryInstance.connect(owner).closeSeason(1);
+
+      const ownerBalAfter = await owner.getBalance();
+      console.log(ownerBalAfter.toString());
     });
   });
   describe("mintArtifact function", function () {
