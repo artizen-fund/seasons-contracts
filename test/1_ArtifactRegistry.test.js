@@ -134,7 +134,7 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.connect(owner).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("NoMoreSubmissionsToThisSeason(1)");
     });
-    it.only("revert's if season is closed", async () => {
+    it("revert's if season is closed", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(
         1,
@@ -445,7 +445,10 @@ describe("Artifact Registry Tests", function () {
     });
     it.only("getTopBuyerOfSeason returns top buyer of season correctly", async () => {
       // TODO
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      const hmm = await RegistryInstance.connect(owner).createSeason(
+        startTime,
+        endTime
+      );
       await RegistryInstance.connect(owner).createSubmission(
         1,
         "",
@@ -473,15 +476,26 @@ describe("Artifact Registry Tests", function () {
         value: ethers.utils.parseEther("100"),
       });
 
-      await RegistryInstance.connect(owner).calculateTopBuyerOfSeason(1);
+      await RegistryInstance.connect(owner).setAmountOfTokensBoughtInSeason(1);
+      const what = await RegistryInstance.connect(owner).setTopBuyersOfSeason(
+        1
+      );
 
+      const tokenID = await RegistryInstance.getAmountToTokenIDsOfSeason(3, 1);
+
+      console.log("yo", tokenID.toString());
       const season = await RegistryInstance.getSeason(1);
-      const array = await RegistryInstance.getTopBuyerArray();
-      console.log(array.toString());
-      // expect(await RegistryInstance.getTopBuyersOfSeason(1)).to.equal([
-      //   buyer1Address,
-      //   buyer1Address,
-      // ]);
+      const address = await RegistryInstance.getAddressOfAmountBoughtPerToken(
+        125,
+        3
+      );
+
+      console.log(season.toString());
+      console.log(address.toString());
+      expect(await RegistryInstance.getTopBuyersOfSeason(1)).to.equal([
+        buyer1Address,
+        buyer1Address,
+      ]);
     });
   });
   describe("Events", function () {
@@ -719,7 +733,7 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.getTopSubmissionsOfSeason(2)
       ).to.be.revertedWith("SeasonDoesntExist()");
     });
-    it("getAmountToTokenIDsOfSeason returns an array of tokenIDs", async () => {
+    it.only("getAmountToTokenIDsOfSeason returns an array of tokenIDs", async () => {
       // ** This is an internal function **
       // await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       // await RegistryInstance.connect(owner).createSubmission(
@@ -733,10 +747,10 @@ describe("Artifact Registry Tests", function () {
       //   buyer2Address
       // );
       // await RegistryInstance.connect(buyer2).mintArtifact(124, [4], {
-      //   value: ethers.utils.parseEther("1200"),
+      //   value: ethers.utils.parseEther("400"),
       // });
       // await RegistryInstance.connect(buyer2).mintArtifact(125, [4], {
-      //   value: ethers.utils.parseEther("1200"),
+      //   value: ethers.utils.parseEther("400"),
       // });
       // expect(await RegistryInstance.getAmountToTokenIDsOfSeason(1, 4)).to.equal(
       //   [124, 125]

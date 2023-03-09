@@ -50,8 +50,8 @@ contract ArtifactRegistry is
   struct Season {
     uint[] submissionIDs;
     uint[] tokenIDs;
-    address[] topBuyers;
     uint[] topSubmissions;
+    address topBuyers;
     uint startTime;
     uint endTime;
     uint lastTokenIDOfSeason;
@@ -72,8 +72,8 @@ contract ArtifactRegistry is
   // address => season => amount
   mapping(address => mapping(uint => uint)) totalTokensPurchasedPerAddressPerSeason;
   // tokenID => amount => user
-  mapping(uint => mapping(uint => address)) amountOfTokenBoughtPerAddress;
-  // amount => season => tokenIDs
+  // mapping(uint => mapping(uint => address)) amountOfTokenBoughtPerAddress;
+  // season => amount => tokenIDs
   mapping(uint => mapping(uint => uint[])) amountToTokenIDsOfSeason;
 
   // --------------------------------------------------------------
@@ -266,8 +266,7 @@ contract ArtifactRegistry is
 
     totalAmountOfTokensSold[tokenIDToMint] += amountSold;
 
-    // TODO double check this
-    amountOfTokenBoughtPerAddress[tokenIDToMint][amountSold] = msg.sender;
+    // amountOfTokenBoughtPerAddress[tokenIDToMint][amountSold] = msg.sender;
 
     amountToTokenIDsOfSeason[submissions[submissionID].season][amountSold].push(
       tokenIDToMint
@@ -304,27 +303,15 @@ contract ArtifactRegistry is
     emit ArtifactMinted(msg.sender, tokenIDToMint, amountToMint);
   }
 
-  function calculateTopBuyerOfSeason(uint seasonID) public onlyOwner {
-    setAmountOfTokensBoughtInSeason(seasonID);
-    settopBuyersOfSeason(seasonID);
-  }
-
-  address[] topBuyerArray;
+  // function calculateTopBuyerOfSeason(uint seasonID) public onlyOwner {
+  //   setAmountOfTokensBoughtInSeason(seasonID);
+  //   setTopBuyersOfSeason(seasonID);
+  // }
 
   // step 3. - top buyer ( includes step 2)
-  function settopBuyersOfSeason(uint _seasonID) public onlyOwner {
-    uint largestAmount = getLargestAmountOfTokensBoughtInSeason(_seasonID);
-
-    uint[] memory IDs = getAmountToTokenIDsOfSeason(_seasonID, largestAmount);
-
-    for (uint i = 0; i < IDs.length; i++) {
-      address buyer = getAddressOfAmountBoughtPerToken(IDs[i], largestAmount);
-      topBuyerArray.push(buyer);
-      // for (uint i = 0; i < topBuyerArray.length; i++) {
-      //   seasons[_seasonID].topBuyers.push(topBuyerArray[i]);
-      // }
-    }
-  }
+  // function setTopBuyersOfSeason(uint _seasonID) public returns (address) {
+  //   uint largestAmount = getLargestAmountOfTokensBoughtInSeason(_seasonID);
+  // }
 
   function calculateTopSubmissionsOfSeason(uint _seasonID) public onlyOwner {
     if (_seasonID > seasonCount) revert SeasonDoesntExist();
@@ -361,36 +348,36 @@ contract ArtifactRegistry is
   }
 
   // step 1.
-  function setAmountOfTokensBoughtInSeason(uint _season) public returns (uint) {
-    uint[] memory tokenIDs = seasons[_season].tokenIDs;
+  // function setAmountOfTokensBoughtInSeason(uint _season) public returns (uint) {
+  //   uint[] memory tokenIDs = seasons[_season].tokenIDs;
 
-    for (uint i = 0; i < tokenIDs.length; i++) {
-      // get top buyer per artifact
-      address topBuyers = getTopBuyerPerArtifact(tokenIDs[i]);
-      // get full amount of tokens bought during the season
-      uint amoutBought = getTotalTokensPurchasedPerAddressInSeason(
-        topBuyers,
-        _season
-      );
+  //   for (uint i = 0; i < tokenIDs.length; i++) {
+  //     // get top buyer per artifact
+  //     address topBuyers = getTopBuyerPerArtifact(tokenIDs[i]);
+  //     // get full amount of tokens bought during the season
+  //     uint amoutBought = getTotalTokensPurchasedPerAddressInSeason(
+  //       topBuyers,
+  //       _season
+  //     );
 
-      amountsBoughtPerAddress.push(amoutBought);
-    }
-  }
+  //     amountsBoughtPerAddress.push(amoutBought);
+  //   }
+  // }
 
-  // step 2.
-  function getLargestAmountOfTokensBoughtInSeason(
-    uint season
-  ) public view returns (uint) {
-    uint256 largest = 0;
-    for (uint i = 0; i < amountsBoughtPerAddress.length; i++) {
-      if (amountsBoughtPerAddress[i] > largest) {
-        largest = amountsBoughtPerAddress[i];
-      }
-    }
-    return largest;
-  }
+  // // step 2. - top buyer
+  // function getLargestAmountOfTokensPurchasedInSeason(
+  //   uint season
+  // ) public view returns (uint) {
+  //   uint256 largest = 0;
+  //   for (uint i = 0; i < amountsBoughtPerAddress.length; i++) {
+  //     if (amountsBoughtPerAddress[i] > largest) {
+  //       largest = amountsBoughtPerAddress[i];
+  //     }
+  //   }
+  //   return largest;
+  // }
 
-  // Step 1 - creating array of all number of sales per token per season
+  // Step 1 TOP submission - creating array of all number of sales per token per season
   function setTotalSalesOfTokenIDs(uint _season) internal {
     uint[] memory submissionIDs = seasons[_season].submissionIDs;
 
@@ -421,7 +408,7 @@ contract ArtifactRegistry is
   function getAmountToTokenIDsOfSeason(
     uint seasonID,
     uint amount
-  ) internal view returns (uint[] memory) {
+  ) public view returns (uint[] memory) {
     if (seasonID > seasonCount) revert SeasonDoesntExist();
     return amountToTokenIDsOfSeason[seasonID][amount];
   }
@@ -481,12 +468,12 @@ contract ArtifactRegistry is
     return totalTokensPurchasedPerAddressPerSeason[buyer][seasonID];
   }
 
-  function getAddressOfAmountBoughtPerToken(
-    uint tokenID,
-    uint amount
-  ) public view returns (address) {
-    return amountOfTokenBoughtPerAddress[tokenID][amount];
-  }
+  // function getAddressOfAmountBoughtPerToken(
+  //   uint tokenID,
+  //   uint amount
+  // ) public view returns (address) {
+  //   return amountOfTokenBoughtPerAddress[tokenID][amount];
+  // }
 
   function getProtocolWalletAddress() public view returns (address wallet) {
     assembly {
@@ -517,13 +504,6 @@ contract ArtifactRegistry is
   ) public view returns (uint[] memory) {
     if (seasonID > seasonCount) revert SeasonDoesntExist();
     return seasons[seasonID].topSubmissions;
-  }
-
-  function getTopBuyersOfSeason(
-    uint seasonID
-  ) public view returns (address[] memory) {
-    if (seasonID > seasonCount) revert SeasonDoesntExist();
-    return seasons[seasonID].topBuyers;
   }
 
   function uri(
