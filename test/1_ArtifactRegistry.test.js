@@ -287,6 +287,21 @@ describe("Artifact Registry Tests", function () {
       expect(await RegistryInstance.balanceOf(buyer2Address, 124)).to.equal(2);
       expect(await RegistryInstance.balanceOf(ownerAddress, 124)).to.equal(2);
     });
+    it.only("minting one token mints tokens correctly", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+      await RegistryInstance.connect(buyer1).mintArtifact(124, [1], {
+        value: ethers.utils.parseEther("100"),
+      });
+
+      expect(await RegistryInstance.balanceOf(buyer1Address, 124)).to.equal(1);
+      expect(await RegistryInstance.balanceOf(buyer2Address, 124)).to.equal(1);
+      expect(await RegistryInstance.balanceOf(ownerAddress, 124)).to.equal(1);
+    });
 
     it("users cant mint if a season is closed", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
