@@ -353,6 +353,19 @@ describe("Artifact Registry Tests", function () {
       //   ethers.utils.parseEther("1000300")
       // );
     });
+    it.only("reverts it wrong submission id is given", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+      await expect(
+        RegistryInstance.connect(buyer1).mintArtifact(125, [2], {
+          value: ethers.utils.parseEther("200"),
+        })
+      ).to.be.revertedWith("SubmissionDoesntExist()");
+    });
     it("buyer receives correct amount and tokenIDs of NFTs after purchase", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(

@@ -4,7 +4,7 @@ require("hardhat-gas-reporter");
 require("@nomiclabs/hardhat-etherscan");
 require("solidity-coverage");
 require("@openzeppelin/hardhat-upgrades");
-
+require("solidity-coverage");
 require("dotenv").config();
 
 task("accounts", "Prints the list of accounts", async () => {
