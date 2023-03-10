@@ -450,99 +450,6 @@ describe("Artifact Registry Tests", function () {
         "SeasonDoesntExist()"
       );
     });
-    // it("getLargestAmountOfTokensBoughtInSeason returns largest amount bought per buyer in season", async () => {
-    //   await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-    //   await RegistryInstance.connect(owner).createSubmission(
-    //     1,
-    //     "",
-    //     buyer2Address
-    //   );
-    //   await RegistryInstance.connect(owner).createSubmission(
-    //     1,
-    //     "",
-    //     buyer2Address
-    //   );
-    //   await RegistryInstance.connect(owner).createSubmission(
-    //     1,
-    //     "",
-    //     buyer2Address
-    //   );
-
-    //   await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
-    //     value: ethers.utils.parseEther("200"),
-    //   });
-    //   console.log("?");
-
-    //   await RegistryInstance.connect(buyer1).mintArtifact(125, [3], {
-    //     value: ethers.utils.parseEther("300"),
-    //   });
-
-    //   console.log("?");
-
-    //   await RegistryInstance.connect(buyer3).mintArtifact(126, [1], {
-    //     value: ethers.utils.parseEther("100"),
-    //   });
-
-    //   console.log("?");
-    //   await RegistryInstance.setAmountOfTokensBoughtInSeason(1);
-    //   expect(
-    //     await RegistryInstance.getLargestAmountOfTokensBoughtInSeason(1)
-    //   ).to.equal(5);
-    // });
-    //   it.only("getTopBuyerOfSeason returns top buyer of season correctly", async () => {
-    //     // TODO
-    //     const hmm = await RegistryInstance.connect(owner).createSeason(
-    //       startTime,
-    //       endTime
-    //     );
-    //     await RegistryInstance.connect(owner).createSubmission(
-    //       1,
-    //       "",
-    //       buyer2Address
-    //     );
-    //     await RegistryInstance.connect(owner).createSubmission(
-    //       1,
-    //       "",
-    //       buyer2Address
-    //     );
-    //     await RegistryInstance.connect(owner).createSubmission(
-    //       1,
-    //       "",
-    //       buyer2Address
-    //     );
-    //     await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
-    //       value: ethers.utils.parseEther("200"),
-    //     });
-
-    //     await RegistryInstance.connect(buyer1).mintArtifact(125, [3], {
-    //       value: ethers.utils.parseEther("300"),
-    //     });
-
-    //     await RegistryInstance.connect(buyer3).mintArtifact(126, [1], {
-    //       value: ethers.utils.parseEther("100"),
-    //     });
-
-    //     await RegistryInstance.connect(owner).setAmountOfTokensBoughtInSeason(1);
-    //     const what = await RegistryInstance.connect(owner).setTopBuyersOfSeason(
-    //       1
-    //     );
-
-    //     const tokenID = await RegistryInstance.getAmountToTokenIDsOfSeason(3, 1);
-
-    //     console.log("yo", tokenID.toString());
-    //     const season = await RegistryInstance.getSeason(1);
-    //     const address = await RegistryInstance.getAddressOfAmountBoughtPerToken(
-    //       125,
-    //       3
-    //     );
-
-    //     console.log(season.toString());
-    //     console.log(address.toString());
-    //     expect(await RegistryInstance.getTopBuyersOfSeason(1)).to.equal([
-    //       buyer1Address,
-    //       buyer1Address,
-    //     ]);
-    //   });
   });
   describe("Events", function () {
     it("emits seasonCreated event correctly", async () => {
@@ -779,7 +686,7 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.getTopSubmissionsOfSeason(2)
       ).to.be.revertedWith("SeasonDoesntExist()");
     });
-    it.only("getTotalTokensPurchasedPerAddressInSeason returns the total amount of tokens purchased by an address in a season", async () => {
+    it("getTotalTokensPurchasedPerAddressInSeason returns the total amount of tokens purchased by an address in a season", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
 
