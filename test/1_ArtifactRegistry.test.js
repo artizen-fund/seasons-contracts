@@ -213,7 +213,7 @@ describe("Artifact Registry Tests", function () {
         RegistryInstance.connect(buyer1).closeSeason(1)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
-    it.only("transfers protocol fees to protocol wallet", async () => {
+    it("transfers protocol fees to protocol wallet", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(
         1,
@@ -287,7 +287,7 @@ describe("Artifact Registry Tests", function () {
       expect(await RegistryInstance.balanceOf(buyer2Address, 124)).to.equal(2);
       expect(await RegistryInstance.balanceOf(ownerAddress, 124)).to.equal(2);
     });
-    it.only("minting one token mints tokens correctly", async () => {
+    it("minting one token mints tokens correctly", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(
         1,
@@ -368,7 +368,7 @@ describe("Artifact Registry Tests", function () {
       //   ethers.utils.parseEther("1000300")
       // );
     });
-    it.only("reverts it wrong submission id is given", async () => {
+    it("reverts it wrong submission id is given", async () => {
       await RegistryInstance.connect(owner).createSeason(startTime, endTime);
       await RegistryInstance.connect(owner).createSubmission(
         1,
@@ -760,9 +760,9 @@ describe("Artifact Registry Tests", function () {
       await RegistryInstance.connect(owner).calculateTopSubmissionsOfSeason(1);
 
       await RegistryInstance.connect(owner).calculateTopSubmissionsOfSeason(2);
-      // expect(
-      //   await RegistryInstance.connect(owner).getTopSubmissionsOfSeason(1)
-      // ).to.equal([BigNumber.from("124"), BigNumber.from("125")]);
+      expect(
+        await RegistryInstance.connect(owner).getTopSubmissionsOfSeason(1)
+      ).to.equal([BigNumber.from("124"), BigNumber.from("125")]);
       const seasonTwo = await RegistryInstance.getSeason(2);
       console.log(seasonTwo.toString());
       expect(
@@ -778,6 +778,72 @@ describe("Artifact Registry Tests", function () {
       await expect(
         RegistryInstance.getTopSubmissionsOfSeason(2)
       ).to.be.revertedWith("SeasonDoesntExist()");
+    });
+    it.only("getTotalTokensPurchasedPerAddressInSeason returns the total amount of tokens purchased by an address in a season", async () => {
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
+
+      await RegistryInstance.connect(buyer2).mintArtifact(127, [4], {
+        value: ethers.utils.parseEther("400"),
+      });
+
+      await RegistryInstance.connect(buyer2).mintArtifact(128, [3], {
+        value: ethers.utils.parseEther("300"),
+      });
+      await RegistryInstance.connect(buyer2).mintArtifact(124, [4], {
+        value: ethers.utils.parseEther("400"),
+      });
+
+      await RegistryInstance.connect(buyer2).mintArtifact(125, [4], {
+        value: ethers.utils.parseEther("400"),
+      });
+
+      await RegistryInstance.connect(buyer2).mintArtifact(126, [2], {
+        value: ethers.utils.parseEther("200"),
+      });
+
+      expect(
+        await RegistryInstance.getTotalTokensPurchasedPerAddressInSeason(
+          buyer2Address,
+          1
+        )
+      ).to.equal(10);
+      expect(
+        await RegistryInstance.getTotalTokensPurchasedPerAddressInSeason(
+          buyer2Address,
+          2
+        )
+      ).to.equal(7);
     });
     it("getAmountToTokenIDsOfSeason returns an array of tokenIDs", async () => {
       // ** This is an internal function **
