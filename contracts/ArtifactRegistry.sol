@@ -5,17 +5,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155URIStorageUpgradeable.sol";
 
-/* * Contract requirements *
-- Minting 3 times of the amount of NFTs 
-- Fee split on buy
-- TokenID is associated with a Submission
-- Start minting from tokenID 123
-- Specify mint price
-- Minting opened/closed from tokenID to tokenID => closeSeason
-- Top Submission of the season calculation
-- Add season struct record timestamps, try to close season by timestamp
-*/
-
 contract ArtifactRegistry is
   ERC1155Upgradeable,
   OwnableUpgradeable,
