@@ -42,7 +42,8 @@ async function main() {
   //   // set logic here
   // }
 
-  const ARTIFACTS_REGISTRY_PROXY_ADDRESS = "";
+  const ARTIFACTS_REGISTRY_PROXY_ADDRESS =
+    "0x1704555dcA40a23Ec58993AebDBbB99583152940";
 
   const nftContract = await upgrade(
     "ArtifactRegistry",

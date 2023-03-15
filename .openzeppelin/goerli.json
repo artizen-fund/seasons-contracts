@@ -9,6 +9,11 @@
       "address": "0x1704555dcA40a23Ec58993AebDBbB99583152940",
       "txHash": "0xc94871947a1ad0b47b714a2916619099b7717bc58e6f8a1b6d375d885b98b84b",
       "kind": "transparent"
+    },
+    {
+      "address": "0x156d57cFcd0324d8341E7213F67b1558A4aF6130",
+      "txHash": "0xad1bb395b387bab4ae261afa93ecb12e9e395187834c23255ade5d39e7659494",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -438,6 +443,444 @@
               }
             ],
             "numberOfBytes": "256"
+          },
+          "t_struct(Submission)3306_storage": {
+            "label": "struct ArtifactRegistry.Submission",
+            "members": [
+              {
+                "label": "tokenID",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "season",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "tokenURI",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "SubmissionOwner",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "85dc0c3376e614bca8317fd5d5786e2e4b3636898f86c71bcfac77c8d8f03ce1": {
+      "address": "0x6C8Dbb68d006cC50BA0053283C0584ac8648B4d9",
+      "txHash": "0xfb46a1275ce80de63c2ed087fc9fbb5e360fdfa388452b80ef4d8c9b706edc2e",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_balances",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:25"
+          },
+          {
+            "label": "_operatorApprovals",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:28"
+          },
+          {
+            "label": "_uri",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:31"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_array(t_uint256)47_storage",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:528"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "_baseURI",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_string_storage",
+            "contract": "ERC1155URIStorageUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155URIStorageUpgradeable.sol:27"
+          },
+          {
+            "label": "_tokenURIs",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_mapping(t_uint256,t_string_storage)",
+            "contract": "ERC1155URIStorageUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155URIStorageUpgradeable.sol:30"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_array(t_uint256)48_storage",
+            "contract": "ERC1155URIStorageUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155URIStorageUpgradeable.sol:77"
+          },
+          {
+            "label": "startTokenID",
+            "offset": 0,
+            "slot": "251",
+            "type": "t_uint256",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:17"
+          },
+          {
+            "label": "submissionCount",
+            "offset": 0,
+            "slot": "252",
+            "type": "t_uint256",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:18"
+          },
+          {
+            "label": "seasonCount",
+            "offset": 0,
+            "slot": "253",
+            "type": "t_uint256",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:19"
+          },
+          {
+            "label": "protocolWallet",
+            "offset": 0,
+            "slot": "254",
+            "type": "t_address_payable",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:20"
+          },
+          {
+            "label": "treasuryWallet",
+            "offset": 0,
+            "slot": "255",
+            "type": "t_address_payable",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:21"
+          },
+          {
+            "label": "treasurySplitPercentage",
+            "offset": 0,
+            "slot": "256",
+            "type": "t_uint256",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:22"
+          },
+          {
+            "label": "artistFeePercentage",
+            "offset": 0,
+            "slot": "257",
+            "type": "t_uint256",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:23"
+          },
+          {
+            "label": "tokenPrice",
+            "offset": 0,
+            "slot": "258",
+            "type": "t_uint256",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:24"
+          },
+          {
+            "label": "isShutdown",
+            "offset": 0,
+            "slot": "259",
+            "type": "t_bool",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:25"
+          },
+          {
+            "label": "latestTokenID",
+            "offset": 0,
+            "slot": "260",
+            "type": "t_uint256",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:26"
+          },
+          {
+            "label": "amountsBoughtPerAddress",
+            "offset": 0,
+            "slot": "261",
+            "type": "t_array(t_uint256)dyn_storage",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:28"
+          },
+          {
+            "label": "totalSalesOfTokenIDs",
+            "offset": 0,
+            "slot": "262",
+            "type": "t_array(t_uint256)dyn_storage",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:29"
+          },
+          {
+            "label": "seasons",
+            "offset": 0,
+            "slot": "263",
+            "type": "t_mapping(t_uint256,t_struct(Season)3324_storage)",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:49"
+          },
+          {
+            "label": "submissions",
+            "offset": 0,
+            "slot": "264",
+            "type": "t_mapping(t_uint256,t_struct(Submission)3306_storage)",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:51"
+          },
+          {
+            "label": "artifactTopBuyer",
+            "offset": 0,
+            "slot": "265",
+            "type": "t_mapping(t_uint256,t_address)",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:53"
+          },
+          {
+            "label": "topAmontOfTokenSold",
+            "offset": 0,
+            "slot": "266",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:56"
+          },
+          {
+            "label": "totalAmountOfTokensSold",
+            "offset": 0,
+            "slot": "267",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:58"
+          },
+          {
+            "label": "totalTokensPurchasedPerAddressPerSeason",
+            "offset": 0,
+            "slot": "268",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:61"
+          },
+          {
+            "label": "amountToTokenIDsOfSeason",
+            "offset": 0,
+            "slot": "269",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_array(t_uint256)dyn_storage))",
+            "contract": "ArtifactRegistry",
+            "src": "contracts/ArtifactRegistry.sol:65"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)47_storage": {
+            "label": "uint256[47]",
+            "numberOfBytes": "1504"
+          },
+          "t_array(t_uint256)48_storage": {
+            "label": "uint256[48]",
+            "numberOfBytes": "1536"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(uint256 => uint256[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(uint256 => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_array(t_uint256)dyn_storage))": {
+            "label": "mapping(uint256 => mapping(uint256 => uint256[]))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_string_storage)": {
+            "label": "mapping(uint256 => string)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Season)3324_storage)": {
+            "label": "mapping(uint256 => struct ArtifactRegistry.Season)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Submission)3306_storage)": {
+            "label": "mapping(uint256 => struct ArtifactRegistry.Submission)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Season)3324_storage": {
+            "label": "struct ArtifactRegistry.Season",
+            "members": [
+              {
+                "label": "submissionIDs",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "tokenIDs",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "topSubmissions",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "startTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "endTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "lastTokenIDOfSeason",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "isClosed",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "6"
+              }
+            ],
+            "numberOfBytes": "224"
           },
           "t_struct(Submission)3306_storage": {
             "label": "struct ArtifactRegistry.Submission",
