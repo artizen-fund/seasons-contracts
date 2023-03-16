@@ -43,7 +43,7 @@ async function main() {
   //   // set logic here
   // }
 
-  const nftContract = await deploy("ArtifactRegistry", [], {
+  const nftContract = await deploy("Seasons", [], {
     timeout: 1800000, // ms = 1800 sec = 30 minutes
   });
 

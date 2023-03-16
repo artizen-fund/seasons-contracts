@@ -42,17 +42,11 @@ async function main() {
   //   // set logic here
   // }
 
-  const ARTIFACTS_REGISTRY_PROXY_ADDRESS =
-    "0x1704555dcA40a23Ec58993AebDBbB99583152940";
+  const SEASONS_PROXY_ADDRESS = "0x1704555dcA40a23Ec58993AebDBbB99583152940";
 
-  const nftContract = await upgrade(
-    "ArtifactRegistry",
-    ARTIFACTS_REGISTRY_PROXY_ADDRESS,
-    [],
-    {
-      timeout: 1800000, // ms = 1800 sec = 30 minutes
-    }
-  );
+  const nftContract = await upgrade("Seasons", SEASONS_PROXY_ADDRESS, [], {
+    timeout: 1800000, // ms = 1800 sec = 30 minutes
+  });
 
   // verification
   if (verifiableNetwork.includes(network)) await verify();
