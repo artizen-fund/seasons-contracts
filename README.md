@@ -45,5 +45,3 @@ This upgradable contract registers the Artizen Seasons and each submission (proj
 ### function withdrawProtocolFees
 
 - Transfers protocol fees to protocol wallet.
-
-### function
