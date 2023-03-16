@@ -3,8 +3,8 @@ const { ethers, upgrades } = require("hardhat");
 const { BigNumber } = require("ethers");
 const { fastForward, currentTime } = require("./utils");
 
-let RegistryContract;
-let RegistryInstance;
+let SeasonsContract;
+let SeasonsInstance;
 let owner, buyer1, buyer2, buyer3;
 let ownerAddress, buyer1Address, buyer2Address, buyer3Address;
 
@@ -16,23 +16,21 @@ describe("Artifact Registry Tests", function () {
     buyer2Address = await buyer2.getAddress();
     buyer3Address = await buyer3.getAddress();
 
-    RegistryContract = await ethers.getContractFactory("ArtifactRegistry");
-    RegistryInstance = await upgrades.deployProxy(RegistryContract, []);
+    SeasonsContract = await ethers.getContractFactory("Seasons");
+    SeasonsInstance = await upgrades.deployProxy(SeasonsContract, []);
 
     // set token price split percentages
-    await RegistryInstance.connect(owner).setTreasurySplitPercentage(10);
-    await RegistryInstance.connect(owner).setArtistFeePercentage(50);
+    await SeasonsInstance.connect(owner).setTreasurySplitPercentage(10);
+    await SeasonsInstance.connect(owner).setArtistFeePercentage(50);
 
     // set protocol and treasury wallet address
-    await RegistryInstance.connect(owner).setProtocolWalletAddress(
-      ownerAddress
-    );
+    await SeasonsInstance.connect(owner).setProtocolWalletAddress(ownerAddress);
 
-    await RegistryInstance.connect(owner).setTreasuryAddress(ownerAddress);
+    await SeasonsInstance.connect(owner).setTreasuryAddress(ownerAddress);
 
     // set token price
 
-    await RegistryInstance.connect(owner).setTokenPrice(
+    await SeasonsInstance.connect(owner).setTokenPrice(
       ethers.utils.parseEther("100")
     );
     startTime = await currentTime();
@@ -40,58 +38,63 @@ describe("Artifact Registry Tests", function () {
   });
   describe("Setter functions", function () {
     it("sets up protocol wallet address properly", async () => {
-      await RegistryInstance.connect(owner).setProtocolWalletAddress(
+      await SeasonsInstance.connect(owner).setProtocolWalletAddress(
         ownerAddress
       );
 
-      expect(await RegistryInstance.getprotocolWalletAddress()).to.equal(
+      expect(await SeasonsInstance.getprotocolWalletAddress()).to.equal(
         ownerAddress
       );
     });
     it("emits event correctly", async () => {});
     it("sets token price properly", async () => {
-      await RegistryInstance.connect(owner).setTokenPrice(BigNumber.from("1"));
+      await SeasonsInstance.connect(owner).setTokenPrice(BigNumber.from("1"));
 
-      expect(await RegistryInstance.getTokenPrice()).to.equal(
+      expect(await SeasonsInstance.getTokenPrice()).to.equal(
         BigNumber.from("1")
       );
     });
     it("emits event correctly", async () => {});
     it("sets sets artist fee  and treasury fee split percentage properly", async () => {
-      await RegistryInstance.connect(owner).setTreasurySplitPercentage(
+      await SeasonsInstance.connect(owner).setTreasurySplitPercentage(
         BigNumber.from("5")
       );
 
-      expect(await RegistryInstance.getTreasurySplitPercentage()).to.equal(
+      expect(await SeasonsInstance.getTreasurySplitPercentage()).to.equal(
         BigNumber.from("5")
       );
     });
 
     it("contract shuts down if shutdown is turned on", async () => {
-      await RegistryInstance.connect(owner).shutdown(true);
+      await SeasonsInstance.connect(owner).shutdown(true);
 
       await expect(
-        RegistryInstance.connect(owner).createSeason(startTime, endTime)
+        SeasonsInstance.connect(owner).createSeason(startTime, endTime)
       ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
       await expect(
-        RegistryInstance.connect(owner).createSubmission(1, "", buyer1Address)
+        SeasonsInstance.connect(owner).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("SeasonDoesntExist()");
 
       await expect(
-        RegistryInstance.connect(owner).mintArtifact(124, [5])
+        SeasonsInstance.connect(owner).mintArtifact(124, [5])
       ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
+    });
+    it.only("only owner can call shutdown", async () => {
+      await expect(
+        SeasonsInstance.connect(buyer1).shutdown(true)
+      ).to.be.revertedWith("Ownable: caller is not the owner");
     });
   });
   describe("createSubmission function", function () {
     it("registers submission details properly ", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      const submission = await RegistryInstance.getSubmission(
+      const submission = await SeasonsInstance.getSubmission(
         BigNumber.from(124)
       );
       console.log(submission.toString());
@@ -103,24 +106,24 @@ describe("Artifact Registry Tests", function () {
     });
     it("only owner can create submission", async () => {
       await expect(
-        RegistryInstance.connect(buyer1).createSubmission(1, "", buyer1Address)
+        SeasonsInstance.connect(buyer1).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
     it("getSubmission reverts if submission doesn't exist", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      await expect(RegistryInstance.getSubmission(125)).to.be.revertedWith(
+      await expect(SeasonsInstance.getSubmission(125)).to.be.revertedWith(
         "SubmissionDoesntExist()"
       );
     });
     it("revert's if season ended", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
@@ -128,38 +131,38 @@ describe("Artifact Registry Tests", function () {
 
       await fastForward(endTime + 100000);
       await expect(
-        RegistryInstance.connect(owner).createSubmission(1, "", buyer1Address)
+        SeasonsInstance.connect(owner).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("NoMoreSubmissionsToThisSeason(1)");
     });
     it("revert's if season is closed", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
-      await RegistryInstance.connect(owner).closeSeason(1);
+      await SeasonsInstance.connect(owner).closeSeason(1);
       await expect(
-        RegistryInstance.connect(owner).createSubmission(1, "", buyer1Address)
+        SeasonsInstance.connect(owner).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
     });
   });
 
   describe("createSeason function", function () {
     it("registers season details properly", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      const season = await RegistryInstance.getSeason(1);
+      const season = await SeasonsInstance.getSeason(1);
       console.log(season.toString());
       console.log(season[5].toString());
       expect(await season[0].toString()).to.equal("124,125");
@@ -172,71 +175,71 @@ describe("Artifact Registry Tests", function () {
     });
     it("reverts if incorrect times given", async () => {
       await expect(
-        RegistryInstance.connect(owner).createSeason(endTime, startTime)
+        SeasonsInstance.connect(owner).createSeason(endTime, startTime)
       ).to.be.revertedWith('IncorrectTimesGiven("Incorrect times given")');
     });
     it("only owner can create season", async () => {
       await expect(
-        RegistryInstance.connect(buyer1).createSeason(startTime, endTime)
+        SeasonsInstance.connect(buyer1).createSeason(startTime, endTime)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
     it("getSeason reverts if season doesn't exist", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await expect(RegistryInstance.getSeason(2)).to.be.revertedWith(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await expect(SeasonsInstance.getSeason(2)).to.be.revertedWith(
         "SeasonDoesntExist()"
       );
     });
   });
   describe("closeSeason function", function () {
     it("cannot close a season that's already been closed", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      await RegistryInstance.connect(owner).closeSeason(1);
+      await SeasonsInstance.connect(owner).closeSeason(1);
       await expect(
-        RegistryInstance.connect(owner).closeSeason(1)
+        SeasonsInstance.connect(owner).closeSeason(1)
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
     });
 
     it("only owner can close season submission", async () => {
       await expect(
-        RegistryInstance.connect(buyer1).closeSeason(1)
+        SeasonsInstance.connect(buyer1).closeSeason(1)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
     it("transfers protocol fees to protocol wallet", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
       const ownerBalBefore = await owner.getBalance();
       console.log(ownerBalBefore.toString());
-      await RegistryInstance.connect(owner).closeSeason(1);
+      await SeasonsInstance.connect(owner).closeSeason(1);
 
       const ownerBalAfter = await owner.getBalance();
       console.log(ownerBalAfter.toString());
@@ -244,104 +247,104 @@ describe("Artifact Registry Tests", function () {
   });
   describe("mintArtifact function", function () {
     it("msg.value has to be equal to token price", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
       await expect(
-        RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+        SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
           value: ethers.utils.parseEther("10"),
         })
       ).to.be.revertedWith('IncorrectAmount("")');
     });
     it("mints correct tokenID for submission", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
-      await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      expect(await RegistryInstance.balanceOf(buyer1Address, 124)).to.equal(2);
-      expect(await RegistryInstance.balanceOf(buyer2Address, 124)).to.equal(2);
-      expect(await RegistryInstance.balanceOf(ownerAddress, 124)).to.equal(2);
+      expect(await SeasonsInstance.balanceOf(buyer1Address, 124)).to.equal(2);
+      expect(await SeasonsInstance.balanceOf(buyer2Address, 124)).to.equal(2);
+      expect(await SeasonsInstance.balanceOf(ownerAddress, 124)).to.equal(2);
     });
 
     it("mints the same amounts to 3 different addresses", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
-      await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      expect(await RegistryInstance.balanceOf(buyer1Address, 124)).to.equal(2);
-      expect(await RegistryInstance.balanceOf(buyer2Address, 124)).to.equal(2);
-      expect(await RegistryInstance.balanceOf(ownerAddress, 124)).to.equal(2);
+      expect(await SeasonsInstance.balanceOf(buyer1Address, 124)).to.equal(2);
+      expect(await SeasonsInstance.balanceOf(buyer2Address, 124)).to.equal(2);
+      expect(await SeasonsInstance.balanceOf(ownerAddress, 124)).to.equal(2);
     });
     it("minting one token mints tokens correctly", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
-      await RegistryInstance.connect(buyer1).mintArtifact(124, [1], {
+      await SeasonsInstance.connect(buyer1).mintArtifact(124, [1], {
         value: ethers.utils.parseEther("100"),
       });
 
-      expect(await RegistryInstance.balanceOf(buyer1Address, 124)).to.equal(1);
-      expect(await RegistryInstance.balanceOf(buyer2Address, 124)).to.equal(1);
-      expect(await RegistryInstance.balanceOf(ownerAddress, 124)).to.equal(1);
+      expect(await SeasonsInstance.balanceOf(buyer1Address, 124)).to.equal(1);
+      expect(await SeasonsInstance.balanceOf(buyer2Address, 124)).to.equal(1);
+      expect(await SeasonsInstance.balanceOf(ownerAddress, 124)).to.equal(1);
     });
 
     it("users cant mint if a season is closed", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      await RegistryInstance.connect(owner).closeSeason(1);
+      await SeasonsInstance.connect(owner).closeSeason(1);
       await expect(
-        RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+        SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
           value: ethers.utils.parseEther("200"),
         })
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
     });
     it("sets correct tokenURI for each token", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "blabla",
         buyer1Address
       );
-      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
-      await RegistryInstance.connect(buyer2).mintArtifact(125, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(125, [2], {
         value: ethers.utils.parseEther("200"),
       });
-      expect(await RegistryInstance.uri(124)).to.be.equal("");
-      expect(await RegistryInstance.uri(125)).to.be.equal("blabla");
+      expect(await SeasonsInstance.uri(124)).to.be.equal("");
+      expect(await SeasonsInstance.uri(125)).to.be.equal("blabla");
     });
     it("splits token price correctly", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
@@ -351,7 +354,7 @@ describe("Artifact Registry Tests", function () {
       const ownerBalBefore = await owner.getBalance();
 
       console.log(balanceBefore.toString());
-      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
@@ -369,84 +372,84 @@ describe("Artifact Registry Tests", function () {
       // );
     });
     it("reverts it wrong submission id is given", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
       await expect(
-        RegistryInstance.connect(buyer1).mintArtifact(125, [2], {
+        SeasonsInstance.connect(buyer1).mintArtifact(125, [2], {
           value: ethers.utils.parseEther("200"),
         })
       ).to.be.revertedWith("SubmissionDoesntExist()");
     });
     it("buyer receives correct amount and tokenIDs of NFTs after purchase", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
-      await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      await RegistryInstance.connect(buyer1).mintArtifact(125, [3], {
+      await SeasonsInstance.connect(buyer1).mintArtifact(125, [3], {
         value: ethers.utils.parseEther("300"),
       });
 
-      await RegistryInstance.connect(buyer3).mintArtifact(126, [1], {
+      await SeasonsInstance.connect(buyer3).mintArtifact(126, [1], {
         value: ethers.utils.parseEther("100"),
       });
 
-      expect(await RegistryInstance.balanceOf(buyer1Address, 124)).to.equal(2);
-      expect(await RegistryInstance.balanceOf(buyer3Address, 126)).to.equal(1);
-      expect(await RegistryInstance.balanceOf(buyer1Address, 125)).to.equal(3);
+      expect(await SeasonsInstance.balanceOf(buyer1Address, 124)).to.equal(2);
+      expect(await SeasonsInstance.balanceOf(buyer3Address, 126)).to.equal(1);
+      expect(await SeasonsInstance.balanceOf(buyer1Address, 125)).to.equal(3);
     });
     it("saves top artifact buyer correctly", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      expect(await RegistryInstance.getTopBuyerPerArtifact(124)).to.equal(
+      expect(await SeasonsInstance.getTopBuyerPerArtifact(124)).to.equal(
         buyer2Address
       );
     });
     it("getLatestTokenID returns correct tokenIDs", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
-      expect(await RegistryInstance.getLatestTokenID(1)).to.equal(124);
+      expect(await SeasonsInstance.getLatestTokenID(1)).to.equal(124);
     });
     it("getLatestTokenID reverts if season doesn't exist", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
-      await expect(RegistryInstance.getLatestTokenID(2)).to.be.revertedWith(
+      await expect(SeasonsInstance.getLatestTokenID(2)).to.be.revertedWith(
         "SeasonDoesntExist()"
       );
     });
@@ -454,299 +457,299 @@ describe("Artifact Registry Tests", function () {
   describe("Events", function () {
     it("emits seasonCreated event correctly", async () => {
       expect(
-        await RegistryInstance.connect(owner).createSeason(startTime, endTime)
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime)
       )
-        .to.emit(RegistryInstance, "seasonCreated")
+        .to.emit(SeasonsInstance, "seasonCreated")
         .withArgs(1);
     });
     it("emits submissionCreated event correctly", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       expect(
-        await RegistryInstance.connect(owner).createSubmission(
+        await SeasonsInstance.connect(owner).createSubmission(
           1,
           "",
           buyer2Address
         )
       )
-        .to.emit(RegistryInstance, "submissionCreated")
+        .to.emit(SeasonsInstance, "submissionCreated")
         .withArgs(124, buyer2Address);
     });
     it("emits protocolWalletAddressSet event correctly", async () => {
       expect(
-        await RegistryInstance.connect(owner).setProtocolWalletAddress(
+        await SeasonsInstance.connect(owner).setProtocolWalletAddress(
           ownerAddress
         )
       )
-        .to.emit(RegistryInstance, "ProtocolWalletAddressSet")
+        .to.emit(SeasonsInstance, "ProtocolWalletAddressSet")
         .withArgs(ownerAddress);
     });
 
     it("emits SeasonClosed event correctly", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
-      await RegistryInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      expect(await RegistryInstance.connect(owner).closeSeason(1))
-        .to.emit(RegistryInstance, "SeasonClosed")
+      expect(await SeasonsInstance.connect(owner).closeSeason(1))
+        .to.emit(SeasonsInstance, "SeasonClosed")
         .withArgs(1);
     });
 
     it("emits TokenPriceSet event correctly", async () => {
-      expect(await RegistryInstance.connect(owner).setTokenPrice(100))
-        .to.emit(RegistryInstance, "TokenPriceSet")
+      expect(await SeasonsInstance.connect(owner).setTokenPrice(100))
+        .to.emit(SeasonsInstance, "TokenPriceSet")
         .to.emit(100);
     });
     it("emits Shutdown event correctly", async () => {
-      expect(await RegistryInstance.connect(owner).shutdown(true))
-        .to.emit(RegistryInstance, "Shutdown")
+      expect(await SeasonsInstance.connect(owner).shutdown(true))
+        .to.emit(SeasonsInstance, "Shutdown")
         .withArgs(true);
     });
     it("emits TreasuryFeeSplitPercentageSet event correctly", async () => {
       expect(
-        await RegistryInstance.connect(owner).setTreasurySplitPercentage(10)
+        await SeasonsInstance.connect(owner).setTreasurySplitPercentage(10)
       )
-        .to.emit(RegistryInstance, "TreasuryFeeSplitPercentageSet")
+        .to.emit(SeasonsInstance, "TreasuryFeeSplitPercentageSet")
         .withArgs(10);
     });
     it("emits ArtistFeePercentageSet event correctly", async () => {
-      expect(await RegistryInstance.connect(owner).setArtistFeePercentage(80))
-        .to.emit(RegistryInstance, "ArtistFeePercentageSet")
+      expect(await SeasonsInstance.connect(owner).setArtistFeePercentage(80))
+        .to.emit(SeasonsInstance, "ArtistFeePercentageSet")
         .withArgs(80);
     });
     it("emits ArtifactMinted  event correctly", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
 
       expect(
-        await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+        await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
           value: ethers.utils.parseEther("200"),
         })
       )
-        .to.emit(RegistryInstance, "ArtifactMinted")
+        .to.emit(SeasonsInstance, "ArtifactMinted")
         .withArgs(buyer2Address, 124, 2);
     });
 
     it("emits FeesWithdrawn event correctly", async () => {
-      await RegistryInstance.connect(owner).setProtocolWalletAddress(
+      await SeasonsInstance.connect(owner).setProtocolWalletAddress(
         buyer3Address
       );
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      expect(await RegistryInstance.connect(owner).withdrawProtocolFees())
-        .to.emit(RegistryInstance, "FeesWithdrawn")
+      expect(await SeasonsInstance.connect(owner).withdrawProtocolFees())
+        .to.emit(SeasonsInstance, "FeesWithdrawn")
         .withArgs("");
     });
   });
   describe("View functions", function () {
     it("getprotocolWalletAddress returns correct wallet address", async () => {
-      await RegistryInstance.connect(owner).setProtocolWalletAddress(
+      await SeasonsInstance.connect(owner).setProtocolWalletAddress(
         ownerAddress
       );
-      expect(await RegistryInstance.getprotocolWalletAddress()).to.equal(
+      expect(await SeasonsInstance.getprotocolWalletAddress()).to.equal(
         ownerAddress
       );
     });
     it("getTotalTokenSales returns correct amount of tokens sold", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
 
-      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      expect(await RegistryInstance.getTotalTokenSales(124)).to.equal(4);
+      expect(await SeasonsInstance.getTotalTokenSales(124)).to.equal(4);
     });
     it("getTopBuyer returns top buyer per artifact correctly", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      await RegistryInstance.connect(buyer3).mintArtifact(124, [3], {
+      await SeasonsInstance.connect(buyer3).mintArtifact(124, [3], {
         value: ethers.utils.parseEther("300"),
       });
 
-      await RegistryInstance.connect(buyer1).mintArtifact(124, [5], {
+      await SeasonsInstance.connect(buyer1).mintArtifact(124, [5], {
         value: ethers.utils.parseEther("500"),
       });
 
-      expect(await RegistryInstance.getTopBuyerPerArtifact(124)).to.equal(
+      expect(await SeasonsInstance.getTopBuyerPerArtifact(124)).to.equal(
         buyer1Address
       );
     });
     it("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
       // TODO - this test should be passing
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         2,
         "",
         buyer2Address
       );
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         2,
         "",
         buyer2Address
       );
 
-      await RegistryInstance.connect(buyer2).mintArtifact(127, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(127, [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await RegistryInstance.connect(buyer2).mintArtifact(128, [3], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(128, [3], {
         value: ethers.utils.parseEther("300"),
       });
-      await RegistryInstance.connect(buyer2).mintArtifact(124, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(124, [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await RegistryInstance.connect(buyer2).mintArtifact(125, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(125, [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await RegistryInstance.connect(buyer2).mintArtifact(126, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(126, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      await RegistryInstance.connect(owner).calculateTopSubmissionsOfSeason(1);
+      await SeasonsInstance.connect(owner).calculateTopSubmissionsOfSeason(1);
 
-      await RegistryInstance.connect(owner).calculateTopSubmissionsOfSeason(2);
+      await SeasonsInstance.connect(owner).calculateTopSubmissionsOfSeason(2);
       expect(
-        await RegistryInstance.connect(owner).getTopSubmissionsOfSeason(1)
+        await SeasonsInstance.connect(owner).getTopSubmissionsOfSeason(1)
       ).to.equal([BigNumber.from("124"), BigNumber.from("125")]);
-      const seasonTwo = await RegistryInstance.getSeason(2);
+      const seasonTwo = await SeasonsInstance.getSeason(2);
       console.log(seasonTwo.toString());
       expect(
-        await RegistryInstance.connect(owner).getTopSubmissionsOfSeason(2)
+        await SeasonsInstance.connect(owner).getTopSubmissionsOfSeason(2)
       ).to.equal([BigNumber.from("127")]);
 
-      const winners = await RegistryInstance.getSeason(1);
+      const winners = await SeasonsInstance.getSeason(1);
       console.log(winners.toString());
     });
     it("getTopSubmissionsOfSeason reverts if season doesn't exist", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
       await expect(
-        RegistryInstance.getTopSubmissionsOfSeason(2)
+        SeasonsInstance.getTopSubmissionsOfSeason(2)
       ).to.be.revertedWith("SeasonDoesntExist()");
     });
     it("getTotalTokensPurchasedPerAddressInSeason returns the total amount of tokens purchased by an address in a season", async () => {
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer2Address
       );
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         2,
         "",
         buyer2Address
       );
 
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSubmission(
         2,
         "",
         buyer2Address
       );
 
-      await RegistryInstance.connect(buyer2).mintArtifact(127, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(127, [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await RegistryInstance.connect(buyer2).mintArtifact(128, [3], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(128, [3], {
         value: ethers.utils.parseEther("300"),
       });
-      await RegistryInstance.connect(buyer2).mintArtifact(124, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(124, [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await RegistryInstance.connect(buyer2).mintArtifact(125, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(125, [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await RegistryInstance.connect(buyer2).mintArtifact(126, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(126, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
       expect(
-        await RegistryInstance.getTotalTokensPurchasedPerAddressInSeason(
+        await SeasonsInstance.getTotalTokensPurchasedPerAddressInSeason(
           buyer2Address,
           1
         )
       ).to.equal(10);
       expect(
-        await RegistryInstance.getTotalTokensPurchasedPerAddressInSeason(
+        await SeasonsInstance.getTotalTokensPurchasedPerAddressInSeason(
           buyer2Address,
           2
         )
@@ -754,77 +757,77 @@ describe("Artifact Registry Tests", function () {
     });
     it("getAmountToTokenIDsOfSeason returns an array of tokenIDs", async () => {
       // ** This is an internal function **
-      // await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      // await RegistryInstance.connect(owner).createSubmission(
+      // await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      // await SeasonsInstance.connect(owner).createSubmission(
       //   1,
       //   "",
       //   buyer2Address
       // );
-      // await RegistryInstance.connect(owner).createSubmission(
+      // await SeasonsInstance.connect(owner).createSubmission(
       //   1,
       //   "",
       //   buyer2Address
       // );
-      // await RegistryInstance.connect(buyer2).mintArtifact(124, [4], {
+      // await SeasonsInstance.connect(buyer2).mintArtifact(124, [4], {
       //   value: ethers.utils.parseEther("400"),
       // });
-      // await RegistryInstance.connect(buyer2).mintArtifact(125, [4], {
+      // await SeasonsInstance.connect(buyer2).mintArtifact(125, [4], {
       //   value: ethers.utils.parseEther("400"),
       // });
-      // expect(await RegistryInstance.getAmountToTokenIDsOfSeason(1, 4)).to.equal(
+      // expect(await SeasonsInstance.getAmountToTokenIDsOfSeason(1, 4)).to.equal(
       //   [124, 125]
       // );
     });
     it("getLargestAmountOfTokensSoldInSeason returns larges amount of tokens sold in season", async () => {
       // ** This function is internal **
-      // await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      // await RegistryInstance.connect(owner).createSubmission(
+      // await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      // await SeasonsInstance.connect(owner).createSubmission(
       //   1,
       //   "",
       //   buyer2Address
       // );
-      // await RegistryInstance.connect(owner).createSubmission(
+      // await SeasonsInstance.connect(owner).createSubmission(
       //   1,
       //   "",
       //   buyer2Address
       // );
-      // await RegistryInstance.connect(owner).createSubmission(
+      // await SeasonsInstance.connect(owner).createSubmission(
       //   1,
       //   "",
       //   buyer2Address
       // );
-      // await RegistryInstance.connect(buyer2).mintArtifact(124, [4], {
+      // await SeasonsInstance.connect(buyer2).mintArtifact(124, [4], {
       //   value: ethers.utils.parseEther("1200"),
       // });
-      // await RegistryInstance.connect(buyer2).mintArtifact(125, [2], {
+      // await SeasonsInstance.connect(buyer2).mintArtifact(125, [2], {
       //   value: ethers.utils.parseEther("600"),
       // });
-      // await RegistryInstance.connect(buyer2).mintArtifact(126, [2], {
+      // await SeasonsInstance.connect(buyer2).mintArtifact(126, [2], {
       //   value: ethers.utils.parseEther("600"),
       // });
-      // await RegistryInstance.setTotalSalesOfTokenIDs(1);
+      // await SeasonsInstance.setTotalSalesOfTokenIDs(1);
       // expect(
-      //   await RegistryInstance.getLargestAmountOfTokensSoldInSeason(1)
+      //   await SeasonsInstance.getLargestAmountOfTokensSoldInSeason(1)
       // ).to.equal(4);
     });
     it("withdrawing protocol fees works properly", async () => {
-      await RegistryInstance.connect(owner).setProtocolWalletAddress(
+      await SeasonsInstance.connect(owner).setProtocolWalletAddress(
         buyer3Address
       );
-      await RegistryInstance.connect(owner).createSeason(startTime, endTime);
-      await RegistryInstance.connect(owner).createSubmission(
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
         1,
         "",
         buyer1Address
       );
 
-      await RegistryInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
         value: ethers.utils.parseEther("200"),
       });
 
       const balanceBefore = await buyer3.getBalance();
       console.log(balanceBefore.toString());
-      await RegistryInstance.connect(owner).withdrawProtocolFees();
+      await SeasonsInstance.connect(owner).withdrawProtocolFees();
 
       const balanceAfter = await buyer3.getBalance();
       console.log(balanceAfter.toString());
