@@ -149,7 +149,7 @@ contract ArtifactRegistry is
         emit ArtistFeePercentageSet(percentage);
     }
 
-    function shutdown(bool _isShutdown) external {
+    function shutdown(bool _isShutdown) external onlyOwner {
         isShutdown = _isShutdown;
         emit Shutdown(_isShutdown);
     }
