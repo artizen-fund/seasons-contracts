@@ -79,7 +79,7 @@ describe("Artifact Registry Tests", function () {
         SeasonsInstance.connect(owner).mintArtifact(124, [5])
       ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
     });
-    it.only("only owner can call shutdown", async () => {
+    it("only owner can call shutdown", async () => {
       await expect(
         SeasonsInstance.connect(buyer1).shutdown(true)
       ).to.be.revertedWith("Ownable: caller is not the owner");
