@@ -371,6 +371,22 @@ describe("Artifact Registry Tests", function () {
       //   ethers.utils.parseEther("1000300")
       // );
     });
+    it.only("reverts if season ended already", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await fastForward(endTime + 1000000);
+
+      await expect(
+        SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
+          value: ethers.utils.parseEther("200"),
+        })
+      ).to.be.revertedWith("SeasonAlreadyClosed(1)");
+    });
     it("reverts it wrong submission id is given", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
