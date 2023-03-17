@@ -10,10 +10,10 @@
 
 ## Methods
 
-### amontOfTokenSold
+### amountPurchasedPerTokenPerAddress
 
 ```solidity
-function amontOfTokenSold(uint256) external view returns (uint256)
+function amountPurchasedPerTokenPerAddress(address, uint256) external view returns (uint256)
 ```
 
 
@@ -24,7 +24,8 @@ function amontOfTokenSold(uint256) external view returns (uint256)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | undefined
+| _0 | address | undefined
+| _1 | uint256 | undefined
 
 #### Returns
 
@@ -53,6 +54,23 @@ function artifactTopBuyer(uint256) external view returns (address)
 | Name | Type | Description |
 |---|---|---|
 | _0 | address | undefined
+
+### artizenSplitPercentage
+
+```solidity
+function artizenSplitPercentage() external view returns (uint256)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
 
 ### balanceOf
 
@@ -103,18 +121,24 @@ function balanceOfBatch(address[] accounts, uint256[] ids) external view returns
 ### closeSeason
 
 ```solidity
-function closeSeason() external nonpayable
+function closeSeason(uint256 _season, uint256 _lastTokenIDOfSeason) external nonpayable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _season | uint256 | undefined
+| _lastTokenIDOfSeason | uint256 | undefined
 
 ### createProject
 
 ```solidity
-function createProject(uint256 _season, string _tokenURI, address _projectOwner) external nonpayable returns (uint256)
+function createProject(uint256 _season, string _tokenURI, address payable _projectOwner) external nonpayable returns (uint256)
 ```
 
 
@@ -127,7 +151,7 @@ function createProject(uint256 _season, string _tokenURI, address _projectOwner)
 |---|---|---|
 | _season | uint256 | undefined
 | _tokenURI | string | undefined
-| _projectOwner | address | undefined
+| _projectOwner | address payable | undefined
 
 #### Returns
 
@@ -169,6 +193,28 @@ function getLatestTokenID() external view returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined
 
+### getTopBuyerOfSeason
+
+```solidity
+function getTopBuyerOfSeason(uint256 season) external view returns (address)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| season | uint256 | undefined
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined
+
 ### initialize
 
 ```solidity
@@ -203,16 +249,61 @@ function isApprovedForAll(address account, address operator) external view retur
 |---|---|---|
 | _0 | bool | undefined
 
-### mintArtifact
+### lastTokenIDOfSeason
 
 ```solidity
-function mintArtifact() external payable
+function lastTokenIDOfSeason(uint256) external view returns (uint256)
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+### latestTokenID
+
+```solidity
+function latestTokenID() external view returns (uint256)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+### mintArtifact
+
+```solidity
+function mintArtifact(uint256 submissionID, uint256[] amount) external payable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| submissionID | uint256 | undefined
+| amount | uint256[] | undefined
 
 ### owner
 
@@ -247,17 +338,6 @@ function projectCount() external view returns (uint256)
 | Name | Type | Description |
 |---|---|---|
 | _0 | uint256 | undefined
-
-### renewProject
-
-```solidity
-function renewProject() external nonpayable
-```
-
-
-
-
-
 
 ### renounceOwnership
 
@@ -371,6 +451,22 @@ function setApprovalForAll(address operator, bool approved) external nonpayable
 | operator | address | undefined
 | approved | bool | undefined
 
+### setArtizenFeeSplitPercentage
+
+```solidity
+function setArtizenFeeSplitPercentage(uint256 percentage) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| percentage | uint256 | undefined
+
 ### setDAOWalletAddress
 
 ```solidity
@@ -409,23 +505,6 @@ function setTokenPrice(uint256 price) external nonpayable returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined
 
-### setURI
-
-```solidity
-function setURI(string newuri, uint256 tokenID) external nonpayable
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| newuri | string | undefined
-| tokenID | uint256 | undefined
-
 ### shutdown
 
 ```solidity
@@ -463,6 +542,68 @@ function supportsInterface(bytes4 interfaceId) external view returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | undefined
+
+### tokenPrice
+
+```solidity
+function tokenPrice() external view returns (uint256)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+### topAmontOfTokenSold
+
+```solidity
+function topAmontOfTokenSold(uint256) external view returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
+
+### totalPurchasedPerAddressPerSeason
+
+```solidity
+function totalPurchasedPerAddressPerSeason(address, uint256) external view returns (uint256)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined
+| _1 | uint256 | undefined
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined
 
 ### transferOwnership
 
@@ -524,6 +665,40 @@ event ApprovalForAll(address indexed account, address indexed operator, bool app
 | operator `indexed` | address | undefined |
 | approved  | bool | undefined |
 
+### ArtifactMinted
+
+```solidity
+event ArtifactMinted(address to, uint256 tokenID, uint256 amount)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| to  | address | undefined |
+| tokenID  | uint256 | undefined |
+| amount  | uint256 | undefined |
+
+### ArtizenFeeSplitPercentageSet
+
+```solidity
+event ArtizenFeeSplitPercentageSet(uint256 percentage)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| percentage  | uint256 | undefined |
+
 ### ArtizenWalletAddressSet
 
 ```solidity
@@ -576,7 +751,7 @@ event OwnershipTransferred(address indexed previousOwner, address indexed newOwn
 ### ProjectCreated
 
 ```solidity
-event ProjectCreated(uint256 projectID, address projectOwner)
+event ProjectCreated(uint256 submissionID, address projectOwner)
 ```
 
 
@@ -587,13 +762,29 @@ event ProjectCreated(uint256 projectID, address projectOwner)
 
 | Name | Type | Description |
 |---|---|---|
-| projectID  | uint256 | undefined |
+| submissionID  | uint256 | undefined |
 | projectOwner  | address | undefined |
+
+### ProjectRenewed
+
+```solidity
+event ProjectRenewed(uint256 submissionID)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| submissionID  | uint256 | undefined |
 
 ### ProjectUpdated
 
 ```solidity
-event ProjectUpdated(uint256 projectID)
+event ProjectUpdated(uint256 submissionID)
 ```
 
 
@@ -604,7 +795,23 @@ event ProjectUpdated(uint256 projectID)
 
 | Name | Type | Description |
 |---|---|---|
-| projectID  | uint256 | undefined |
+| submissionID  | uint256 | undefined |
+
+### SeasonClosed
+
+```solidity
+event SeasonClosed(uint256 _season)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _season  | uint256 | undefined |
 
 ### Shutdown
 
@@ -621,6 +828,22 @@ event Shutdown(bool _isShutdown)
 | Name | Type | Description |
 |---|---|---|
 | _isShutdown  | bool | undefined |
+
+### TokenPriceSet
+
+```solidity
+event TokenPriceSet(uint256 price)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| price  | uint256 | undefined |
 
 ### TransferBatch
 
@@ -683,10 +906,26 @@ event URI(string value, uint256 indexed id)
 
 ## Errors
 
-### SeasonClosed
+### IncorrectAmount
 
 ```solidity
-error SeasonClosed(uint256 season)
+error IncorrectAmount(string message)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| message | string | undefined |
+
+### SeasonAlreadyClosed
+
+```solidity
+error SeasonAlreadyClosed(uint256 season)
 ```
 
 
