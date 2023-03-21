@@ -14,7 +14,7 @@ contract Seasons is
   // STORAGE
   // --------------------------------------------------------------
 
-  uint256 startTokenID;
+  uint256 private startTokenID;
   uint256 public submissionCount;
   uint public seasonCount;
   address payable protocolWallet;
@@ -23,7 +23,7 @@ contract Seasons is
   uint artistFeePercentage;
   uint256 public tokenPrice;
   bool private isShutdown;
-  uint public latestTokenID;
+  uint private latestTokenID;
 
   uint[] amountsBoughtPerAddress;
   uint[] totalSalesOfTokenIDs;
