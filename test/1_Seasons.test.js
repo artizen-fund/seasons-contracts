@@ -371,7 +371,7 @@ describe("Artifact Registry Tests", function () {
       //   ethers.utils.parseEther("1000300")
       // );
     });
-    it.only("reverts if season ended already", async () => {
+    it("reverts if season ended already", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         1,

@@ -257,7 +257,6 @@ contract Seasons is
   ) public payable {
     if (isShutdown) revert ContractShutdown("Contract has been shut down");
     if (submissionID > submissionCount) revert SubmissionDoesntExist();
-    uint amountToMint = amount[0] * 3;
     uint amountSold = amount[0];
     uint[] storage tokenIDsToMint = submissions[submissionID].tokenID;
     uint tokenIDToMint = tokenIDsToMint[0];
@@ -269,8 +268,8 @@ contract Seasons is
       revert SeasonAlreadyClosed(seasonOfSubmission);
     uint latestTokenIDOfSeason = seasons[seasonOfSubmission]
       .lastTokenIDOfSeason;
-    if (tokenIDToMint <= latestTokenIDOfSeason)
-      revert SeasonAlreadyClosed(seasonOfSubmission);
+    // if (tokenIDToMint <= latestTokenIDOfSeason)
+    //   revert SeasonAlreadyClosed(seasonOfSubmission);
 
     totalTokensPurchasedPerAddressPerSeason[msg.sender][
       submissions[submissionID].season
@@ -293,24 +292,24 @@ contract Seasons is
 
     _setURI(tokenIDToMint, submissions[submissionID].tokenURI);
 
-    if (amountToMint == 1) {
+    if (amountSold == 1) {
       _mint(msg.sender, tokenIDToMint, 1, "");
-      _mint(protocolWallet, tokenIDToMint, 1, "");
-      _mint(submissions[submissionID].SubmissionOwner, tokenIDToMint, 1, "");
-    } else {
-      _mintBatch(msg.sender, tokenIDsToMint, amount, "");
-      _mintBatch(protocolWallet, tokenIDsToMint, amount, "");
-      _mintBatch(
-        submissions[submissionID].SubmissionOwner,
-        tokenIDsToMint,
-        amount,
-        ""
-      );
+      //   _mint(protocolWallet, tokenIDToMint, 1, "");
+      //   _mint(submissions[submissionID].SubmissionOwner, tokenIDToMint, 1, "");
     }
-
+    if (amountSold > 1) {
+      _mintBatch(msg.sender, tokenIDsToMint, amount, "");
+      // _mintBatch(protocolWallet, tokenIDsToMint, amount, "");
+      // _mintBatch(
+      //   submissions[submissionID].SubmissionOwner,
+      //   tokenIDsToMint,
+      //   amount,
+      //   ""
+      // );
+    }
     splitPrice(submissionID, msg.value);
 
-    emit ArtifactMinted(msg.sender, tokenIDToMint, amountToMint);
+    emit ArtifactMinted(msg.sender, tokenIDToMint, amountSold);
   }
 
   /**
