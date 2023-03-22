@@ -252,34 +252,31 @@ contract Seasons is
     */
 
   function mintArtifact(
-    uint submissionID,
-    uint[] calldata amount
+    uint[] memory submissionID,
+    uint[] memory amount
   ) public payable {
-    if (isShutdown) revert ContractShutdown("Contract has been shut down");
-    if (submissionID > submissionCount) revert SubmissionDoesntExist();
+    uint tokenIDToMint = submissionID[0];
     uint amountSold = amount[0];
-    uint[] storage tokenIDsToMint = submissions[submissionID].tokenID;
-    uint tokenIDToMint = tokenIDsToMint[0];
-    if (msg.value != tokenPrice * amountSold) revert IncorrectAmount("");
-    uint seasonOfSubmission = submissions[submissionID].season;
+    if (isShutdown) revert ContractShutdown("Contract has been shut down");
+    if (tokenIDToMint > submissionCount) revert SubmissionDoesntExist();
+
+    if (msg.value < tokenPrice * amountSold) revert IncorrectAmount("");
+    uint seasonOfSubmission = submissions[tokenIDToMint].season;
     if (seasons[seasonOfSubmission].isClosed)
       revert SeasonAlreadyClosed(seasonOfSubmission);
     if (seasons[seasonOfSubmission].endTime < block.timestamp)
       revert SeasonAlreadyClosed(seasonOfSubmission);
     uint latestTokenIDOfSeason = seasons[seasonOfSubmission]
       .lastTokenIDOfSeason;
-    // if (tokenIDToMint <= latestTokenIDOfSeason)
-    //   revert SeasonAlreadyClosed(seasonOfSubmission);
 
     totalTokensPurchasedPerAddressPerSeason[msg.sender][
-      submissions[submissionID].season
+      submissions[tokenIDToMint].season
     ] += amountSold;
 
     totalAmountOfTokensSold[tokenIDToMint] += amountSold;
 
-    amountToTokenIDsOfSeason[submissions[submissionID].season][amountSold].push(
-      tokenIDToMint
-    );
+    amountToTokenIDsOfSeason[submissions[tokenIDToMint].season][amountSold]
+      .push(tokenIDToMint);
 
     // register top buyer
     if (
@@ -290,24 +287,18 @@ contract Seasons is
       topAmontOfTokenSold[tokenIDToMint] = amountSold;
     }
 
-    _setURI(tokenIDToMint, submissions[submissionID].tokenURI);
+    _setURI(tokenIDToMint, submissions[tokenIDToMint].tokenURI);
 
-    if (amountSold == 1) {
-      _mint(msg.sender, tokenIDToMint, 1, "");
-      //   _mint(protocolWallet, tokenIDToMint, 1, "");
-      //   _mint(submissions[submissionID].SubmissionOwner, tokenIDToMint, 1, "");
-    }
-    if (amountSold > 1) {
-      _mintBatch(msg.sender, tokenIDsToMint, amount, "");
-      // _mintBatch(protocolWallet, tokenIDsToMint, amount, "");
-      // _mintBatch(
-      //   submissions[submissionID].SubmissionOwner,
-      //   tokenIDsToMint,
-      //   amount,
-      //   ""
-      // );
-    }
-    splitPrice(submissionID, msg.value);
+    _mintBatch(msg.sender, submissionID, amount, "");
+    _mintBatch(protocolWallet, submissionID, amount, "");
+    _mintBatch(
+      submissions[tokenIDToMint].SubmissionOwner,
+      submissionID,
+      amount,
+      ""
+    );
+
+    splitPrice(tokenIDToMint, msg.value);
 
     emit ArtifactMinted(msg.sender, tokenIDToMint, amountSold);
   }

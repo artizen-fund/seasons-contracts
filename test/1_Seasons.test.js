@@ -71,6 +71,7 @@ describe("Artifact Registry Tests", function () {
       await expect(
         SeasonsInstance.connect(owner).createSeason(startTime, endTime)
       ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
+
       await expect(
         SeasonsInstance.connect(owner).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("SeasonDoesntExist()");
