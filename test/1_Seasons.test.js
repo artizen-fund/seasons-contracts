@@ -211,6 +211,23 @@ describe("Artifact Registry Tests", function () {
         SeasonsInstance.connect(owner).closeSeason(1)
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
     });
+    it.only("cannot close a season that's not ended yet", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+
+      await SeasonsInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+      await expect(
+        SeasonsInstance.connect(owner).closeSeason(1)
+      ).to.be.revertedWith("SeasonStillRunning(1)");
+    });
 
     it("only owner can close season submission", async () => {
       await expect(
