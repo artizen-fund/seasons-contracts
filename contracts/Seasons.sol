@@ -60,7 +60,7 @@ contract Seasons is
     // address => season => amount
     mapping(address => mapping(uint => uint)) totalTokensPurchasedPerAddressPerSeason;
     // tokenID => amount => user
-    // mapping(uint => mapping(uint => address)) amountOfTokenBoughtPerAddress;
+    mapping(address => mapping(uint => uint)) totalAmountPurchasedPerToken;
     // season => amount => tokenIDs
     mapping(uint => mapping(uint => uint[])) amountToTokenIDsOfSeason;
 
@@ -278,16 +278,24 @@ contract Seasons is
 
         totalAmountOfTokensSold[tokenIDToMint] += amountSold;
 
+        totalAmountPurchasedPerToken[msg.sender][tokenIDToMint] += amountSold;
+
         amountToTokenIDsOfSeason[submissions[tokenIDToMint].season][amountSold]
             .push(tokenIDToMint);
 
         // register top buyer
         if (
             // amounts purchased per address
-            topAmontOfTokenSold[tokenIDToMint] < amountSold
+            // TODO - check against top amount of tokens bought per address
+            topAmontOfTokenSold[tokenIDToMint] <
+            totalAmountPurchasedPerToken[msg.sender][tokenIDToMint]
         ) {
+            uint newTopAmount = gettotalAmountPurchasedPerToken(
+                msg.sender,
+                tokenIDToMint
+            );
             artifactTopBuyer[tokenIDToMint] = msg.sender;
-            topAmontOfTokenSold[tokenIDToMint] = amountSold;
+            topAmontOfTokenSold[tokenIDToMint] = newTopAmount;
         }
 
         _setURI(tokenIDToMint, submissions[tokenIDToMint].tokenURI);
@@ -471,6 +479,13 @@ contract Seasons is
     ) public view returns (uint[] memory) {
         if (seasonID > seasonCount) revert SeasonDoesntExist();
         return seasons[seasonID].topSubmissions;
+    }
+
+    function gettotalAmountPurchasedPerToken(
+        address user,
+        uint tokenID
+    ) public view returns (uint totalAmount) {
+        totalAmount = totalAmountPurchasedPerToken[user][tokenID];
     }
 
     function uri(
