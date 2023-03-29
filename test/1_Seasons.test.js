@@ -266,7 +266,7 @@ describe("Artifact Registry Tests", function () {
     });
   });
   describe("mintArtifact function", function () {
-    it.only("msg.value has to be equal to token price", async () => {
+    it("msg.value has to be equal to token price", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         1,
@@ -875,7 +875,7 @@ describe("Artifact Registry Tests", function () {
 
       expect(await balanceAfter).to.equal(ethers.utils.parseEther("1000240"));
     });
-    it.only("gettotalAmountPurchasedPerToken returns the total amount of tokens bought by an address of a single tokenID", async () => {
+    it("gettotalAmountPurchasedPerToken returns the total amount of tokens bought by an address of a single tokenID", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
