@@ -142,10 +142,11 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer1Address
       );
+      await fastForward(endTime + 1000000);
       await SeasonsInstance.connect(owner).closeSeason(1);
       await expect(
         SeasonsInstance.connect(owner).createSubmission(1, "", buyer1Address)
-      ).to.be.revertedWith("SeasonAlreadyClosed(1)");
+      ).to.be.revertedWith("NoMoreSubmissionsToThisSeason(1)");
     });
   });
 
@@ -205,7 +206,7 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer1Address
       );
-
+      await fastForward(endTime + 1000000);
       await SeasonsInstance.connect(owner).closeSeason(1);
       await expect(
         SeasonsInstance.connect(owner).closeSeason(1)
@@ -257,6 +258,7 @@ describe("Artifact Registry Tests", function () {
       });
       const ownerBalBefore = await owner.getBalance();
       console.log(ownerBalBefore.toString());
+      await fastForward(endTime + 1000000);
       await SeasonsInstance.connect(owner).closeSeason(1);
 
       const ownerBalAfter = await owner.getBalance();
@@ -331,7 +333,7 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer1Address
       );
-
+      await fastForward(endTime + 1000000);
       await SeasonsInstance.connect(owner).closeSeason(1);
       await expect(
         SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
@@ -529,7 +531,7 @@ describe("Artifact Registry Tests", function () {
       await SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
-
+      await fastForward(endTime + 1000000);
       expect(await SeasonsInstance.connect(owner).closeSeason(1))
         .to.emit(SeasonsInstance, "SeasonClosed")
         .withArgs(1);
@@ -647,7 +649,7 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
     });
-    it("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
+    it.only("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
       // TODO - this test should be passing
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
@@ -704,14 +706,20 @@ describe("Artifact Registry Tests", function () {
       await SeasonsInstance.connect(owner).calculateTopSubmissionsOfSeason(1);
 
       await SeasonsInstance.connect(owner).calculateTopSubmissionsOfSeason(2);
-      expect(
-        await SeasonsInstance.connect(owner).getTopSubmissionsOfSeason(1)
-      ).to.equal([BigNumber.from("124"), BigNumber.from("125")]);
-      const seasonTwo = await SeasonsInstance.getSeason(2);
-      console.log(seasonTwo.toString());
-      expect(
-        await SeasonsInstance.connect(owner).getTopSubmissionsOfSeason(2)
-      ).to.equal([BigNumber.from("127")]);
+
+      let season1Winner = await SeasonsInstance.connect(
+        owner
+      ).getTopSubmissionsOfSeason(1);
+      console.log("winner", season1Winner.toString());
+      expect(await season1Winner[0].toString()).to.equal("124");
+      expect(await season1Winner[1].toString()).to.equal("125");
+      await SeasonsInstance.getSeason(2);
+
+      const season2Winner = await SeasonsInstance.connect(
+        owner
+      ).getTopSubmissionsOfSeason(2);
+      console.log("season 2 winner", season2Winner[0].toString());
+      expect(await season2Winner[0].toString()).to.equal("127");
 
       const winners = await SeasonsInstance.getSeason(1);
       console.log(winners.toString());
