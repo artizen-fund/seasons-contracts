@@ -875,5 +875,40 @@ describe("Artifact Registry Tests", function () {
 
       expect(await balanceAfter).to.equal(ethers.utils.parseEther("1000240"));
     });
+    it.only("gettotalAmountPurchasedPerToken returns the total amount of tokens bought by an address of a single tokenID", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+      await SeasonsInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await SeasonsInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [4], {
+        value: ethers.utils.parseEther("400"),
+      });
+
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [4], {
+        value: ethers.utils.parseEther("400"),
+      });
+
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [4], {
+        value: ethers.utils.parseEther("400"),
+      });
+
+      expect(
+        await SeasonsInstance.getTotalAmountPurchasedPerToken(
+          buyer2Address,
+          124
+        )
+      ).to.equal(8);
+    });
   });
 });
