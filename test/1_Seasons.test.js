@@ -649,8 +649,7 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
     });
-    it.only("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
-      // TODO - this test should be passing
+    it("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
