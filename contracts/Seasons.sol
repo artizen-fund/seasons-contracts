@@ -263,7 +263,7 @@ contract Seasons is
     if (isShutdown) revert ContractShutdown("Contract has been shut down");
     if (tokenIDToMint > submissionCount) revert SubmissionDoesntExist();
 
-    if (msg.value < tokenPrice * amountSold) revert IncorrectAmount("");
+    if (msg.value != tokenPrice * amountSold) revert IncorrectAmount("");
     uint seasonOfSubmission = submissions[tokenIDToMint].season;
     if (seasons[seasonOfSubmission].isClosed)
       revert SeasonAlreadyClosed(seasonOfSubmission);

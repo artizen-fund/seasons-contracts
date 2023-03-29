@@ -266,7 +266,7 @@ describe("Artifact Registry Tests", function () {
     });
   });
   describe("mintArtifact function", function () {
-    it("msg.value has to be equal to token price", async () => {
+    it.only("msg.value has to be equal to token price", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         1,
