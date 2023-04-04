@@ -14,7 +14,7 @@ contract Seasons is
   // STORAGE
   // --------------------------------------------------------------
 
-  uint256 startTokenID;
+  uint256 private startTokenID;
   uint256 public submissionCount;
   uint public seasonCount;
   address payable protocolWallet;
@@ -23,7 +23,7 @@ contract Seasons is
   uint artistFeePercentage;
   uint256 public tokenPrice;
   bool private isShutdown;
-  uint public latestTokenID;
+  uint private latestTokenID;
 
   uint[] amountsBoughtPerAddress;
   uint[] totalSalesOfTokenIDs;
@@ -60,7 +60,7 @@ contract Seasons is
   // address => season => amount
   mapping(address => mapping(uint => uint)) totalTokensPurchasedPerAddressPerSeason;
   // tokenID => amount => user
-  // mapping(uint => mapping(uint => address)) amountOfTokenBoughtPerAddress;
+  mapping(address => mapping(uint => uint)) totalAmountPurchasedPerToken;
   // season => amount => tokenIDs
   mapping(uint => mapping(uint => uint[])) amountToTokenIDsOfSeason;
 
@@ -90,6 +90,7 @@ contract Seasons is
   error IncorrectTimesGiven(string message);
   error SeasonDoesntExist();
   error SubmissionDoesntExist();
+  error SeasonStillRunning(uint season);
 
   // --------------------------------------------------------------
   // CONSTRUCTOR
@@ -228,6 +229,8 @@ contract Seasons is
 
   function closeSeason(uint256 _season) public onlyOwner {
     if (_season > seasonCount) revert SeasonDoesntExist();
+    if (seasons[_season].endTime > block.timestamp)
+      revert SeasonStillRunning(_season);
     if (seasons[_season].isClosed) revert SeasonAlreadyClosed(_season);
 
     // return last tokenIDOfSeason
@@ -252,65 +255,63 @@ contract Seasons is
     */
 
   function mintArtifact(
-    uint submissionID,
-    uint[] calldata amount
+    uint[] memory submissionID,
+    uint[] memory amount
   ) public payable {
-    if (isShutdown) revert ContractShutdown("Contract has been shut down");
-    if (submissionID > submissionCount) revert SubmissionDoesntExist();
-    uint amountToMint = amount[0] * 3;
+    uint tokenIDToMint = submissionID[0];
     uint amountSold = amount[0];
-    uint[] storage tokenIDsToMint = submissions[submissionID].tokenID;
-    uint tokenIDToMint = tokenIDsToMint[0];
+    if (isShutdown) revert ContractShutdown("Contract has been shut down");
+    if (tokenIDToMint > submissionCount) revert SubmissionDoesntExist();
+
     if (msg.value != tokenPrice * amountSold) revert IncorrectAmount("");
-    uint seasonOfSubmission = submissions[submissionID].season;
+    uint seasonOfSubmission = submissions[tokenIDToMint].season;
     if (seasons[seasonOfSubmission].isClosed)
       revert SeasonAlreadyClosed(seasonOfSubmission);
     if (seasons[seasonOfSubmission].endTime < block.timestamp)
       revert SeasonAlreadyClosed(seasonOfSubmission);
     uint latestTokenIDOfSeason = seasons[seasonOfSubmission]
       .lastTokenIDOfSeason;
-    if (tokenIDToMint <= latestTokenIDOfSeason)
-      revert SeasonAlreadyClosed(seasonOfSubmission);
 
     totalTokensPurchasedPerAddressPerSeason[msg.sender][
-      submissions[submissionID].season
+      submissions[tokenIDToMint].season
     ] += amountSold;
 
     totalAmountOfTokensSold[tokenIDToMint] += amountSold;
 
-    amountToTokenIDsOfSeason[submissions[submissionID].season][amountSold].push(
-      tokenIDToMint
-    );
+    totalAmountPurchasedPerToken[msg.sender][tokenIDToMint] += amountSold;
+
+    amountToTokenIDsOfSeason[submissions[tokenIDToMint].season][amountSold]
+      .push(tokenIDToMint);
 
     // register top buyer
     if (
       // amounts purchased per address
-      topAmontOfTokenSold[tokenIDToMint] < amountSold
+      // TODO - check against top amount of tokens bought per address
+      topAmontOfTokenSold[tokenIDToMint] <
+      totalAmountPurchasedPerToken[msg.sender][tokenIDToMint]
     ) {
-      artifactTopBuyer[tokenIDToMint] = msg.sender;
-      topAmontOfTokenSold[tokenIDToMint] = amountSold;
-    }
-
-    _setURI(tokenIDToMint, submissions[submissionID].tokenURI);
-
-    if (amountToMint == 1) {
-      _mint(msg.sender, tokenIDToMint, 1, "");
-      _mint(protocolWallet, tokenIDToMint, 1, "");
-      _mint(submissions[submissionID].SubmissionOwner, tokenIDToMint, 1, "");
-    } else {
-      _mintBatch(msg.sender, tokenIDsToMint, amount, "");
-      _mintBatch(protocolWallet, tokenIDsToMint, amount, "");
-      _mintBatch(
-        submissions[submissionID].SubmissionOwner,
-        tokenIDsToMint,
-        amount,
-        ""
+      uint newTopAmount = getTotalAmountPurchasedPerToken(
+        msg.sender,
+        tokenIDToMint
       );
+      artifactTopBuyer[tokenIDToMint] = msg.sender;
+      topAmontOfTokenSold[tokenIDToMint] = newTopAmount;
     }
 
-    splitPrice(submissionID, msg.value);
+    _setURI(tokenIDToMint, submissions[tokenIDToMint].tokenURI);
 
-    emit ArtifactMinted(msg.sender, tokenIDToMint, amountToMint);
+    _mintBatch(msg.sender, submissionID, amount, "");
+    _mintBatch(protocolWallet, submissionID, amount, "");
+    _mintBatch(
+      submissions[tokenIDToMint].SubmissionOwner,
+      submissionID,
+      amount,
+      ""
+    );
+
+    splitPrice(tokenIDToMint, msg.value);
+
+    emit ArtifactMinted(msg.sender, tokenIDToMint, amountSold);
   }
 
   /**
@@ -470,6 +471,13 @@ contract Seasons is
   ) public view returns (uint[] memory) {
     if (seasonID > seasonCount) revert SeasonDoesntExist();
     return seasons[seasonID].topSubmissions;
+  }
+
+  function getTotalAmountPurchasedPerToken(
+    address user,
+    uint tokenID
+  ) public view returns (uint totalAmount) {
+    totalAmount = totalAmountPurchasedPerToken[user][tokenID];
   }
 
   function uri(

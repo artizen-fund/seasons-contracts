@@ -71,12 +71,13 @@ describe("Artifact Registry Tests", function () {
       await expect(
         SeasonsInstance.connect(owner).createSeason(startTime, endTime)
       ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
+
       await expect(
         SeasonsInstance.connect(owner).createSubmission(1, "", buyer1Address)
       ).to.be.revertedWith("SeasonDoesntExist()");
 
       await expect(
-        SeasonsInstance.connect(owner).mintArtifact(124, [5])
+        SeasonsInstance.connect(owner).mintArtifact([124], [5])
       ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
     });
     it("only owner can call shutdown", async () => {
@@ -141,10 +142,11 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer1Address
       );
+      await fastForward(endTime + 1000000);
       await SeasonsInstance.connect(owner).closeSeason(1);
       await expect(
         SeasonsInstance.connect(owner).createSubmission(1, "", buyer1Address)
-      ).to.be.revertedWith("SeasonAlreadyClosed(1)");
+      ).to.be.revertedWith("NoMoreSubmissionsToThisSeason(1)");
     });
   });
 
@@ -204,11 +206,28 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer1Address
       );
-
+      await fastForward(endTime + 1000000);
       await SeasonsInstance.connect(owner).closeSeason(1);
       await expect(
         SeasonsInstance.connect(owner).closeSeason(1)
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
+    });
+    it("cannot close a season that's not ended yet", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+
+      await SeasonsInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer1Address
+      );
+      await expect(
+        SeasonsInstance.connect(owner).closeSeason(1)
+      ).to.be.revertedWith("SeasonStillRunning(1)");
     });
 
     it("only owner can close season submission", async () => {
@@ -230,15 +249,16 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
 
-      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
       const ownerBalBefore = await owner.getBalance();
       console.log(ownerBalBefore.toString());
+      await fastForward(endTime + 1000000);
       await SeasonsInstance.connect(owner).closeSeason(1);
 
       const ownerBalAfter = await owner.getBalance();
@@ -254,7 +274,7 @@ describe("Artifact Registry Tests", function () {
         buyer2Address
       );
       await expect(
-        SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
+        SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
           value: ethers.utils.parseEther("10"),
         })
       ).to.be.revertedWith('IncorrectAmount("")');
@@ -266,7 +286,7 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer2Address
       );
-      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
@@ -282,7 +302,7 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer2Address
       );
-      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
@@ -297,7 +317,7 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer2Address
       );
-      await SeasonsInstance.connect(buyer1).mintArtifact(124, [1], {
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [1], {
         value: ethers.utils.parseEther("100"),
       });
 
@@ -313,10 +333,10 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer1Address
       );
-
+      await fastForward(endTime + 1000000);
       await SeasonsInstance.connect(owner).closeSeason(1);
       await expect(
-        SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
+        SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
           value: ethers.utils.parseEther("200"),
         })
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
@@ -333,10 +353,10 @@ describe("Artifact Registry Tests", function () {
         "blabla",
         buyer1Address
       );
-      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
-      await SeasonsInstance.connect(buyer2).mintArtifact(125, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([125], [2], {
         value: ethers.utils.parseEther("200"),
       });
       expect(await SeasonsInstance.uri(124)).to.be.equal("");
@@ -354,7 +374,7 @@ describe("Artifact Registry Tests", function () {
       const ownerBalBefore = await owner.getBalance();
 
       console.log(balanceBefore.toString());
-      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
@@ -371,7 +391,7 @@ describe("Artifact Registry Tests", function () {
       //   ethers.utils.parseEther("1000300")
       // );
     });
-    it.only("reverts if season ended already", async () => {
+    it("reverts if season ended already", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         1,
@@ -382,7 +402,7 @@ describe("Artifact Registry Tests", function () {
       await fastForward(endTime + 1000000);
 
       await expect(
-        SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
+        SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
           value: ethers.utils.parseEther("200"),
         })
       ).to.be.revertedWith("SeasonAlreadyClosed(1)");
@@ -395,7 +415,7 @@ describe("Artifact Registry Tests", function () {
         buyer2Address
       );
       await expect(
-        SeasonsInstance.connect(buyer1).mintArtifact(125, [2], {
+        SeasonsInstance.connect(buyer1).mintArtifact([125], [2], {
           value: ethers.utils.parseEther("200"),
         })
       ).to.be.revertedWith("SubmissionDoesntExist()");
@@ -417,15 +437,15 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer2Address
       );
-      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      await SeasonsInstance.connect(buyer1).mintArtifact(125, [3], {
+      await SeasonsInstance.connect(buyer1).mintArtifact([125], [3], {
         value: ethers.utils.parseEther("300"),
       });
 
-      await SeasonsInstance.connect(buyer3).mintArtifact(126, [1], {
+      await SeasonsInstance.connect(buyer3).mintArtifact([126], [1], {
         value: ethers.utils.parseEther("100"),
       });
 
@@ -441,7 +461,7 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
@@ -508,10 +528,10 @@ describe("Artifact Registry Tests", function () {
         "",
         buyer2Address
       );
-      await SeasonsInstance.connect(buyer1).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
-
+      await fastForward(endTime + 1000000);
       expect(await SeasonsInstance.connect(owner).closeSeason(1))
         .to.emit(SeasonsInstance, "SeasonClosed")
         .withArgs(1);
@@ -549,7 +569,7 @@ describe("Artifact Registry Tests", function () {
       );
 
       expect(
-        await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
+        await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
           value: ethers.utils.parseEther("200"),
         })
       )
@@ -568,7 +588,7 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
@@ -595,11 +615,11 @@ describe("Artifact Registry Tests", function () {
         buyer2Address
       );
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
@@ -613,15 +633,15 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
-      await SeasonsInstance.connect(buyer3).mintArtifact(124, [3], {
+      await SeasonsInstance.connect(buyer3).mintArtifact([124], [3], {
         value: ethers.utils.parseEther("300"),
       });
 
-      await SeasonsInstance.connect(buyer1).mintArtifact(124, [5], {
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [5], {
         value: ethers.utils.parseEther("500"),
       });
 
@@ -630,7 +650,6 @@ describe("Artifact Registry Tests", function () {
       );
     });
     it("getTopSubmissionOfSeason returns top submission for season correctly", async () => {
-      // TODO - this test should be passing
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
@@ -664,36 +683,42 @@ describe("Artifact Registry Tests", function () {
         buyer2Address
       );
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(127, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([127], [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(128, [3], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([128], [3], {
         value: ethers.utils.parseEther("300"),
       });
-      await SeasonsInstance.connect(buyer2).mintArtifact(124, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(125, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([125], [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(126, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([126], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
       await SeasonsInstance.connect(owner).calculateTopSubmissionsOfSeason(1);
 
       await SeasonsInstance.connect(owner).calculateTopSubmissionsOfSeason(2);
-      expect(
-        await SeasonsInstance.connect(owner).getTopSubmissionsOfSeason(1)
-      ).to.equal([BigNumber.from("124"), BigNumber.from("125")]);
-      const seasonTwo = await SeasonsInstance.getSeason(2);
-      console.log(seasonTwo.toString());
-      expect(
-        await SeasonsInstance.connect(owner).getTopSubmissionsOfSeason(2)
-      ).to.equal([BigNumber.from("127")]);
+
+      let season1Winner = await SeasonsInstance.connect(
+        owner
+      ).getTopSubmissionsOfSeason(1);
+      console.log("winner", season1Winner.toString());
+      expect(await season1Winner[0].toString()).to.equal("124");
+      expect(await season1Winner[1].toString()).to.equal("125");
+      await SeasonsInstance.getSeason(2);
+
+      const season2Winner = await SeasonsInstance.connect(
+        owner
+      ).getTopSubmissionsOfSeason(2);
+      console.log("season 2 winner", season2Winner[0].toString());
+      expect(await season2Winner[0].toString()).to.equal("127");
 
       const winners = await SeasonsInstance.getSeason(1);
       console.log(winners.toString());
@@ -739,22 +764,22 @@ describe("Artifact Registry Tests", function () {
         buyer2Address
       );
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(127, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([127], [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(128, [3], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([128], [3], {
         value: ethers.utils.parseEther("300"),
       });
-      await SeasonsInstance.connect(buyer2).mintArtifact(124, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(125, [4], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([125], [4], {
         value: ethers.utils.parseEther("400"),
       });
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(126, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([126], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
@@ -837,7 +862,7 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
 
-      await SeasonsInstance.connect(buyer2).mintArtifact(124, [2], {
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
 
@@ -849,6 +874,41 @@ describe("Artifact Registry Tests", function () {
       console.log(balanceAfter.toString());
 
       expect(await balanceAfter).to.equal(ethers.utils.parseEther("1000240"));
+    });
+    it("gettotalAmountPurchasedPerToken returns the total amount of tokens bought by an address of a single tokenID", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+      await SeasonsInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await SeasonsInstance.connect(owner).createSubmission(
+        1,
+        "",
+        buyer2Address
+      );
+
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [4], {
+        value: ethers.utils.parseEther("400"),
+      });
+
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [4], {
+        value: ethers.utils.parseEther("400"),
+      });
+
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [4], {
+        value: ethers.utils.parseEther("400"),
+      });
+
+      expect(
+        await SeasonsInstance.getTotalAmountPurchasedPerToken(
+          buyer2Address,
+          124
+        )
+      ).to.equal(8);
     });
   });
 });
