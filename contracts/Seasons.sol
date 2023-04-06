@@ -59,10 +59,10 @@ contract Seasons is
 
   // address => season => amount
   mapping(address => mapping(uint => uint)) totalTokensPurchasedPerAddressPerSeason;
-  // tokenID => amount => user
-  mapping(address => mapping(uint => uint)) totalAmountPurchasedPerToken;
   // season => amount => tokenIDs
   mapping(uint => mapping(uint => uint[])) amountToTokenIDsOfSeason;
+  // tokenID => amount => user
+  mapping(address => mapping(uint => uint)) totalAmountPurchasedPerToken;
 
   // --------------------------------------------------------------
   // EVENTS
