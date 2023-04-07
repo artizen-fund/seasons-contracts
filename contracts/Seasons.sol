@@ -99,6 +99,7 @@ contract Seasons is
   function initialize() public initializer {
     startTokenID = 123;
     submissionCount = 123;
+    seasonCount = 1;
     __ERC1155_init("");
     __Ownable_init();
     __ERC1155URIStorage_init();
