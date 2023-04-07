@@ -873,7 +873,7 @@ describe("Artifact Registry Tests", function () {
       const balanceAfter = await buyer3.getBalance();
       console.log(balanceAfter.toString());
 
-      expect(await balanceAfter).to.equal(ethers.utils.parseEther("1000240"));
+      expect(await balanceAfter).to.equal("999759988749150670400032");
     });
     it("gettotalAmountPurchasedPerToken returns the total amount of tokens bought by an address of a single tokenID", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);

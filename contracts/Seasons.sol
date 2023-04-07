@@ -269,8 +269,8 @@ contract Seasons is
       revert SeasonAlreadyClosed(seasonOfSubmission);
     if (seasons[seasonOfSubmission].endTime < block.timestamp)
       revert SeasonAlreadyClosed(seasonOfSubmission);
-    uint latestTokenIDOfSeason = seasons[seasonOfSubmission]
-      .lastTokenIDOfSeason;
+
+    splitPrice(tokenIDToMint, msg.value);
 
     totalTokensPurchasedPerAddressPerSeason[msg.sender][
       submissions[tokenIDToMint].season
@@ -286,7 +286,6 @@ contract Seasons is
     // register top buyer
     if (
       // amounts purchased per address
-      // TODO - check against top amount of tokens bought per address
       topAmontOfTokenSold[tokenIDToMint] <
       totalAmountPurchasedPerToken[msg.sender][tokenIDToMint]
     ) {
@@ -308,8 +307,6 @@ contract Seasons is
       amount,
       ""
     );
-
-    splitPrice(tokenIDToMint, msg.value);
 
     emit ArtifactMinted(msg.sender, tokenIDToMint, amountSold);
   }
