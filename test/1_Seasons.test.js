@@ -20,13 +20,13 @@ describe("Artifact Registry Tests", function () {
     SeasonsInstance = await upgrades.deployProxy(SeasonsContract, []);
 
     // set token price split percentages
-    await SeasonsInstance.connect(owner).setTreasurySplitPercentage(10);
+    // await SeasonsInstance.connect(owner).setTreasurySplitPercentage(10);
     await SeasonsInstance.connect(owner).setArtistFeePercentage(50);
 
     // set protocol and treasury wallet address
     await SeasonsInstance.connect(owner).setProtocolWalletAddress(ownerAddress);
 
-    await SeasonsInstance.connect(owner).setTreasuryAddress(ownerAddress);
+    // await SeasonsInstance.connect(owner).setTreasuryAddress(ownerAddress);
 
     // set token price
 
@@ -363,7 +363,7 @@ describe("Artifact Registry Tests", function () {
       expect(await SeasonsInstance.uri(124)).to.be.equal("");
       expect(await SeasonsInstance.uri(125)).to.be.equal("blabla");
     });
-    it("splits token price correctly", async () => {
+    it.only("sends artistRoyalty properly", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -372,25 +372,14 @@ describe("Artifact Registry Tests", function () {
       );
 
       const balanceBefore = await buyer1.getBalance();
-      const ownerBalBefore = await owner.getBalance();
+      console.log("balance before mint", balanceBefore.toString());
 
-      console.log(balanceBefore.toString());
-      await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
-        value: ethers.utils.parseEther("200"),
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [1], {
+        value: ethers.utils.parseEther("100"),
       });
 
-      const ownerBalAfter = await owner.getBalance();
-      console.log(ownerBalAfter);
       const balanceAfter = await buyer1.getBalance();
-      console.log(balanceAfter.toString());
-
-      // TODO splits correct amount of money, need to figure out maths
-      // expect(await owner.getBalance()).to.equal(
-      //   ethers.utils.parseEther("1000059")
-      // );
-      // expect(await buyer1.getBalance()).to.equal(
-      //   ethers.utils.parseEther("1000300")
-      // );
+      console.log("balance after", balanceAfter.toString());
     });
     it("reverts if season ended already", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);

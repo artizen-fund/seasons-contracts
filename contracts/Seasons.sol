@@ -5,6 +5,8 @@ import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155URIStorageUpgradeable.sol";
 
+// TODO inherit non-reentrancy
+
 contract Seasons is
   ERC1155Upgradeable,
   OwnableUpgradeable,
@@ -78,6 +80,7 @@ contract Seasons is
   event ArtistFeePercentageSet(uint percentage);
   event ArtifactMinted(address to, uint tokenID, uint amount);
   event FeesWithdrawn(uint balance);
+  event RoyaltyTransferred(address to, uint amount);
 
   // --------------------------------------------------------------
   // CUSTOM ERRORS
@@ -108,16 +111,16 @@ contract Seasons is
   // --------------------------------------------------------------
   // STATE-MODIFYING FUNCTIONS
   // --------------------------------------------------------------
-  function setTreasuryAddress(
-    address payable _treasuryWallet
-  ) public onlyOwner {
-    if (_treasuryWallet == address(0))
-      revert ZeroAddressNotAllowed("Cannot set zero address");
-    assembly {
-      sstore(treasuryWallet.slot, _treasuryWallet)
-    }
-    emit ProtocolWalletAddressSet(_treasuryWallet);
-  }
+  //   function setTreasuryAddress(
+  //     address payable _treasuryWallet
+  //   ) public onlyOwner {
+  //     if (_treasuryWallet == address(0))
+  //       revert ZeroAddressNotAllowed("Cannot set zero address");
+  //     assembly {
+  //       sstore(treasuryWallet.slot, _treasuryWallet)
+  //     }
+  //     emit ProtocolWalletAddressSet(_treasuryWallet);
+  //   }
 
   function setProtocolWalletAddress(
     address payable _protocolWallet
@@ -137,12 +140,12 @@ contract Seasons is
     emit TokenPriceSet(price);
   }
 
-  function setTreasurySplitPercentage(uint percentage) public onlyOwner {
-    assembly {
-      sstore(treasurySplitPercentage.slot, percentage)
-    }
-    emit TreasuryFeeSplitPercentageSet(percentage);
-  }
+  //   function setTreasurySplitPercentage(uint percentage) public onlyOwner {
+  //     assembly {
+  //       sstore(treasurySplitPercentage.slot, percentage)
+  //     }
+  //     emit TreasuryFeeSplitPercentageSet(percentage);
+  //   }
 
   function setArtistFeePercentage(uint percentage) public onlyOwner {
     assembly {
@@ -271,7 +274,7 @@ contract Seasons is
     if (seasons[seasonOfSubmission].endTime < block.timestamp)
       revert SeasonAlreadyClosed(seasonOfSubmission);
 
-    splitPrice(tokenIDToMint, msg.value);
+    // splitPrice(tokenIDToMint, msg.value);
 
     totalTokensPurchasedPerAddressPerSeason[msg.sender][
       submissions[tokenIDToMint].season
@@ -309,6 +312,7 @@ contract Seasons is
       ""
     );
 
+    sendArtistRoyalty(msg.value, submissions[tokenIDToMint].SubmissionOwner);
     emit ArtifactMinted(msg.sender, tokenIDToMint, amountSold);
   }
 
@@ -334,13 +338,23 @@ contract Seasons is
   // INTERNAL FUNCTIONS
   // --------------------------------------------------------------
 
-  function splitPrice(uint submissionID, uint value) internal {
-    uint splitTreasury = (value / 100) * treasurySplitPercentage;
-    uint splitArtist = (value / 100) * artistFeePercentage;
+  // function splitPrice(uint submissionID, uint value) internal {
+  //     uint splitTreasury = (value / 100) * treasurySplitPercentage;
+  //     uint splitArtist = (value / 100) * artistFeePercentage;
 
-    address payable artistAddress = submissions[submissionID].SubmissionOwner;
-    treasuryWallet.transfer(splitTreasury);
-    artistAddress.transfer(splitArtist);
+  //     address payable artistAddress = submissions[submissionID]
+  //         .SubmissionOwner;
+  //     treasuryWallet.call{value: splitTreasury}("");
+  //     artistAddress.call{value: splitArtist}("");
+  // }
+
+  function sendArtistRoyalty(
+    uint value,
+    address payable to
+  ) internal returns (bool) {
+    uint splitArtist = (value / 100) * artistFeePercentage;
+    to.transfer(splitArtist);
+    emit RoyaltyTransferred(to, splitArtist);
   }
 
   function setTopSubmissionsOfSeason(uint _seasonID) internal {
@@ -446,11 +460,11 @@ contract Seasons is
     }
   }
 
-  function getTreasurySplitPercentage() public view returns (uint percentage) {
-    assembly {
-      percentage := sload(treasurySplitPercentage.slot)
-    }
-  }
+  //   function getTreasurySplitPercentage() public view returns (uint percentage) {
+  //     assembly {
+  //       percentage := sload(treasurySplitPercentage.slot)
+  //     }
+  //   }
 
   function getArtistFeePercentage() public view returns (uint percentage) {
     assembly {
