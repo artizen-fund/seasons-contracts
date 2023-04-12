@@ -19,15 +19,19 @@ describe("Artifact Registry Tests", function () {
     SeasonsContract = await ethers.getContractFactory("Seasons");
     SeasonsInstance = await upgrades.deployProxy(SeasonsContract, []);
 
+    console.log("here 1");
+
     // set token price split percentages
     await SeasonsInstance.connect(owner).setTreasurySplitPercentage(10);
     await SeasonsInstance.connect(owner).setArtistFeePercentage(50);
-
+    console.log("here 2");
     // set protocol and treasury wallet address
     await SeasonsInstance.connect(owner).setProtocolWalletAddress(ownerAddress);
 
-    await SeasonsInstance.connect(owner).setTreasuryAddress(ownerAddress);
+    console.log("here 3");
 
+    await SeasonsInstance.connect(owner).setTreasuryAddress(ownerAddress);
+    console.log("here 4");
     // set token price
 
     await SeasonsInstance.connect(owner).setTokenPrice(

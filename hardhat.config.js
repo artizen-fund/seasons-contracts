@@ -51,7 +51,7 @@ module.exports = {
     hardhat: {
       forking: {
         url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API}`,
-        blockNumber: 15890332,
+        blockNumber: 16000000,
       },
       accounts: {
         accountsBalance: "1000000000000000000000000", //1 million ETH to signers
