@@ -74,7 +74,7 @@
     "test": "hardhat test",
     "coverage": "hardhat coverage --network hardhat",
     "compile": "prettier --write 'contracts/**/*.sol' && hardhat compile",
-    "deploy:mainnet": "hardhat run scripts/1_deploy_seasons.ts",
+    "deploy:mainnet": "hardhat run --network mainnet scripts/1_deploy_seasons.ts",
     "upgrade:mainnet": "hardhat clean && hardhat run --network mainnet scripts/2_upgrade_seasons.ts",
     "deploy:goerli": "hardhat clean && hardhat run --network goerli scripts/1_deploy_seasons.ts",
     "upgrade:goerli": "hardhat clean && hardhat run --network goerli scripts/2_upgrade_seasons.ts",
