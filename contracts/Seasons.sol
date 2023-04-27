@@ -30,7 +30,6 @@ contract Seasons is
   uint[] amountsBoughtPerAddress;
   uint[] totalSalesOfTokenIDs;
 
-  // TODO rename it to Submission
   struct Submission {
     uint256[] tokenID;
     uint256 season;
@@ -111,16 +110,6 @@ contract Seasons is
   // --------------------------------------------------------------
   // STATE-MODIFYING FUNCTIONS
   // --------------------------------------------------------------
-  //   function setTreasuryAddress(
-  //     address payable _treasuryWallet
-  //   ) public onlyOwner {
-  //     if (_treasuryWallet == address(0))
-  //       revert ZeroAddressNotAllowed("Cannot set zero address");
-  //     assembly {
-  //       sstore(treasuryWallet.slot, _treasuryWallet)
-  //     }
-  //     emit ProtocolWalletAddressSet(_treasuryWallet);
-  //   }
 
   function setProtocolWalletAddress(
     address payable _protocolWallet
@@ -139,13 +128,6 @@ contract Seasons is
     }
     emit TokenPriceSet(price);
   }
-
-  //   function setTreasurySplitPercentage(uint percentage) public onlyOwner {
-  //     assembly {
-  //       sstore(treasurySplitPercentage.slot, percentage)
-  //     }
-  //     emit TreasuryFeeSplitPercentageSet(percentage);
-  //   }
 
   function setArtistFeePercentage(uint percentage) public onlyOwner {
     assembly {
@@ -338,16 +320,6 @@ contract Seasons is
   // INTERNAL FUNCTIONS
   // --------------------------------------------------------------
 
-  // function splitPrice(uint submissionID, uint value) internal {
-  //     uint splitTreasury = (value / 100) * treasurySplitPercentage;
-  //     uint splitArtist = (value / 100) * artistFeePercentage;
-
-  //     address payable artistAddress = submissions[submissionID]
-  //         .SubmissionOwner;
-  //     treasuryWallet.call{value: splitTreasury}("");
-  //     artistAddress.call{value: splitArtist}("");
-  // }
-
   function sendArtistRoyalty(
     uint value,
     address payable to
@@ -459,12 +431,6 @@ contract Seasons is
       wallet := sload(protocolWallet.slot)
     }
   }
-
-  //   function getTreasurySplitPercentage() public view returns (uint percentage) {
-  //     assembly {
-  //       percentage := sload(treasurySplitPercentage.slot)
-  //     }
-  //   }
 
   function getArtistFeePercentage() public view returns (uint percentage) {
     assembly {

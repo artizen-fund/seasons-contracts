@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { ethers, upgrades } = require("hardhat");
-const { BigNumber } = require("ethers");
+const { BigNumber, providers } = require("ethers");
 const { fastForward, currentTime } = require("./utils");
 
 let SeasonsContract;
@@ -20,13 +20,11 @@ describe("Artifact Registry Tests", function () {
     SeasonsInstance = await upgrades.deployProxy(SeasonsContract, []);
 
     // set token price split percentages
-    // await SeasonsInstance.connect(owner).setTreasurySplitPercentage(10);
+
     await SeasonsInstance.connect(owner).setArtistFeePercentage(50);
 
     // set protocol and treasury wallet address
     await SeasonsInstance.connect(owner).setProtocolWalletAddress(ownerAddress);
-
-    // await SeasonsInstance.connect(owner).setTreasuryAddress(ownerAddress);
 
     // set token price
 
@@ -46,18 +44,12 @@ describe("Artifact Registry Tests", function () {
         ownerAddress
       );
     });
-    it("emits event correctly", async () => {});
+
     it("sets token price properly", async () => {
       await SeasonsInstance.connect(owner).setTokenPrice(BigNumber.from("1"));
 
       expect(await SeasonsInstance.getTokenPrice()).to.equal(
         BigNumber.from("1")
-      );
-    });
-    it("emits event correctly", async () => {});
-    it("sets sets artist fee  and treasury fee split percentage properly", async () => {
-      await SeasonsInstance.connect(owner).setTreasurySplitPercentage(
-        BigNumber.from("5")
       );
 
       expect(await SeasonsInstance.getTreasurySplitPercentage()).to.equal(
@@ -363,7 +355,7 @@ describe("Artifact Registry Tests", function () {
       expect(await SeasonsInstance.uri(124)).to.be.equal("");
       expect(await SeasonsInstance.uri(125)).to.be.equal("blabla");
     });
-    it.only("sends artistRoyalty properly", async () => {
+    it("sends artistRoyalty properly", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -537,13 +529,7 @@ describe("Artifact Registry Tests", function () {
         .to.emit(SeasonsInstance, "Shutdown")
         .withArgs(true);
     });
-    it("emits TreasuryFeeSplitPercentageSet event correctly", async () => {
-      expect(
-        await SeasonsInstance.connect(owner).setTreasurySplitPercentage(10)
-      )
-        .to.emit(SeasonsInstance, "TreasuryFeeSplitPercentageSet")
-        .withArgs(10);
-    });
+
     it("emits ArtistFeePercentageSet event correctly", async () => {
       expect(await SeasonsInstance.connect(owner).setArtistFeePercentage(80))
         .to.emit(SeasonsInstance, "ArtistFeePercentageSet")
@@ -841,7 +827,7 @@ describe("Artifact Registry Tests", function () {
       //   await SeasonsInstance.getLargestAmountOfTokensSoldInSeason(1)
       // ).to.equal(4);
     });
-    it("withdrawing protocol fees works properly", async () => {
+    it.only("withdrawing protocol fees works properly", async () => {
       await SeasonsInstance.connect(owner).setProtocolWalletAddress(
         buyer3Address
       );
@@ -852,18 +838,16 @@ describe("Artifact Registry Tests", function () {
         buyer1Address
       );
 
-      await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
-        value: ethers.utils.parseEther("200"),
+      await SeasonsInstance.connect(buyer2).mintArtifact([124], [1], {
+        value: ethers.utils.parseEther("100"),
       });
 
       const balanceBefore = await buyer3.getBalance();
-      console.log(balanceBefore.toString());
       await SeasonsInstance.connect(owner).withdrawProtocolFees();
 
       const balanceAfter = await buyer3.getBalance();
-      console.log(balanceAfter.toString());
 
-      expect(await balanceAfter).to.equal("999759988749150670400032");
+      expect(balanceAfter).to.equal(ethers.utils.parseEther("1000050"));
     });
     it("gettotalAmountPurchasedPerToken returns the total amount of tokens bought by an address of a single tokenID", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
