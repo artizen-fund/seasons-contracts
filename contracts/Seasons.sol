@@ -67,17 +67,6 @@ contract Seasons is
     // EVENTS
     // --------------------------------------------------------------
 
-  event SubmissionCreated(uint256 submissionID, address SubmissionOwner);
-  event SeasonCreated(uint seasonID);
-  event ProtocolWalletAddressSet(address protocolWallet);
-  event SeasonClosed(uint256 _season);
-  event TokenPriceSet(uint price);
-  event Shutdown(bool _isShutdown);
-  event TreasuryFeeSplitPercentageSet(uint percentage);
-  event ArtistFeePercentageSet(uint percentage);
-  event ArtifactMinted(address to, uint tokenID, uint amount);
-  event FeesWithdrawn(uint balance);
-  event RoyaltyTransferred(address to, uint amount);
     event SubmissionCreated(uint256 submissionID, address SubmissionOwner);
     event SeasonCreated(uint seasonID);
     event ProtocolWalletAddressSet(address protocolWallet);
@@ -265,7 +254,6 @@ contract Seasons is
         if (seasons[seasonOfSubmission].endTime < block.timestamp)
             revert SeasonAlreadyClosed(seasonOfSubmission);
 
-    // splitPrice(tokenIDToMint, msg.value);
         // splitPrice(tokenIDToMint, msg.value);
 
         totalTokensPurchasedPerAddressPerSeason[msg.sender][
@@ -304,9 +292,6 @@ contract Seasons is
             ""
         );
 
-    sendArtistRoyalty(msg.value, submissions[tokenIDToMint].SubmissionOwner);
-    emit ArtifactMinted(msg.sender, tokenIDToMint, amountSold);
-  }
         sendArtistRoyalty(
             msg.value,
             submissions[tokenIDToMint].SubmissionOwner
