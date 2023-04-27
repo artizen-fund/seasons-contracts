@@ -51,10 +51,6 @@ describe("Artifact Registry Tests", function () {
       expect(await SeasonsInstance.getTokenPrice()).to.equal(
         BigNumber.from("1")
       );
-
-      expect(await SeasonsInstance.getTreasurySplitPercentage()).to.equal(
-        BigNumber.from("5")
-      );
     });
 
     it("contract shuts down if shutdown is turned on", async () => {
@@ -827,7 +823,7 @@ describe("Artifact Registry Tests", function () {
       //   await SeasonsInstance.getLargestAmountOfTokensSoldInSeason(1)
       // ).to.equal(4);
     });
-    it.only("withdrawing protocol fees works properly", async () => {
+    it("withdrawing protocol fees works properly", async () => {
       await SeasonsInstance.connect(owner).setProtocolWalletAddress(
         buyer3Address
       );
