@@ -8,6 +8,7 @@
     {
       "address": "0x20CdDf283164ee59742c80AA5CE9b97127f123cE",
       "txHash": "0xd060429c624bbf6a5d76f776fca99ce34390eec50b890ecf721c4bfcea339dbb",
+
       "kind": "transparent"
     }
   ],
@@ -903,6 +904,7 @@
           }
         }
       }
+
     }
   }
 }
