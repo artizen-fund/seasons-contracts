@@ -50,13 +50,12 @@ module.exports = {
     },
     hardhat: {
       forking: {
-        url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API}`,
-        blockNumber: 16000000,
+        url: `https://mainnet.infura.io/v3/${process.env.INFURA_API}`,
       },
       accounts: {
         accountsBalance: "1000000000000000000000000", //1 million ETH to signers
       },
-      gasPrice: 20036132356,
+      gasPrice: 41064111987,
     },
     mainnet: {
       url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API}`,

@@ -19,8 +19,6 @@ describe("Artifact Registry Tests", function () {
     SeasonsContract = await ethers.getContractFactory("Seasons");
     SeasonsInstance = await upgrades.deployProxy(SeasonsContract, []);
 
-    console.log("here 1");
-
     // set token price split percentages
 
     await SeasonsInstance.connect(owner).setArtistFeePercentage(50);
