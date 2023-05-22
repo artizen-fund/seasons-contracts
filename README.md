@@ -54,60 +54,58 @@ The Seasons contract is composed of several storage variables, structs, and mapp
 - `FeesWithdrawn`: Triggered when fees are withdrawn from the contract
 - `RoyaltyTransferred`: Triggered when artist royalty is transferred
 
-### Custom Errors
+## Functions
 
-- `ZeroAddressNotAllowed`: Error thrown when a zero address is not allowed
-- `SeasonAlreadyClosed`: Error thrown when attempting to close an already closed season
-- `NoMoreSubmissionsToThisSeason`: Error thrown when no more submissions are allowed for a season
-- `IncorrectAmount`: Error thrown when an incorrect amount is provided
-- `ContractShutdown`: Error thrown when the contract has been shut down
-- `IncorrectTimesGiven`: Error thrown when incorrect start and end times are provided
-- `SeasonDoesntExist`: Error thrown when attempting to access a non-existent season
-- `SubmissionDoesntExist`:Error thrown when attempting to access a non-existent submission
+`function setProtocolWalletAddress(address payable protocolWallet)`
 
-### function setProtocolWalletAddress(address payable protocolWallet)
+Use this function to set central protocol wallet address after deployment. This wallet will store protocol fees.
 
-- Use this function to set central protocol wallet address after deployment. This wallet will store protocol fees.
 - `address payable protocolWallet`: address of Ethereum wallet
 
-### function setTokenPrice(uint256 price)
+`function setTokenPrice(uint256 price)`
 
-- Sets the price of a single NFT.
+Sets the price of a single NFT.
+
 - `uint256 price`: token price in wei
 
-### function shutdown(bool isShutdown)
+`function shutdown(bool isShutdown)`
 
-- This is an emergency function that shuts all main functionalities of the contract.
+This is an emergency function that shuts all main functionalities of the contract.
 
-### function createSeason( uint startTime,uint endTime)
+`function createSeason( uint startTime,uint endTime)`
 
-- Creates a season with given details.
+Creates a season with given details.
+
 - `startTime`: time of the season opening, in unix timestamp
 - `endTime`: time of the season closing, in unix timestamp
 
-### function createSubmission(uint256 \_season,string memory \_tokenURI address payable \_submissionOwner)
+`function createSubmission(uint256 \_season,string memory \_tokenURI address payable \_submissionOwner)`
 
-- Creates a submission with given details.
+Creates a submission with given details.
+
 - `_season`: ID of season
 - `_tokenURIaddress`: tokenURI for NFT
 - `_submissionOwner`: address of the official
 
-### function closeSeason(uint256 \_season)
+`function closeSeason(uint256 \_season)`
 
-- Closes a season, so there can be no more submission submitted to it.
+Closes a season, so there can be no more submission submitted to it.
+
 - `_season`: ID of season
 
-### function mintArtifact( uint[] memory submissionID,uint[] memory amount)
+`function mintArtifact( uint[] memory submissionID,uint[] memory amount)`
 
-- Mints given amount of open edition artifacts to buyers wallet. Mints the same amount of artifacts to treasury wallet and to artist's wallet. This function also and to the artist and keeps the remaining amount in the contract.It also records data for other calculations.
+Mints given amount of open edition artifacts to buyers wallet. Mints the same amount of artifacts to treasury wallet and to artist's wallet. This function also and to the artist and keeps the remaining amount in the contract.It also records data for other calculations.
+
 - `submissionID`: ID of submission
 - `amount`: amount to mint for user (doesn't include the additional mints )
 
-### function calculateTopSubmissionsOfSeason(uint \_seasonID)
+`function calculateTopSubmissionsOfSeason(uint \_seasonID)`
 
-- Calculates the top submission with the most open edition NFTs sold. This function doesn't return any data, you have to call getSeason or getTopSubmissionOfSeason view functions.
+Calculates the top submission with the most open edition NFTs sold. This function doesn't return any data, you have to call getSeason or getTopSubmissionOfSeason view functions.
+
 - `_season`: ID of season
 
-### function withdrawProtocolFees()
+`function withdrawProtocolFees()`
 
-- Transfers protocol fees to protocol wallet.
+Transfers protocol fees to protocol wallet.
