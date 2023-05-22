@@ -1,12 +1,15 @@
 # Seasons Smart Contract
 
-This is a smart contract written in Solidity that implements a Seasons marketplace for minting and trading ERC-1155 tokens. The contract allows users to create submissions for different seasons, mint tokens for these submissions, calculate top submissions for each season, and manage fees and royalties.
+This upgradable contract registers the Artizen Seasons and each submission (project) to a season.
+The contract allows users to create submissions for different seasons, mint tokens for these submissions, calculate top submissions for each season, and manage fees and royalties.It also mints open edition Artifacts to each submission and has inherited functionalities from the Open Zeppelin ERC1155Upgradeable,OwnableUpgradeable and ERC1155URIStorageUpgradeable contracts.
 
 **Ethereum Mainnet Contract Address:**
 0x20CdDf283164ee59742c80AA5CE9b97127f123cE
 
 **Goerli Testnet Contract Address:**
-0x92de970cB2d9c98C8a62c6F36f47694b0b903e16
+0x362D42D067F7e3632f9876dbe22D9dBcDe5F6f23
+
+Using the testnet contract requires goerli ETH, you can get some from the Goerli Testnet faucet: https://goerlifaucet.com/
 
 ## Prerequisites
 
@@ -45,20 +48,6 @@ The Seasons contract is composed of several storage variables, structs, and mapp
 - `totalTokensPurchasedPerAddressPerSeason`: Maps addresses and season IDs to the total tokens purchased
 - `totalAmountPurchasedPerToken`: Maps addresses and token IDs to the total amount of tokens purchased
 - `amountToTokenIDsOfSeason`: Maps season IDs and amounts to arrays of token IDs
-
-### Events
-
-- `SubmissionCreated`: Triggered when a submission is created
-- `SeasonCreated`: Triggered when a season is created
-- `ProtocolWalletAddressSet`: Triggered when the protocol wallet address is set
-- `SeasonClosed`: Triggered when a season is closed
-- `TokenPriceSet`: Triggered when the token price is set
-- `Shutdown`: Triggered when the contract is shut down
-- `TreasuryFeeSplitPercentageSet`: Triggered when the treasury fee split percentage is set
-- `ArtistFeePercentageSet`: Triggered when the artist fee percentage is set
-- `ArtifactMinted`: Triggered when an artifact is minted
-- `FeesWithdrawn`: Triggered when fees are withdrawn from the contract
-- `RoyaltyTransferred`: Triggered when artist royalty is transferred
 
 ## Functions
 
