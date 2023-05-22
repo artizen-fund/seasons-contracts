@@ -2,6 +2,12 @@
 
 This is a smart contract written in Solidity that implements a Seasons marketplace for minting and trading ERC-1155 tokens. The contract allows users to create submissions for different seasons, mint tokens for these submissions, calculate top submissions for each season, and manage fees and royalties.
 
+**Ethereum Mainnet Contract Address:**
+0x20CdDf283164ee59742c80AA5CE9b97127f123cE
+
+**Goerli Testnet Contract Address:**
+0x92de970cB2d9c98C8a62c6F36f47694b0b903e16
+
 ## Prerequisites
 
 - Solidity version 0.8.18
