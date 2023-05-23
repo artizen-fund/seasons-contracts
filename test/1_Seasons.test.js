@@ -881,7 +881,22 @@ describe("Artifact Registry Tests", function () {
       ).to.equal(8);
     });
     describe("Blacklist functions", function () {
-      it("blacklists a project from a season correctly", async () => {});
+      it("blacklists a project from a season correctly", async () => {
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+        await SeasonsInstance.connect(owner).createSubmission(
+          3,
+          "",
+          buyer2Address
+        );
+
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
+      });
     });
   });
 });

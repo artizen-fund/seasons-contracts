@@ -486,6 +486,13 @@ contract Seasons is
         totalAmount = totalAmountPurchasedPerToken[user][tokenID];
     }
 
+    function isBlackListed(
+        uint seasonID,
+        uint submissionID
+    ) external view returns (bool isBlacklisted) {
+        return isBlackListedInSeason[seasonID][submissionID];
+    }
+
     function uri(
         uint256 tokenId
     )
