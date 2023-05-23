@@ -880,28 +880,49 @@ describe("Artifact Registry Tests", function () {
         )
       ).to.equal(8);
     });
-    it.only("blacklists a project from a season correctly", async () => {
-      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+    describe("Artifact Registry Tests", function () {
+      it("blacklists a project from a season correctly", async () => {
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
-      await SeasonsInstance.connect(owner).createSubmission(
-        2,
-        "",
-        buyer2Address
-      );
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
 
-      await SeasonsInstance.connect(owner).createSubmission(
-        2,
-        "",
-        buyer2Address
-      );
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
 
-      await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
-        2,
-        124
-      );
+        await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+          2,
+          124
+        );
 
-      expect(await SeasonsInstance.isBlacklisted(2, 124)).to.equal(true);
-      expect(await SeasonsInstance.isBlacklisted(2, 125)).to.equal(false);
+        expect(await SeasonsInstance.isBlacklisted(2, 124)).to.equal(true);
+        expect(await SeasonsInstance.isBlacklisted(2, 125)).to.equal(false);
+      });
+      it.only("reverts blacklist if submisson is already blacklisted in season", async () => {
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
+
+        await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+          2,
+          124
+        );
+
+        await expect(
+          SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(2, 124)
+        ).to.be.revertedWith("AlreadyBlackListed(124, 2)");
+      });
+      it.only("reverts blacklist if submisson is not part of the season", async () => {});
     });
   });
 });
