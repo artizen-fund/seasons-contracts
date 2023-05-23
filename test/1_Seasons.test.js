@@ -922,7 +922,7 @@ describe("Artifact Registry Tests", function () {
           SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(2, 124)
         ).to.be.revertedWith("AlreadyBlackListed(124, 2)");
       });
-      it.only("reverts blacklist if submission is not part of the season", async () => {
+      it("reverts blacklist if submission is not part of the season", async () => {
         await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
         await SeasonsInstance.connect(owner).createSubmission(
@@ -935,7 +935,7 @@ describe("Artifact Registry Tests", function () {
           SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(1, 124)
         ).to.be.revertedWith("SubmissionIsNotPartOfSeason(124)");
       });
-      it("only owner can call blacklist", async () => {
+      it.only("only owner can call blacklist", async () => {
         await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
         await SeasonsInstance.connect(owner).createSubmission(
@@ -945,8 +945,8 @@ describe("Artifact Registry Tests", function () {
         );
 
         await expect(
-          SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(1, 124)
-        ).to.be.revertedWith("");
+          SeasonsInstance.connect(buyer1).blacklistSubmissionFromSeason(1, 124)
+        ).to.be.revertedWith("Ownable: caller is not the owner");
       });
     });
   });
