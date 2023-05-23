@@ -93,6 +93,7 @@ contract Seasons is
   error SeasonDoesntExist();
   error SubmissionDoesntExist();
   error SeasonStillRunning(uint season);
+  error ProjectBlacklistedInSeason(uint projectID);
 
   // --------------------------------------------------------------
   // CONSTRUCTOR
@@ -255,8 +256,8 @@ contract Seasons is
       revert SeasonAlreadyClosed(seasonOfSubmission);
     if (seasons[seasonOfSubmission].endTime < block.timestamp)
       revert SeasonAlreadyClosed(seasonOfSubmission);
-
-    // splitPrice(tokenIDToMint, msg.value);
+    if (isBlackListedInSeason[submissions[tokenIDToMint].season][submissionID])
+      revert ProjectBlacklistedInSeason(submissionID);
 
     totalTokensPurchasedPerAddressPerSeason[msg.sender][
       submissions[tokenIDToMint].season
