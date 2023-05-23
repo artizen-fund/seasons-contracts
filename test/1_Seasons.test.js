@@ -880,23 +880,28 @@ describe("Artifact Registry Tests", function () {
         )
       ).to.equal(8);
     });
-    describe("Blacklist functions", function () {
-      it("blacklists a project from a season correctly", async () => {
-        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
-        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+    it.only("blacklists a project from a season correctly", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
-        await SeasonsInstance.connect(owner).createSubmission(
-          3,
-          "",
-          buyer2Address
-        );
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
 
-        await SeasonsInstance.connect(owner).createSubmission(
-          2,
-          "",
-          buyer2Address
-        );
-      });
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
+
+      await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+        2,
+        124
+      );
+
+      expect(await SeasonsInstance.isBlacklisted(2, 124)).to.equal(true);
+      expect(await SeasonsInstance.isBlacklisted(2, 125)).to.equal(false);
     });
   });
 });
