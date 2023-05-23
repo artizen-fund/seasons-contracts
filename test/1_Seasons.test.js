@@ -880,5 +880,8 @@ describe("Artifact Registry Tests", function () {
         )
       ).to.equal(8);
     });
+    describe("Blacklist functions", function () {
+      it("blacklists a project from a season correctly", async () => {});
+    });
   });
 });
