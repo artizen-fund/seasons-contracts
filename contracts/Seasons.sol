@@ -96,6 +96,7 @@ contract Seasons is
   error ProjectBlacklistedInSeason(uint submissionID, uint season);
   error SubmissionIsNotPartOfSeason(uint submissionID);
   error AlreadyBlackListed(uint submissionID, uint season);
+  error NotBlacklisted(uint season, uint submissionID);
 
   // --------------------------------------------------------------
   // CONSTRUCTOR
@@ -325,13 +326,25 @@ contract Seasons is
   function blacklistSubmissionFromSeason(
     uint seasonID,
     uint submissionID
-  ) external onlyOwner returns (bool) {
+  ) external onlyOwner {
     if (submissions[submissionID].season != seasonID)
       revert SubmissionIsNotPartOfSeason(submissionID);
     if (isBlacklistedInSeason[seasonID][submissionID])
       revert AlreadyBlackListed(submissionID, seasonID);
 
     isBlacklistedInSeason[seasonID][submissionID] = true;
+  }
+
+  function removeSubmissionFromSeason(
+    uint seasonID,
+    uint submissionID
+  ) external onlyOwner {
+    if (!isBlacklistedInSeason[seasonID][submissionID])
+      revert NotBlacklisted(seasonID, submissionID);
+    if (submissions[submissionID].season != seasonID)
+      revert SubmissionIsNotPartOfSeason(submissionID);
+
+    // TODO
   }
 
   // --------------------------------------------------------------
