@@ -904,7 +904,7 @@ describe("Artifact Registry Tests", function () {
         expect(await SeasonsInstance.isBlacklisted(2, 124)).to.equal(true);
         expect(await SeasonsInstance.isBlacklisted(2, 125)).to.equal(false);
       });
-      it.only("reverts blacklist if submisson is already blacklisted in season", async () => {
+      it("reverts blacklist if submisson is already blacklisted in season", async () => {
         await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
         await SeasonsInstance.connect(owner).createSubmission(
@@ -922,7 +922,32 @@ describe("Artifact Registry Tests", function () {
           SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(2, 124)
         ).to.be.revertedWith("AlreadyBlackListed(124, 2)");
       });
-      it.only("reverts blacklist if submisson is not part of the season", async () => {});
+      it.only("reverts blacklist if submission is not part of the season", async () => {
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
+
+        await expect(
+          SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(1, 124)
+        ).to.be.revertedWith("SubmissionIsNotPartOfSeason(124)");
+      });
+      it("only owner can call blacklist", async () => {
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
+
+        await expect(
+          SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(1, 124)
+        ).to.be.revertedWith("");
+      });
     });
   });
 });
