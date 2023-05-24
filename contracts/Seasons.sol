@@ -80,7 +80,7 @@ contract Seasons is
   event ArtifactMinted(address to, uint tokenID, uint amount);
   event FeesWithdrawn(uint balance);
   event RoyaltyTransferred(address to, uint amount);
-
+  event SubmissionBlacklistedFromSeason(uint season, uint submissionID);
   // --------------------------------------------------------------
   // CUSTOM ERRORS
   // --------------------------------------------------------------
@@ -333,41 +333,46 @@ contract Seasons is
       revert AlreadyBlackListed(submissionID, seasonID);
 
     isBlacklistedInSeason[seasonID][submissionID] = true;
+    totalAmountOfTokensSold[submissionID] = 0;
+
+    // TODO - potentially we can remove the tokenURI too but that could be unfair to the users who already bought
+
+    emit SubmissionBlacklistedFromSeason(seasonID, submissionID);
   }
 
-  function removeSubmissionFromSeason(
-    uint seasonID,
-    uint submissionID
-  ) external onlyOwner {
-    if (!isBlacklistedInSeason[seasonID][submissionID])
-      revert NotBlacklisted(seasonID, submissionID);
-    if (submissions[submissionID].season != seasonID)
-      revert SubmissionIsNotPartOfSeason(submissionID);
+  // function removeSubmissionFromSeason(
+  //   uint seasonID,
+  //   uint submissionID
+  // ) external onlyOwner {
+  //   if (!isBlacklistedInSeason[seasonID][submissionID])
+  //     revert NotBlacklisted(seasonID, submissionID);
+  //   if (submissions[submissionID].season != seasonID)
+  //     revert SubmissionIsNotPartOfSeason(submissionID);
 
-    uint[] storage submissionsInSeasonArray = seasons[seasonID].submissionIDs;
+  //   uint[] storage submissionsInSeasonArray = seasons[seasonID].submissionIDs;
 
-    // find the index of the submissionID
-    uint indexOfSubmissionID = indexOf(submissionsInSeasonArray, submissionID);
+  //   // find the index of the submissionID
+  //   uint indexOfSubmissionID = indexOf(submissionsInSeasonArray, submissionID);
 
-    require(
-      indexOfSubmissionID < submissionsInSeasonArray.length,
-      "Invalid index"
-    );
+  //   require(
+  //     indexOfSubmissionID < submissionsInSeasonArray.length,
+  //     "Invalid index"
+  //   );
 
-    if (indexOfSubmissionID < submissionsInSeasonArray.length - 1) {
-      // Shift the elements after the removed element to the left
-      for (
-        uint256 i = indexOfSubmissionID;
-        i < submissionsInSeasonArray.length - 1;
-        i++
-      ) {
-        submissionsInSeasonArray[i] = submissionsInSeasonArray[i + 1];
-      }
-    }
+  //   if (indexOfSubmissionID < submissionsInSeasonArray.length - 1) {
+  //     // Shift the elements after the removed element to the left
+  //     for (
+  //       uint256 i = indexOfSubmissionID;
+  //       i < submissionsInSeasonArray.length - 1;
+  //       i++
+  //     ) {
+  //       submissionsInSeasonArray[i] = submissionsInSeasonArray[i + 1];
+  //     }
+  //   }
 
-    // Reduce the array length by 1
-    submissionsInSeasonArray.pop();
-  }
+  //   // Reduce the array length by 1
+  //   submissionsInSeasonArray.pop();
+  // }
 
   // --------------------------------------------------------------
   // INTERNAL FUNCTIONS
@@ -424,17 +429,17 @@ contract Seasons is
     return amountToTokenIDsOfSeason[seasonID][amount];
   }
 
-  function indexOf(
-    uint256[] memory arr,
-    uint256 searchFor
-  ) internal returns (uint256) {
-    for (uint256 i = 0; i < arr.length; i++) {
-      if (arr[i] == searchFor) {
-        return i;
-      }
-      return i - 1;
-    }
-  }
+  // function indexOf(
+  //   uint256[] memory arr,
+  //   uint256 searchFor
+  // ) internal returns (uint256) {
+  //   for (uint256 i = 0; i < arr.length; i++) {
+  //     if (arr[i] == searchFor) {
+  //       return i;
+  //     }
+  //     return i - 1;
+  //   }
+  // }
 
   // --------------------------------------------------------------
   // VIEW FUNCTIONS

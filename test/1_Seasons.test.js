@@ -969,10 +969,8 @@ describe("Artifact Registry Tests", function () {
         ).to.be.revertedWith("ProjectBlacklistedInSeason(124, 2)");
       });
     });
-  });
-  describe("removeSubmissionFromSeason", function () {
-    it("removes a  submission to a season", async () => {});
-    it.only("only owner can call removeSubmissionFromSeason", async () => {
+
+    it.only("resets the totalnumber of sales to 0 for the blaklisted project", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
       await SeasonsInstance.connect(owner).createSubmission(
@@ -981,9 +979,72 @@ describe("Artifact Registry Tests", function () {
         buyer2Address
       );
 
-      await expect(
-        SeasonsInstance.connect(buyer1).removeSubmissionFromSeason(2, 124)
-      ).to.be.revertedWith("Ownable: caller is not the owner");
+      await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+        2,
+        124
+      );
+
+      expect(await SeasonsInstance.getTotalTokenSales(124)).to.equal(0);
     });
   });
+  // describe("removeSubmissionFromSeason", function () {
+  //   it.only("removes a  submission to a season", async () => {
+  //     await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+  //     await SeasonsInstance.connect(owner).createSubmission(
+  //       2,
+  //       "",
+  //       buyer2Address
+  //     );
+
+  //     await SeasonsInstance.connect(owner).createSubmission(
+  //       2,
+  //       "",
+  //       buyer2Address
+  //     );
+
+  //     await SeasonsInstance.connect(owner).createSubmission(
+  //       2,
+  //       "",
+  //       buyer2Address
+  //     );
+
+  //     await SeasonsInstance.connect(owner).createSubmission(
+  //       2,
+  //       "",
+  //       buyer2Address
+  //     );
+
+  //     await SeasonsInstance.connect(owner).createSubmission(
+  //       2,
+  //       "",
+  //       buyer2Address
+  //     );
+
+  //     await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+  //       2,
+  //       124
+  //     );
+
+  //     const seasonArrayBefore = await SeasonsInstance.getSeason(2);
+  //     console.log("before", seasonArrayBefore[1]);
+  //     await SeasonsInstance.connect(owner).removeSubmissionFromSeason(2, 124);
+
+  //     const seasonArrayAfter = await SeasonsInstance.getSeason(2);
+  //     console.log("after", seasonArrayAfter[1]);
+  //   });
+  //   it("only owner can call removeSubmissionFromSeason", async () => {
+  //     await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+  //     await SeasonsInstance.connect(owner).createSubmission(
+  //       2,
+  //       "",
+  //       buyer2Address
+  //     );
+
+  //     await expect(
+  //       SeasonsInstance.connect(buyer1).removeSubmissionFromSeason(2, 124)
+  //     ).to.be.revertedWith("Ownable: caller is not the owner");
+  //   });
+  // });
 });
