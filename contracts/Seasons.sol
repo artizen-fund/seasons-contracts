@@ -337,8 +337,7 @@ contract Seasons is
 
   function removeSubmissionFromSeason(
     uint seasonID,
-    uint submissionID,
-    uint index
+    uint submissionID
   ) external onlyOwner {
     if (!isBlacklistedInSeason[seasonID][submissionID])
       revert NotBlacklisted(seasonID, submissionID);

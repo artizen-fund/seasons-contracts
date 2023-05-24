@@ -948,7 +948,7 @@ describe("Artifact Registry Tests", function () {
           SeasonsInstance.connect(buyer1).blacklistSubmissionFromSeason(1, 124)
         ).to.be.revertedWith("Ownable: caller is not the owner");
       });
-      it.only("can't mint from blacklisted project", async () => {
+      it("can't mint from blacklisted project", async () => {
         await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
         await SeasonsInstance.connect(owner).createSubmission(
@@ -968,6 +968,22 @@ describe("Artifact Registry Tests", function () {
           })
         ).to.be.revertedWith("ProjectBlacklistedInSeason(124, 2)");
       });
+    });
+  });
+  describe("removeSubmissionFromSeason", function () {
+    it("removes a  submission to a season", async () => {});
+    it.only("only owner can call removeSubmissionFromSeason", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
+
+      await expect(
+        SeasonsInstance.connect(buyer1).removeSubmissionFromSeason(2, 124)
+      ).to.be.revertedWith("Ownable: caller is not the owner");
     });
   });
 });
