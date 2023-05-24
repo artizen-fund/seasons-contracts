@@ -337,14 +337,37 @@ contract Seasons is
 
   function removeSubmissionFromSeason(
     uint seasonID,
-    uint submissionID
+    uint submissionID,
+    uint index
   ) external onlyOwner {
     if (!isBlacklistedInSeason[seasonID][submissionID])
       revert NotBlacklisted(seasonID, submissionID);
     if (submissions[submissionID].season != seasonID)
       revert SubmissionIsNotPartOfSeason(submissionID);
 
-    // TODO
+    uint[] storage submissionsInSeasonArray = seasons[seasonID].submissionIDs;
+
+    // find the index of the submissionID
+    uint indexOfSubmissionID = indexOf(submissionsInSeasonArray, submissionID);
+
+    require(
+      indexOfSubmissionID < submissionsInSeasonArray.length,
+      "Invalid index"
+    );
+
+    if (indexOfSubmissionID < submissionsInSeasonArray.length - 1) {
+      // Shift the elements after the removed element to the left
+      for (
+        uint256 i = indexOfSubmissionID;
+        i < submissionsInSeasonArray.length - 1;
+        i++
+      ) {
+        submissionsInSeasonArray[i] = submissionsInSeasonArray[i + 1];
+      }
+    }
+
+    // Reduce the array length by 1
+    submissionsInSeasonArray.pop();
   }
 
   // --------------------------------------------------------------
@@ -400,6 +423,18 @@ contract Seasons is
   ) internal view returns (uint[] memory) {
     if (seasonID > seasonCount) revert SeasonDoesntExist();
     return amountToTokenIDsOfSeason[seasonID][amount];
+  }
+
+  function indexOf(
+    uint256[] memory arr,
+    uint256 searchFor
+  ) internal returns (uint256) {
+    for (uint256 i = 0; i < arr.length; i++) {
+      if (arr[i] == searchFor) {
+        return i;
+      }
+      return i - 1;
+    }
   }
 
   // --------------------------------------------------------------
