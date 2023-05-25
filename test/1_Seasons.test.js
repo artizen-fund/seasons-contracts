@@ -970,7 +970,7 @@ describe("Artifact Registry Tests", function () {
       });
     });
 
-    it.only("resets the totalnumber of sales to 0 for the blaklisted project", async () => {
+    it("resets the total number of sales to 0 for the blaklisted project", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
       await SeasonsInstance.connect(owner).createSubmission(
@@ -987,64 +987,4 @@ describe("Artifact Registry Tests", function () {
       expect(await SeasonsInstance.getTotalTokenSales(124)).to.equal(0);
     });
   });
-  // describe("removeSubmissionFromSeason", function () {
-  //   it.only("removes a  submission to a season", async () => {
-  //     await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
-
-  //     await SeasonsInstance.connect(owner).createSubmission(
-  //       2,
-  //       "",
-  //       buyer2Address
-  //     );
-
-  //     await SeasonsInstance.connect(owner).createSubmission(
-  //       2,
-  //       "",
-  //       buyer2Address
-  //     );
-
-  //     await SeasonsInstance.connect(owner).createSubmission(
-  //       2,
-  //       "",
-  //       buyer2Address
-  //     );
-
-  //     await SeasonsInstance.connect(owner).createSubmission(
-  //       2,
-  //       "",
-  //       buyer2Address
-  //     );
-
-  //     await SeasonsInstance.connect(owner).createSubmission(
-  //       2,
-  //       "",
-  //       buyer2Address
-  //     );
-
-  //     await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
-  //       2,
-  //       124
-  //     );
-
-  //     const seasonArrayBefore = await SeasonsInstance.getSeason(2);
-  //     console.log("before", seasonArrayBefore[1]);
-  //     await SeasonsInstance.connect(owner).removeSubmissionFromSeason(2, 124);
-
-  //     const seasonArrayAfter = await SeasonsInstance.getSeason(2);
-  //     console.log("after", seasonArrayAfter[1]);
-  //   });
-  //   it("only owner can call removeSubmissionFromSeason", async () => {
-  //     await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
-
-  //     await SeasonsInstance.connect(owner).createSubmission(
-  //       2,
-  //       "",
-  //       buyer2Address
-  //     );
-
-  //     await expect(
-  //       SeasonsInstance.connect(buyer1).removeSubmissionFromSeason(2, 124)
-  //     ).to.be.revertedWith("Ownable: caller is not the owner");
-  //   });
-  // });
 });
