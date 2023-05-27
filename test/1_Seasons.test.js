@@ -987,7 +987,7 @@ describe("Artifact Registry Tests", function () {
       expect(await SeasonsInstance.getTotalTokenSales(124)).to.equal(0);
     });
 
-    it.only("saves the previous sales into a mapping before 0ing out sales", async () => {
+    it("saves the previous sales into a mapping before 0ing out sales", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
       await SeasonsInstance.connect(owner).createSubmission(
