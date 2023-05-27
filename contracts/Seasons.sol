@@ -65,6 +65,8 @@ contract Seasons is
 
   // seasonID => submissionID => blacklist
   mapping(uint => mapping(uint => bool)) isBlacklistedInSeason;
+  // seasonID => submissionID => amount
+  mapping(uint => mapping(uint => uint)) amountSoldBeforeBlackList;
   // --------------------------------------------------------------
   // EVENTS
   // --------------------------------------------------------------
@@ -333,9 +335,10 @@ contract Seasons is
       revert AlreadyBlackListed(submissionID, seasonID);
 
     isBlacklistedInSeason[seasonID][submissionID] = true;
+    amountSoldBeforeBlackList[seasonID][submissionID] = totalAmountOfTokensSold[
+      submissionID
+    ];
     totalAmountOfTokensSold[submissionID] = 0;
-
-    // TODO - potentially we can remove the tokenURI too but that could be unfair to the users who already bought
 
     emit SubmissionBlacklistedFromSeason(seasonID, submissionID);
   }
@@ -486,7 +489,14 @@ contract Seasons is
     uint seasonID,
     uint submissionID
   ) external view returns (bool isBlacklisted) {
-    return isBlacklistedInSeason[seasonID][submissionID];
+    isBlacklisted = isBlacklistedInSeason[seasonID][submissionID];
+  }
+
+  function getAmountSoldBeforeBlackList(
+    uint seasonID,
+    uint submissionID
+  ) external view returns (uint) {
+    return amountSoldBeforeBlackList[seasonID][submissionID];
   }
 
   function uri(

@@ -986,5 +986,29 @@ describe("Artifact Registry Tests", function () {
 
       expect(await SeasonsInstance.getTotalTokenSales(124)).to.equal(0);
     });
+
+    it.only("saves the previous sales into a mapping before 0ing out sales", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
+
+      await SeasonsInstance.connect(owner).mintArtifact([124], [5], {
+        value: ethers.utils.parseEther("500"),
+      });
+
+      await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+        2,
+        124
+      );
+
+      expect(await SeasonsInstance.getTotalTokenSales(124)).to.equal(0);
+      expect(
+        await SeasonsInstance.getAmountSoldBeforeBlackList(2, 124)
+      ).to.be.equal(5);
+    });
   });
 });
