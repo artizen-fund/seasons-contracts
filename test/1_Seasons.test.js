@@ -880,5 +880,135 @@ describe("Artifact Registry Tests", function () {
         )
       ).to.equal(8);
     });
+    describe("Artifact Registry Tests", function () {
+      it("blacklists a project from a season correctly", async () => {
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
+
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
+
+        await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+          2,
+          124
+        );
+
+        expect(await SeasonsInstance.isBlacklisted(2, 124)).to.equal(true);
+        expect(await SeasonsInstance.isBlacklisted(2, 125)).to.equal(false);
+      });
+      it("reverts blacklist if submisson is already blacklisted in season", async () => {
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
+
+        await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+          2,
+          124
+        );
+
+        await expect(
+          SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(2, 124)
+        ).to.be.revertedWith("AlreadyBlackListed(124, 2)");
+      });
+      it("reverts blacklist if submission is not part of the season", async () => {
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
+
+        await expect(
+          SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(1, 124)
+        ).to.be.revertedWith("SubmissionIsNotPartOfSeason(124)");
+      });
+      it("only owner can call blacklist", async () => {
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
+
+        await expect(
+          SeasonsInstance.connect(buyer1).blacklistSubmissionFromSeason(1, 124)
+        ).to.be.revertedWith("Ownable: caller is not the owner");
+      });
+      it("can't mint from blacklisted project", async () => {
+        await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+        await SeasonsInstance.connect(owner).createSubmission(
+          2,
+          "",
+          buyer2Address
+        );
+
+        await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+          2,
+          124
+        );
+
+        await expect(
+          SeasonsInstance.connect(buyer2).mintArtifact([124], [4], {
+            value: ethers.utils.parseEther("400"),
+          })
+        ).to.be.revertedWith("ProjectBlacklistedInSeason(124, 2)");
+      });
+    });
+
+    it("resets the total number of sales to 0 for the blaklisted project", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
+
+      await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+        2,
+        124
+      );
+
+      expect(await SeasonsInstance.getTotalTokenSales(124)).to.equal(0);
+    });
+
+    it("saves the previous sales into a mapping before 0ing out sales", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
+
+      await SeasonsInstance.connect(owner).mintArtifact([124], [5], {
+        value: ethers.utils.parseEther("500"),
+      });
+
+      await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+        2,
+        124
+      );
+
+      expect(await SeasonsInstance.getTotalTokenSales(124)).to.equal(0);
+      expect(
+        await SeasonsInstance.getAmountSoldBeforeBlackList(2, 124)
+      ).to.be.equal(5);
+    });
   });
 });

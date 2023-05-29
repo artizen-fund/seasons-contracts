@@ -41,7 +41,7 @@ module.exports = {
   },
   gasReporter: {
     currency: "USD",
-    gasPrice: 31,
+    gasPrice: 41,
   },
   defaultNetwork: "hardhat",
   networks: {
@@ -55,7 +55,6 @@ module.exports = {
       accounts: {
         accountsBalance: "1000000000000000000000000", //1 million ETH to signers
       },
-      gasPrice: 41064111987,
     },
     mainnet: {
       url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API}`,
