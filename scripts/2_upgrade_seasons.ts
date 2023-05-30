@@ -42,7 +42,7 @@ async function main() {
   //   // set logic here
   // }
 
-  const SEASONS_PROXY_ADDRESS = "0xf5EB891452964Af63f94A9952246f08aB6Eb095b";
+  const SEASONS_PROXY_ADDRESS = "0x362D42D067F7e3632f9876dbe22D9dBcDe5F6f23";
 
   const nftContract = await upgrade("Seasons", SEASONS_PROXY_ADDRESS, [], {
     timeout: 1800000, // ms = 1800 sec = 30 minutes
