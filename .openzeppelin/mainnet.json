@@ -8,7 +8,6 @@
     {
       "address": "0x20CdDf283164ee59742c80AA5CE9b97127f123cE",
       "txHash": "0xd060429c624bbf6a5d76f776fca99ce34390eec50b890ecf721c4bfcea339dbb",
-
       "kind": "transparent"
     }
   ],
@@ -904,7 +903,480 @@
           }
         }
       }
-
+    },
+    "799aff70882875166c0cfba5632669473f94d29e4e6bd20a6e428ab0bb31fe0b": {
+      "address": "0x658eCf31437Dde26682260133EF081Cf6f484876",
+      "txHash": "0x20ea1a0006cd4757f6a39234a0b87dbcdd2581ae9c8217ac403a1ecbce75355f",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_balances",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:25"
+          },
+          {
+            "label": "_operatorApprovals",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:28"
+          },
+          {
+            "label": "_uri",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_string_storage",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:31"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_array(t_uint256)47_storage",
+            "contract": "ERC1155Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:528"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "_baseURI",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_string_storage",
+            "contract": "ERC1155URIStorageUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155URIStorageUpgradeable.sol:27"
+          },
+          {
+            "label": "_tokenURIs",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_mapping(t_uint256,t_string_storage)",
+            "contract": "ERC1155URIStorageUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155URIStorageUpgradeable.sol:30"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_array(t_uint256)48_storage",
+            "contract": "ERC1155URIStorageUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155URIStorageUpgradeable.sol:77"
+          },
+          {
+            "label": "startTokenID",
+            "offset": 0,
+            "slot": "251",
+            "type": "t_uint256",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:17"
+          },
+          {
+            "label": "submissionCount",
+            "offset": 0,
+            "slot": "252",
+            "type": "t_uint256",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:18"
+          },
+          {
+            "label": "seasonCount",
+            "offset": 0,
+            "slot": "253",
+            "type": "t_uint256",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:19"
+          },
+          {
+            "label": "protocolWallet",
+            "offset": 0,
+            "slot": "254",
+            "type": "t_address_payable",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:20"
+          },
+          {
+            "label": "treasuryWallet",
+            "offset": 0,
+            "slot": "255",
+            "type": "t_address_payable",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:21"
+          },
+          {
+            "label": "treasurySplitPercentage",
+            "offset": 0,
+            "slot": "256",
+            "type": "t_uint256",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:22"
+          },
+          {
+            "label": "artistFeePercentage",
+            "offset": 0,
+            "slot": "257",
+            "type": "t_uint256",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:23"
+          },
+          {
+            "label": "tokenPrice",
+            "offset": 0,
+            "slot": "258",
+            "type": "t_uint256",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:24"
+          },
+          {
+            "label": "isShutdown",
+            "offset": 0,
+            "slot": "259",
+            "type": "t_bool",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:25"
+          },
+          {
+            "label": "latestTokenID",
+            "offset": 0,
+            "slot": "260",
+            "type": "t_uint256",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:26"
+          },
+          {
+            "label": "amountsBoughtPerAddress",
+            "offset": 0,
+            "slot": "261",
+            "type": "t_array(t_uint256)dyn_storage",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:28"
+          },
+          {
+            "label": "totalSalesOfTokenIDs",
+            "offset": 0,
+            "slot": "262",
+            "type": "t_array(t_uint256)dyn_storage",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:29"
+          },
+          {
+            "label": "seasons",
+            "offset": 0,
+            "slot": "263",
+            "type": "t_mapping(t_uint256,t_struct(Season)3324_storage)",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:48"
+          },
+          {
+            "label": "submissions",
+            "offset": 0,
+            "slot": "264",
+            "type": "t_mapping(t_uint256,t_struct(Submission)3306_storage)",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:50"
+          },
+          {
+            "label": "artifactTopBuyer",
+            "offset": 0,
+            "slot": "265",
+            "type": "t_mapping(t_uint256,t_address)",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:52"
+          },
+          {
+            "label": "topAmontOfTokenSold",
+            "offset": 0,
+            "slot": "266",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:55"
+          },
+          {
+            "label": "totalAmountOfTokensSold",
+            "offset": 0,
+            "slot": "267",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:57"
+          },
+          {
+            "label": "totalTokensPurchasedPerAddressPerSeason",
+            "offset": 0,
+            "slot": "268",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:60"
+          },
+          {
+            "label": "totalAmountPurchasedPerToken",
+            "offset": 0,
+            "slot": "269",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:62"
+          },
+          {
+            "label": "amountToTokenIDsOfSeason",
+            "offset": 0,
+            "slot": "270",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_array(t_uint256)dyn_storage))",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:64"
+          },
+          {
+            "label": "isBlacklistedInSeason",
+            "offset": 0,
+            "slot": "271",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_bool))",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:67"
+          },
+          {
+            "label": "amountSoldBeforeBlackList",
+            "offset": 0,
+            "slot": "272",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_uint256))",
+            "contract": "Seasons",
+            "src": "contracts/Seasons.sol:69"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)47_storage": {
+            "label": "uint256[47]",
+            "numberOfBytes": "1504"
+          },
+          "t_array(t_uint256)48_storage": {
+            "label": "uint256[48]",
+            "numberOfBytes": "1536"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(uint256 => uint256[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_bool)": {
+            "label": "mapping(uint256 => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(uint256 => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_array(t_uint256)dyn_storage))": {
+            "label": "mapping(uint256 => mapping(uint256 => uint256[]))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_bool))": {
+            "label": "mapping(uint256 => mapping(uint256 => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(uint256 => mapping(uint256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_string_storage)": {
+            "label": "mapping(uint256 => string)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Season)3324_storage)": {
+            "label": "mapping(uint256 => struct Seasons.Season)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Submission)3306_storage)": {
+            "label": "mapping(uint256 => struct Seasons.Submission)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Season)3324_storage": {
+            "label": "struct Seasons.Season",
+            "members": [
+              {
+                "label": "submissionIDs",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "tokenIDs",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "topSubmissions",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "startTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "endTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "lastTokenIDOfSeason",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "isClosed",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "6"
+              }
+            ],
+            "numberOfBytes": "224"
+          },
+          "t_struct(Submission)3306_storage": {
+            "label": "struct Seasons.Submission",
+            "members": [
+              {
+                "label": "tokenID",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "season",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "tokenURI",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "SubmissionOwner",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
     }
   }
 }
