@@ -18,7 +18,7 @@ contract Seasons is
   uint256 public submissionCount;
   uint public seasonCount;
   address payable protocolWallet;
-  uint artistFeePercentage;
+  // uint artistFeePercentage;
   uint256 public tokenPrice;
   bool private isShutdown;
   uint private latestTokenID;
@@ -231,7 +231,6 @@ contract Seasons is
     seasons[_season].lastTokenIDOfSeason = _lastTokenIDofSeason;
     seasons[_season].isClosed = true;
 
-    // withdrawProtocolFees();
     // TODO - mintArzien() function called here
     calculateTopSubmissionsOfSeason(_season);
     emit SeasonClosed(_season);
