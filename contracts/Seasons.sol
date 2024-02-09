@@ -291,16 +291,25 @@ contract Seasons is
     _setURI(tokenIDToMint, submissions[tokenIDToMint].tokenURI);
 
     _mintBatch(msg.sender, submissionID, amount, "");
-    _mintBatch(protocolWallet, submissionID, amount, "");
-    _mintBatch(
-      submissions[tokenIDToMint].SubmissionOwner,
-      submissionID,
-      amount,
-      ""
-    );
+
+    // TODO removing artist and artizen mint
+
+    // _mintBatch(protocolWallet, submissionID, amount, "");
+    // _mintBatch(
+    //   submissions[tokenIDToMint].SubmissionOwner,
+    //   submissionID,
+    //   amount,
+    //   ""
+    // );
 
     // sendArtistRoyalty(msg.value, submissions[tokenIDToMint].SubmissionOwner);
-    // TODO - ALL funds need to move to protocol wallet
+    // TODO - ALL funds need to move to protocol wallet -> implementing .call to transfer funds to gnoisis safe
+
+    (bool sent, bytes memory data) = protocolWallet.call{ value: msg.value }(
+      ""
+    );
+    require(sent, "Failed to send Ether");
+
     emit ArtifactMinted(msg.sender, tokenIDToMint, amountSold);
   }
 
