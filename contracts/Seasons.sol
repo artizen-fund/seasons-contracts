@@ -76,6 +76,7 @@ contract Seasons is
     event TokenPriceSet(uint price);
     event Shutdown(bool _isShutdown);
     event ArtifactMinted(address to, uint tokenID, uint amount);
+    event ProtocolArtifactsMinted(uint[] tokenIDs, uint[] amounts);
     event FundsWithdrawn(uint balance);
     // event RoyaltyTransferred(address to, uint amount);
     event SubmissionBlacklistedFromSeason(uint season, uint submissionID);
@@ -215,7 +216,7 @@ contract Seasons is
         @param _season season to be closed
     */
 
-    function closeSeason(uint256 _season) public onlyOwner {
+    function closeSeason(uint256 _season) public payable onlyOwner {
         if (_season > seasonCount) revert SeasonDoesntExist();
         if (seasons[_season].endTime > block.timestamp)
             revert SeasonStillRunning(_season);
@@ -231,7 +232,7 @@ contract Seasons is
         seasons[_season].lastTokenIDOfSeason = _lastTokenIDofSeason;
         seasons[_season].isClosed = true;
 
-        // TODO - mintArzien() function called here
+        // TODO - mintArtizen() function called here
         calculateTopSubmissionsOfSeason(_season);
         emit SeasonClosed(_season);
     }
@@ -292,6 +293,12 @@ contract Seasons is
             topAmontOfTokenSold[tokenIDToMint] = newTopAmount;
         }
 
+        // TODO - ALL funds need to move to protocol wallet -> implementing .call to transfer funds to gnoisis safe
+        (bool sent, bytes memory data) = protocolWallet.call{value: msg.value}(
+            ""
+        );
+        require(sent, "Failed to send Ether");
+
         _setURI(tokenIDToMint, submissions[tokenIDToMint].tokenURI);
 
         _mintBatch(msg.sender, submissionID, amount, "");
@@ -307,12 +314,6 @@ contract Seasons is
         // );
 
         // sendArtistRoyalty(msg.value, submissions[tokenIDToMint].SubmissionOwner);
-        // TODO - ALL funds need to move to protocol wallet -> implementing .call to transfer funds to gnoisis safe
-
-        (bool sent, bytes memory data) = protocolWallet.call{value: msg.value}(
-            ""
-        );
-        require(sent, "Failed to send Ether");
 
         emit ArtifactMinted(msg.sender, tokenIDToMint, amountSold);
     }
@@ -365,6 +366,33 @@ contract Seasons is
     //   to.transfer(splitArtist);
     //   emit RoyaltyTransferred(to, splitArtist);
     // }
+
+    /**
+        @notice internal function to mint all tokens from all submissions at the end of the season for the protocol
+        @param _seasonID id of season to mint from
+    */
+    function mintArtifactProtocol(uint _seasonID) internal {
+        // TODO
+
+        // get all tokenIDs of the season //TODO - check if submission and tokenIDs are the same
+        uint[] memory submissionIDsOfSeason = seasons[_seasonID].submissionIDs;
+        uint[] memory tokenIDsOfSeason = seasons[_seasonID].tokenIDs;
+
+        // get the total amount of each token sold
+        uint[] memory amounts;
+
+        for (uint i = 0; i < submissionIDsOfSeason.length; i++) {
+            uint amountSold = getTotalTokenSales(submissionIDsOfSeason[i]);
+
+            for (uint i = 0; i < submissionIDsOfSeason.length; i++) {
+                amounts.push(amountSold);
+            }
+        }
+
+        _mintBatch(msg.sender, tokenIDsOfSeason, amounts, "");
+
+        emit ProtocolArtifactsMinted(tokenIDsOfSeason, amounts);
+    }
 
     function setTopSubmissionsOfSeason(uint _seasonID) internal {
         uint largestAmount = getLargestAmountOfTokensSoldInSeason(_seasonID);
@@ -472,6 +500,7 @@ contract Seasons is
         }
     }
 
+    // TODO - remove this
     // function getArtistFeePercentage() public view returns (uint percentage) {
     //   assembly {
     //     percentage := sload(artistFeePercentage.slot)
