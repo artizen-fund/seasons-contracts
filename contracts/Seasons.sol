@@ -372,21 +372,23 @@ contract Seasons is
         @param _seasonID id of season to mint from
     */
     function mintArtifactProtocol(uint _seasonID) internal {
-        // TODO
+        // TODO - should artizen pay for the minting too?
 
-        // get all tokenIDs of the season //TODO - check if submission and tokenIDs are the same
+        // get all tokenIDs of the season
+        //TODO - check if submission and tokenIDs are the same
         uint[] memory submissionIDsOfSeason = seasons[_seasonID].submissionIDs;
         uint[] memory tokenIDsOfSeason = seasons[_seasonID].tokenIDs;
 
         // get the total amount of each token sold
-        uint[] memory amounts;
+        uint[] memory amounts = new uint[](submissionIDsOfSeason.length);
 
         for (uint i = 0; i < submissionIDsOfSeason.length; i++) {
+            uint[] memory _amounts = new uint[](submissionIDsOfSeason.length);
             uint amountSold = getTotalTokenSales(submissionIDsOfSeason[i]);
 
-            for (uint i = 0; i < submissionIDsOfSeason.length; i++) {
-                amounts.push(amountSold);
-            }
+            _amounts[i] = amountSold;
+
+            amounts = _amounts;
         }
 
         _mintBatch(msg.sender, tokenIDsOfSeason, amounts, "");
