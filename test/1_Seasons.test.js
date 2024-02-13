@@ -220,10 +220,47 @@ describe("Artifact Registry Tests", function () {
       ).to.be.revertedWith("SeasonStillRunning(2)");
     });
 
-    it("only owner can close season submission", async () => {
+    it("only owner can close season", async () => {
       await expect(
         SeasonsInstance.connect(buyer1).closeSeason(1)
       ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+    it.only("mints correct amount of NFTS into protocol wallet", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer1Address
+      );
+
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer1Address
+      );
+
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [5], {
+        value: ethers.utils.parseEther("500"),
+      });
+
+      await SeasonsInstance.connect(buyer1).mintArtifact([125], [6], {
+        value: ethers.utils.parseEther("600"),
+      });
+
+      let totalSales124 = await SeasonsInstance.connect(
+        owner
+      ).getTotalTokenSales(124);
+
+      let totalSales125 = await SeasonsInstance.connect(
+        owner
+      ).getTotalTokenSales(125);
+      console.log("sales", totalSales124, totalSales125);
+
+      await fastForward(endTime + 1000000);
+      await SeasonsInstance.connect(owner).closeSeason(2);
+
+      expect(await SeasonsInstance.balanceOf(ownerAddress, 124)).to.equal(5);
+      expect(await SeasonsInstance.balanceOf(ownerAddress, 125)).to.equal(6);
     });
   });
 
@@ -258,7 +295,7 @@ describe("Artifact Registry Tests", function () {
   //     console.log(ownerBalAfter.toString());
   //   });
 
-  describe("mintArtifact function", function () {
+  describe("mintArtifacts functions", function () {
     it("msg.value has to be equal to token price", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
@@ -355,6 +392,34 @@ describe("Artifact Registry Tests", function () {
       expect(await SeasonsInstance.uri(124)).to.be.equal("");
       expect(await SeasonsInstance.uri(125)).to.be.equal("blabla");
     });
+
+    // TODO - remove this?
+
+    // it.only("mintArtifactProtocol mints the tokens to the protocol wallet", async () => {
+    //   await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+    //   await SeasonsInstance.connect(owner).createSubmission(
+    //     2,
+    //     "",
+    //     buyer1Address
+    //   );
+    //   await SeasonsInstance.connect(owner).createSubmission(
+    //     2,
+    //     "blabla",
+    //     buyer1Address
+    //   );
+
+    //   await SeasonsInstance.connect(buyer1).mintArtifact([124], [5], {
+    //     value: ethers.utils.parseEther("500"),
+    //   });
+
+    //   let totalSales = await SeasonsInstance.connect(owner).getTotalTokenSales(
+    //     124
+    //   );
+    //   console.log("sales", totalSales);
+
+    //   await SeasonsInstance.connect(owner).mintArtifactProtocol(2);
+    //   expect(await SeasonsInstance.balanceOf(ownerAddress, 124)).to.equal(5);
+    // });
 
     // TODO - remove this
     // it("sends artistRoyalty properly", async () => {
@@ -474,7 +539,7 @@ describe("Artifact Registry Tests", function () {
       );
     });
 
-    it.only("transfers all funds to protocol wallet", async () => {
+    it("transfers all funds to protocol wallet", async () => {
       // TODO
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
