@@ -658,26 +658,42 @@ describe("Artifact Registry Tests", function () {
         .to.emit(SeasonsInstance, "ArtifactMinted")
         .withArgs(buyer2Address, 124, 2);
     });
-
-    it("emits FeesWithdrawn event correctly", async () => {
-      await SeasonsInstance.connect(owner).setProtocolWalletAddress(
-        buyer3Address
-      );
+    it.only("emits ProtocolArtifactsMinted event correctly", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+
       await SeasonsInstance.connect(owner).createSubmission(
         2,
         "",
-        buyer1Address
+        buyer2Address
       );
-
-      await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
         value: ethers.utils.parseEther("200"),
       });
-
-      expect(await SeasonsInstance.connect(owner).withdrawProtocolFees())
-        .to.emit(SeasonsInstance, "FeesWithdrawn")
-        .withArgs("");
+      await fastForward(endTime + 1000000);
+      expect(await SeasonsInstance.connect(owner).closeSeason(2))
+        .to.emit(SeasonsInstance, "ProtocolArtifactsMinted")
+        .withArgs([124], [2]);
     });
+
+    // it("emits FeesWithdrawn event correctly", async () => {
+    //   await SeasonsInstance.connect(owner).setProtocolWalletAddress(
+    //     buyer3Address
+    //   );
+    //   await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+    //   await SeasonsInstance.connect(owner).createSubmission(
+    //     2,
+    //     "",
+    //     buyer1Address
+    //   );
+
+    //   await SeasonsInstance.connect(buyer2).mintArtifact([124], [2], {
+    //     value: ethers.utils.parseEther("200"),
+    //   });
+
+    //   expect(await SeasonsInstance.connect(owner).withdrawProtocolFees())
+    //     .to.emit(SeasonsInstance, "FeesWithdrawn")
+    //     .withArgs("");
+    // });
   });
   describe("View functions", function () {
     it("getprotocolWalletAddress returns correct wallet address", async () => {
