@@ -658,7 +658,7 @@ describe("Artifact Registry Tests", function () {
         .to.emit(SeasonsInstance, "ArtifactMinted")
         .withArgs(buyer2Address, 124, 2);
     });
-    it.only("emits ProtocolArtifactsMinted event correctly", async () => {
+    it("emits ProtocolArtifactsMinted event correctly", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
 
       await SeasonsInstance.connect(owner).createSubmission(
