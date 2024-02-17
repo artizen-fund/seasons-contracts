@@ -295,7 +295,7 @@ describe("Artifact Registry Tests", function () {
   //     console.log(ownerBalAfter.toString());
   //   });
   describe("claimArtist function", function () {
-    it.only("only submission owner can call this function", async () => {
+    it("only submission owner can call this function", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -317,6 +317,41 @@ describe("Artifact Registry Tests", function () {
         'OnlyArtist("only submissionOwner can call this function")'
       );
     });
+    it.only("reverts if shutdown is initiated", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
+      await SeasonsInstance.connect(owner).shutdown(true);
+      await expect(
+        SeasonsInstance.connect(owner).artistClaim([124], [10])
+      ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
+    });
+
+    //       it("reverts if project is blacklisted", async () => {
+    //     // TODO
+    //       })
+
+    //        it("reverts if claim balance is 0", async () => {
+    //     // TODO
+    //        })
+    //          it("reverts if claim balance lower than claim amount", async () => {
+    //     // TODO
+    //          })
+
+    //       it("mints correct amount of tokens to submission owner", async () => {
+    //     // TODO
+    //       })
+
+    //       it("emits ArtifactsClaimedByArtist event", async () => {
+    //     // TODO
+    //       })
+
+    //       it("changes the remaining claim balance correctly", async () => {
+    //     // TODO
+    //       })
   });
   describe("mintArtifacts functions", function () {
     it("msg.value has to be equal to token price", async () => {
