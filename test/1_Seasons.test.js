@@ -317,7 +317,7 @@ describe("Artifact Registry Tests", function () {
         'OnlyArtist("only submissionOwner can call this function")'
       );
     });
-    it.only("reverts if shutdown is initiated", async () => {
+    it("reverts if shutdown is initiated", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -330,9 +330,22 @@ describe("Artifact Registry Tests", function () {
       ).to.be.revertedWith('ContractShutdown("Contract has been shut down")');
     });
 
-    //       it("reverts if project is blacklisted", async () => {
-    //     // TODO
-    //       })
+    it.only("reverts if submission is blacklisted", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
+
+      await SeasonsInstance.connect(owner).blacklistSubmissionFromSeason(
+        2,
+        124
+      );
+      await expect(
+        SeasonsInstance.connect(buyer2).artistClaim([124], [10])
+      ).to.be.revertedWith("ProjectBlacklistedInSeason(124, 2)");
+    });
 
     //        it("reverts if claim balance is 0", async () => {
     //     // TODO
