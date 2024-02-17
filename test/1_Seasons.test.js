@@ -348,7 +348,6 @@ describe("Artifact Registry Tests", function () {
     });
 
     it.only("reverts if claim balance is 0", async () => {
-      // TODO
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -360,9 +359,24 @@ describe("Artifact Registry Tests", function () {
         SeasonsInstance.connect(buyer2).artistClaim([124], [10])
       ).to.be.revertedWith("NoTokensToMint()");
     });
-    //          it("reverts if claim balance lower than claim amount", async () => {
-    //     // TODO
-    //          })
+    it.only("reverts if claim balance lower than claim amount", async () => {
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
+
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [10], {
+        value: ethers.utils.parseEther("1000"),
+      });
+
+      await expect(
+        SeasonsInstance.connect(buyer2).artistClaim([124], [20])
+      ).to.be.revertedWith(
+        'IncorrectAmount("Claim balance lower than claim amount")'
+      );
+    });
 
     //       it("mints correct amount of tokens to submission owner", async () => {
     //     // TODO
