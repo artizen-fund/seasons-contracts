@@ -347,7 +347,7 @@ describe("Artifact Registry Tests", function () {
       ).to.be.revertedWith("ProjectBlacklistedInSeason(124, 2)");
     });
 
-    it.only("reverts if claim balance is 0", async () => {
+    it("reverts if claim balance is 0", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -359,7 +359,7 @@ describe("Artifact Registry Tests", function () {
         SeasonsInstance.connect(buyer2).artistClaim([124], [10])
       ).to.be.revertedWith("NoTokensToMint()");
     });
-    it.only("reverts if claim balance lower than claim amount", async () => {
+    it("reverts if claim balance lower than claim amount", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -378,7 +378,7 @@ describe("Artifact Registry Tests", function () {
       );
     });
 
-    it.only("mints correct amount of tokens to submission owner", async () => {
+    it("mints correct amount of tokens to submission owner", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -395,13 +395,45 @@ describe("Artifact Registry Tests", function () {
       expect(await SeasonsInstance.balanceOf(buyer2Address, 124)).to.equal(10);
     });
 
-    //       it("emits ArtifactsClaimedByArtist event", async () => {
-    //     // TODO
-    //       })
+    it.only("emits ArtifactsClaimedByArtist event", async () => {
+      // TODO - check timestamp issue
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
 
-    //       it("changes the remaining claim balance correctly", async () => {
-    //     // TODO
-    //       })
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [10], {
+        value: ethers.utils.parseEther("1000"),
+      });
+
+      let timestamp = await currentTime();
+
+      await expect(SeasonsInstance.connect(buyer2).artistClaim([124], [10]))
+        .to.emit(SeasonsInstance, "ArtifactsClaimedByArtist")
+        .withArgs(buyer2Address, 124, 10, timestamp);
+    });
+
+    it.only("changes the remaining claim balance correctly", async () => {
+      // TODO
+
+      await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
+      await SeasonsInstance.connect(owner).createSubmission(
+        2,
+        "",
+        buyer2Address
+      );
+
+      await SeasonsInstance.connect(buyer1).mintArtifact([124], [10], {
+        value: ethers.utils.parseEther("1000"),
+      });
+      await SeasonsInstance.connect(buyer2).artistClaim([124], [5]);
+
+      let submisson = await SeasonsInstance.getSubmission(124);
+
+      expect(await submisson[3]).to.equal(5);
+    });
   });
   describe("mintArtifacts functions", function () {
     it("msg.value has to be equal to token price", async () => {
