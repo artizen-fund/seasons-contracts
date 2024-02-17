@@ -409,15 +409,12 @@ describe("Artifact Registry Tests", function () {
       });
 
       let timestamp = await currentTime();
-
       await expect(SeasonsInstance.connect(buyer2).artistClaim([124], [10]))
         .to.emit(SeasonsInstance, "ArtifactsClaimedByArtist")
         .withArgs(buyer2Address, 124, 10, timestamp);
     });
 
-    it.only("changes the remaining claim balance correctly", async () => {
-      // TODO
-
+    it("changes the remaining claim balance correctly", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
