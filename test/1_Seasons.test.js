@@ -76,7 +76,7 @@ describe("Artifact Registry Tests", function () {
     });
   });
   describe("createSubmission function", function () {
-    it("registers submission details properly ", async () => {
+    it.only("registers submission details properly ", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -92,7 +92,8 @@ describe("Artifact Registry Tests", function () {
       expect(await submission[0].toString()).to.equal("124");
       expect(await submission[1]).to.equal(2);
       expect(await submission[2]).to.equal("");
-      expect(await submission[3]).to.equal(buyer1Address);
+      expect(await submission[3]).to.equal(0);
+      expect(await submission[4]).to.equal(buyer1Address);
     });
     it("only owner can create submission", async () => {
       await expect(
@@ -416,7 +417,7 @@ describe("Artifact Registry Tests", function () {
         })
       ).to.be.revertedWith('IncorrectAmount("")');
     });
-    it.only("mints correct tokenID for submission", async () => {
+    it("mints correct tokenID for submission", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
