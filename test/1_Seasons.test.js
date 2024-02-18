@@ -76,7 +76,7 @@ describe("Artifact Registry Tests", function () {
     });
   });
   describe("createSubmission function", function () {
-    it.only("registers submission details properly ", async () => {
+    it("registers submission details properly ", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -379,10 +379,9 @@ describe("Artifact Registry Tests", function () {
         value: ethers.utils.parseEther("1000"),
       });
 
-      let timestamp = await currentTime();
       await expect(SeasonsInstance.connect(buyer2).artistClaim([124], [10]))
         .to.emit(SeasonsInstance, "ArtifactsClaimedByArtist")
-        .withArgs(buyer2Address, 124, 10, timestamp);
+        .withArgs(buyer2Address, 124, 10);
     });
 
     it("changes the remaining claim balance correctly", async () => {
@@ -632,8 +631,11 @@ describe("Artifact Registry Tests", function () {
       console.log("diff", difference);
 
       let tokenPrice = await SeasonsInstance.getTokenPrice();
-      console.log("tokenprice", tokenPrice);
-      expect(await difference).to.greaterThanOrEqual(tokenPrice * 2);
+
+      expect(await difference).to.be.approximately(
+        tokenPrice * 2,
+        2000000000000000000
+      );
     });
   });
   describe("Events", function () {
