@@ -26,9 +26,6 @@ The Seasons contract is composed of several storage variables, structs, and mapp
 - `submissionCount`: Total number of submissions
 - `seasonCount`: Total number of seasons
 - `protocolWallet`: Address where protocol fees are sent
-- `treasuryWallet`: Address where treasury fees are sent
-- `treasurySplitPercentage`: Percentage split for treasury fees
-- `artistFeePercentage`: Percentage of the token price as artist royalty
 - `tokenPrice`: Price of each token
 - `isShutdown`: Flag indicating if the contract is shut down
 - `latestTokenID`: Latest token ID used for minting
@@ -48,12 +45,14 @@ The Seasons contract is composed of several storage variables, structs, and mapp
 - `totalTokensPurchasedPerAddressPerSeason`: Maps addresses and season IDs to the total tokens purchased
 - `totalAmountPurchasedPerToken`: Maps addresses and token IDs to the total amount of tokens purchased
 - `amountToTokenIDsOfSeason`: Maps season IDs and amounts to arrays of token IDs
+- `isBlacklistedInSeason`: Maps to a submission blacklisted in a specific season
+- `amountSoldBeforeBlackList`:Maps to the amount of tokens sold before blacklist
 
 ## Functions
 
 `function setProtocolWalletAddress(address payable protocolWallet)`
 
-Use this function to set central protocol wallet address after deployment. This wallet will store protocol fees.
+Use this function to set central protocol wallet address after deployment. This wallet will store all funds.
 
 - `address payable protocolWallet`: address of Ethereum wallet
 
@@ -84,7 +83,7 @@ Creates a submission with given details.
 
 `function closeSeason(uint256 \_season)`
 
-Closes a season, so there can be no more submission submitted to it.
+Closes a season, so there can be no more submission submitted to it. It mints the amount of each tokenID sold within the season to the protocol wallet.
 
 - `_season`: ID of season
 
@@ -93,7 +92,14 @@ Closes a season, so there can be no more submission submitted to it.
 Mints given amount of open edition artifacts to buyers wallet. Mints the same amount of artifacts to treasury wallet and to artist's wallet. This function also and to the artist and keeps the remaining amount in the contract.It also records data for other calculations.
 
 - `submissionID`: ID of submission
-- `amount`: amount to mint for user (doesn't include the additional mints )
+- `amount`: amount to mint for user
+
+`function artistClaim( uint[] memory submissionID,uint[] memory amount)`
+
+Submission owners can claim their own NFTs according to their claim balance at any given time.
+
+- `submissionID`: ID of submission
+- `amount`: amount to mint for user
 
 `function calculateTopSubmissionsOfSeason(uint \_seasonID)`
 

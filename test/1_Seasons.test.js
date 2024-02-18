@@ -599,7 +599,6 @@ describe("Artifact Registry Tests", function () {
     });
 
     it("transfers all funds to protocol wallet", async () => {
-      // TODO
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -695,13 +694,6 @@ describe("Artifact Registry Tests", function () {
         .to.emit(SeasonsInstance, "Shutdown")
         .withArgs(true);
     });
-
-    // TODO - remove this
-    // it("emits ArtistFeePercentageSet event correctly", async () => {
-    //   expect(await SeasonsInstance.connect(owner).setArtistFeePercentage(80))
-    //     .to.emit(SeasonsInstance, "ArtistFeePercentageSet")
-    //     .withArgs(80);
-    // });
 
     it("emits ArtifactMinted  event correctly", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);

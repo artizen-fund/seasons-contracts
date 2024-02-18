@@ -54,16 +54,17 @@ contract Seasons is
   mapping(uint => uint) public totalAmountOfTokensSold;
 
   // address => season => amount
-  mapping(address => mapping(uint => uint)) totalTokensPurchasedPerAddressPerSeason;
+  mapping(address => mapping(uint => uint))
+    public totalTokensPurchasedPerAddressPerSeason;
   // tokenID => amount => user
-  mapping(address => mapping(uint => uint)) totalAmountPurchasedPerToken;
+  mapping(address => mapping(uint => uint)) public totalAmountPurchasedPerToken;
   // season => amount => tokenIDs
-  mapping(uint => mapping(uint => uint[])) amountToTokenIDsOfSeason;
+  mapping(uint => mapping(uint => uint[])) public amountToTokenIDsOfSeason;
 
   // seasonID => submissionID => blacklist
-  mapping(uint => mapping(uint => bool)) isBlacklistedInSeason;
+  mapping(uint => mapping(uint => bool)) public isBlacklistedInSeason;
   // seasonID => submissionID => amount
-  mapping(uint => mapping(uint => uint)) amountSoldBeforeBlackList;
+  mapping(uint => mapping(uint => uint)) public amountSoldBeforeBlackList;
   // --------------------------------------------------------------
   // EVENTS
   // --------------------------------------------------------------
@@ -213,7 +214,7 @@ contract Seasons is
         @param _season season to be closed
     */
 
-  function closeSeason(uint256 _season) public payable onlyOwner {
+  function closeSeason(uint256 _season) public onlyOwner {
     if (_season > seasonCount) revert SeasonDoesntExist();
     if (seasons[_season].endTime > block.timestamp)
       revert SeasonStillRunning(_season);
