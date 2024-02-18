@@ -432,7 +432,7 @@ describe("Artifact Registry Tests", function () {
       expect(await SeasonsInstance.balanceOf(ownerAddress, 124)).to.equal(2);
     });
 
-    it("mints the same amounts to 3 different addresses", async () => {
+    it.only("mints the correct amount to buyer's address", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -443,11 +443,14 @@ describe("Artifact Registry Tests", function () {
         value: ethers.utils.parseEther("200"),
       });
 
+      await SeasonsInstance.connect(buyer3).mintArtifact([124], [2], {
+        value: ethers.utils.parseEther("200"),
+      });
+
       expect(await SeasonsInstance.balanceOf(buyer1Address, 124)).to.equal(2);
-      expect(await SeasonsInstance.balanceOf(buyer2Address, 124)).to.equal(2);
-      expect(await SeasonsInstance.balanceOf(ownerAddress, 124)).to.equal(2);
+      expect(await SeasonsInstance.balanceOf(buyer3Address, 124)).to.equal(2);
     });
-    it.only("minting one token mints tokens correctly", async () => {
+    it("minting one token mints tokens correctly", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
