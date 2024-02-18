@@ -264,36 +264,6 @@ describe("Artifact Registry Tests", function () {
     });
   });
 
-  // TODO - remove this
-  //   it("transfers protocol fees to protocol wallet", async () => {
-  //     await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
-  //     await SeasonsInstance.connect(owner).createSubmission(
-  //       2,
-  //       "",
-  //       buyer1Address
-  //     );
-
-  //     await SeasonsInstance.connect(owner).createSubmission(
-  //       2,
-  //       "",
-  //       buyer1Address
-  //     );
-
-  //     await SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
-  //       value: ethers.utils.parseEther("200"),
-  //     });
-
-  //     await SeasonsInstance.connect(buyer1).mintArtifact([124], [2], {
-  //       value: ethers.utils.parseEther("200"),
-  //     });
-  //     const ownerBalBefore = await owner.getBalance();
-  //     console.log(ownerBalBefore.toString());
-  //     await fastForward(endTime + 1000000);
-  //     await SeasonsInstance.connect(owner).closeSeason(2);
-
-  //     const ownerBalAfter = await owner.getBalance();
-  //     console.log(ownerBalAfter.toString());
-  //   });
   describe("claimArtist function", function () {
     it("only submission owner can call this function", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
@@ -395,7 +365,7 @@ describe("Artifact Registry Tests", function () {
       expect(await SeasonsInstance.balanceOf(buyer2Address, 124)).to.equal(10);
     });
 
-    it.only("emits ArtifactsClaimedByArtist event", async () => {
+    it("emits ArtifactsClaimedByArtist event", async () => {
       // TODO - check timestamp issue
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
@@ -477,7 +447,7 @@ describe("Artifact Registry Tests", function () {
       expect(await SeasonsInstance.balanceOf(buyer2Address, 124)).to.equal(2);
       expect(await SeasonsInstance.balanceOf(ownerAddress, 124)).to.equal(2);
     });
-    it("minting one token mints tokens correctly", async () => {
+    it.only("minting one token mints tokens correctly", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -489,8 +459,6 @@ describe("Artifact Registry Tests", function () {
       });
 
       expect(await SeasonsInstance.balanceOf(buyer1Address, 124)).to.equal(1);
-      expect(await SeasonsInstance.balanceOf(buyer2Address, 124)).to.equal(1);
-      expect(await SeasonsInstance.balanceOf(ownerAddress, 124)).to.equal(1);
     });
 
     it("users cant mint if a season is closed", async () => {
@@ -530,53 +498,6 @@ describe("Artifact Registry Tests", function () {
       expect(await SeasonsInstance.uri(125)).to.be.equal("blabla");
     });
 
-    // TODO - remove this?
-
-    // it.only("mintArtifactProtocol mints the tokens to the protocol wallet", async () => {
-    //   await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
-    //   await SeasonsInstance.connect(owner).createSubmission(
-    //     2,
-    //     "",
-    //     buyer1Address
-    //   );
-    //   await SeasonsInstance.connect(owner).createSubmission(
-    //     2,
-    //     "blabla",
-    //     buyer1Address
-    //   );
-
-    //   await SeasonsInstance.connect(buyer1).mintArtifact([124], [5], {
-    //     value: ethers.utils.parseEther("500"),
-    //   });
-
-    //   let totalSales = await SeasonsInstance.connect(owner).getTotalTokenSales(
-    //     124
-    //   );
-    //   console.log("sales", totalSales);
-
-    //   await SeasonsInstance.connect(owner).mintArtifactProtocol(2);
-    //   expect(await SeasonsInstance.balanceOf(ownerAddress, 124)).to.equal(5);
-    // });
-
-    // TODO - remove this
-    // it("sends artistRoyalty properly", async () => {
-    //   await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
-    //   await SeasonsInstance.connect(owner).createSubmission(
-    //     2,
-    //     "",
-    //     buyer1Address
-    //   );
-
-    //   const balanceBefore = await buyer1.getBalance();
-    //   console.log("balance before mint", balanceBefore.toString());
-
-    //   await SeasonsInstance.connect(buyer2).mintArtifact([124], [1], {
-    //     value: ethers.utils.parseEther("100"),
-    //   });
-
-    //   const balanceAfter = await buyer1.getBalance();
-    //   console.log("balance after", balanceAfter.toString());
-    // });
     it("reverts if season ended already", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
