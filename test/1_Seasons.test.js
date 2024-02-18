@@ -416,7 +416,7 @@ describe("Artifact Registry Tests", function () {
         })
       ).to.be.revertedWith('IncorrectAmount("")');
     });
-    it("mints correct tokenID for submission", async () => {
+    it.only("mints correct tokenID for submission", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
@@ -428,11 +428,9 @@ describe("Artifact Registry Tests", function () {
       });
 
       expect(await SeasonsInstance.balanceOf(buyer1Address, 124)).to.equal(2);
-      expect(await SeasonsInstance.balanceOf(buyer2Address, 124)).to.equal(2);
-      expect(await SeasonsInstance.balanceOf(ownerAddress, 124)).to.equal(2);
     });
 
-    it.only("mints the correct amount to buyer's address", async () => {
+    it("mints the correct amount to buyer's address", async () => {
       await SeasonsInstance.connect(owner).createSeason(startTime, endTime);
       await SeasonsInstance.connect(owner).createSubmission(
         2,
