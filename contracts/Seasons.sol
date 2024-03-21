@@ -361,7 +361,7 @@ contract Seasons is
   }
 
   /**
-        @notice Withdraws all ETH stored in the contract */
+        @notice Withdraws all ETH stored in the contract to the protocol wallet */
   function withdraw() public onlyOwner {
     protocolWallet.transfer(address(this).balance);
 
