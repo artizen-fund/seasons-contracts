@@ -78,6 +78,7 @@
     "upgrade:mainnet": "hardhat clean && hardhat run --network mainnet scripts/2_upgrade_seasons.ts",
     "deploy:goerli": "hardhat clean && hardhat run --network goerli scripts/1_deploy_seasons.ts",
     "upgrade:goerli": "hardhat clean && hardhat run --network goerli scripts/2_upgrade_seasons.ts",
+    "deploy:sepolia": "hardhat clean && hardhat run --network sepolia scripts/1_deploy_seasons.ts",
     "accounts": "hardhat accounts",
     "balance": "hardhat balance",
     "generate": "hardhat generate",
